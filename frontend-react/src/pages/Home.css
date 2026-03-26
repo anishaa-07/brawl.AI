@@ -1,12 +1,12 @@
 :root {
-  --primary: #ff3c8d;
-  --primary-glow: rgba(255, 60, 141, 0.4);
-  --cyan: #00f2ff;
-  --cyan-glow: rgba(0, 242, 255, 0.4);
+  --primary: #8a2be2; /* Blue Violet for Darker Aesthetic */
+  --primary-glow: rgba(138, 43, 226, 0.4);
+  --cyan: #ff0040; /* Vivid Crimson Contrast */
+  --cyan-glow: rgba(255, 0, 64, 0.4);
   --bg: #0b1016;
   --bg-dots: rgba(255, 255, 255, 0.03);
   --glass: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.12); /* Slightly more visible for dark vibe */
   --text-dim: #8b9fb1;
 }
 
