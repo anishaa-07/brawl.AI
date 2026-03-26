@@ -221,30 +221,66 @@ const Home = () => {
           </div>
         </section>
 
-        {/* 🌐 COMMUNITY & UPCOMING 🌐 */}
-        <section className="dual-section tech-section">
+        {/* 🌐 COMMUNITY & ROADMAP: PROFESSIONAL HUD 🌐 */}
+        <section className="dual-section tech-section" id="community">
           <div className="container-main">
             <div className="dual-grid">
-              <div className="community-box glass-panel p-40">
-                <span className="section-label">SOCIAL NODE</span>
+              {/* Community Pulse Card */}
+              <motion.div 
+                className="community-box glass-panel professional"
+                whileHover={{ scale: 1.01 }}
+              >
+                <div className="panel-header">
+                  <Globe size={18} className="accent-cyan" />
+                  <span className="section-label">GLOBAL NETWORK</span>
+                </div>
                 <h2>COMMUNITY <span className="text-glow">HUB</span></h2>
-                <div className="info-list">
+                <div className="pulse-stats-grid">
                   {[
-                    "842k+ Active Players", "Real-time Global Rankings", "Live Matches Preview"
-                  ].map((text, i) => (
-                    <div key={i} className="info-item-simple"><Globe size={16} className="accent-cyan"/> {text}</div>
+                    { label: "CONNECTED PILOTS", val: "842k+", trend: "+12%" },
+                    { label: "BATTLE FREQUENCY", val: "1.2ms", trend: "LEGACY" },
+                    { label: "NODES ONLINE", val: "15,842", trend: "STABLE" }
+                  ].map((stat, i) => (
+                    <div key={i} className="pulse-stat-card">
+                       <span className="p-label">{stat.label}</span>
+                       <div className="p-val-row">
+                         <span className="p-val">{stat.val}</span>
+                         <span className="p-trend">{stat.trend}</span>
+                       </div>
+                    </div>
                   ))}
                 </div>
-              </div>
-              <div className="upcoming-box glass-panel p-40">
-                <span className="section-label">ROADMAP // 2026</span>
+              </motion.div>
+
+              {/* Roadmap Strategy Card */}
+              <motion.div 
+                className="upcoming-box glass-panel professional"
+                whileHover={{ scale: 1.01 }}
+              >
+                <div className="panel-header">
+                  <Activity size={18} className="accent-magenta" />
+                  <span className="section-label">ROADMAP // Q3-Q4 2026</span>
+                </div>
                 <h2>UPCOMING <span className="accent-magenta">FEATURES</span></h2>
-                <div className="info-list horizontal">
-                  {["Voice Chat", "Team Battles", "Tournament Mode", "Mobile Version"].map((feat, i) => (
-                    <div key={i} className="upcoming-tag">{feat}</div>
+                <div className="roadmap-list-professional">
+                  {[
+                    { name: "Neural Voice Chat", progress: 85, status: "TESTING" },
+                    { name: "Global Team Battles", progress: 60, status: "STAGING" },
+                    { name: "Tournament Protocol", progress: 30, status: "DEV" },
+                    { name: "Mobile Client Node", progress: 15, status: "PLANNING" }
+                  ].map((feat, i) => (
+                    <div key={i} className="roadmap-item-pro">
+                       <div className="item-meta">
+                         <span className="f-name">{feat.name}</span>
+                         <span className="f-status">{feat.status}</span>
+                       </div>
+                       <div className="progress-track">
+                         <div className="progress-fill" style={{ width: `${feat.progress}%` }} />
+                       </div>
+                    </div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>

@@ -35,17 +35,20 @@ const Background = ({ children }) => {
 
   return (
     <div className="bg-container terminal-mode">
-      {/* 🚀 RETURN BUTTON: LEFT 🚀 */}
-      <div className="control-left">
-        <button className="control-btn-icon" onClick={() => navigate(-1)} title="Return">
-          <ArrowLeft size={24} />
+      {/* 📺 SYSTEM CONTROLS 📺 */}
+      <div className="fixed-controls">
+        <button className="system-btn return-top" onClick={() => window.scrollTo({top:0, behavior:'smooth'})} title="Return to Top">
+          <ArrowLeft size={18} style={{ transform: 'rotate(90deg)' }} />
+          <span>RETURN TOP</span>
         </button>
-      </div>
 
-      {/* 📺 FULLSCREEN: BOTTOM RIGHT 📺 */}
-      <div className="control-bottom-right">
-        <button className="control-btn-icon scale" onClick={toggleFullscreen} title={isFullscreen ? "Minimize" : "Full Screen"}>
-          {isFullscreen ? <Minimize size={24} /> : <Maximize size={24} />}
+        <button className="system-btn return-back" onClick={() => navigate(-1)} title="Return Back">
+          <ArrowLeft size={18} />
+          <span>SYSTEM BACK</span>
+        </button>
+
+        <button className="system-btn-icon scale" onClick={toggleFullscreen} title={isFullscreen ? "Minimize" : "Full Screen"}>
+          {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
         </button>
       </div>
 
