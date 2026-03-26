@@ -1,0 +1,12 @@
+{
+  "name": "brawl-ai",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node backend/server.js",
+    "client": "npm run dev --prefix frontend-react",
+    "dev": "concurrently \"npm start\" \"npm run client\""
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

@@ -10,8 +10,8 @@ const https = require('https');
 app.use(cors());
 app.use(express.json());
 
-// Serve static frontend files from parent directory
-app.use(express.static(path.join(__dirname, '..')));
+// Serve static frontend files from the React dist folder
+app.use(express.static(path.join(__dirname, '..', 'frontend-react', 'dist')));
 
 
 // Piston Runtime Cache
@@ -271,6 +271,11 @@ app.get('/api/system/nodes', (req, res) => {
     ];
     if(nodes[3].status === 'ONLINE') { nodes[3].ping = Math.floor(Math.random() * 800 + 400) + 'ms'; nodes[3].color = '#ffb800'; }
     res.json(nodes);
+});
+
+// Fallback: Always serve index.html for any other routes (SPA routing)
+app.use((req, res) => {
+    res.sendFile(path.resolve(__dirname, '..', 'frontend-react', 'dist', 'index.html'));
 });
 
 app.listen(PORT, () => {

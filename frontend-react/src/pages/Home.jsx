@@ -14,12 +14,20 @@ const Home = () => {
         
         {/* 🏆 EPIC HERO: CINEMATIC BATTLE ARENA 🏆 */}
         <section className="hero-section premium" id="home">
+          {/* Anime Background Overlay */}
+          <div className="hero-anime-bg" style={{ 
+            backgroundImage: `url(${import.meta.env.BASE_URL}assets/anime_bg.png)`,
+            position: 'absolute', inset: 0, opacity: 0.15, zIndex: 1, pointerEvents: 'none',
+            backgroundSize: 'cover', backgroundPosition: 'center'
+          }} />
+
           <div className="container-hero">
             <motion.div 
               className="hero-text-content"
               initial={{ opacity: 0, x: -40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
+              style={{ zIndex: 10 }}
             >
               <motion.div 
                 className="tagline-badge"
@@ -73,10 +81,11 @@ const Home = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1.2, ease: "easeOut" }}
+              style={{ zIndex: 5 }}
             >
               <div className="hero-art-clash">
-                <img src="/assets/red_left.png" alt="Male Pilot" className="clash-image male" style={{ position: 'absolute', left: '-10%', width: '70%', zIndex: 2 }} />
-                <img src="/assets/red_right.png" alt="Female Pilot" className="clash-image female" style={{ position: 'absolute', right: '-10%', width: '70%', zIndex: 1 }} />
+                <img src={`${import.meta.env.BASE_URL}assets/red_left.png`} alt="Male Pilot" className="clash-image male" style={{ position: 'absolute', left: '-10%', width: '70%', zIndex: 2 }} />
+                <img src={`${import.meta.env.BASE_URL}assets/red_right.png`} alt="Female Pilot" className="clash-image female" style={{ position: 'absolute', right: '-10%', width: '70%', zIndex: 1 }} />
                 <div className="clash-glow" />
               </div>
             </motion.div>
@@ -138,7 +147,7 @@ const Home = () => {
         <section className="tech-spotlight">
           <div className="container-main side-by-side">
             <div className="tech-visual">
-               <img src="/assets/neural_brain.png" alt="Neural Brain" className="brain-img" />
+               <img src={`${import.meta.env.BASE_URL}assets/neural_brain.png`} alt="Neural Brain" className="brain-img" />
                <div className="visual-pulse" />
             </div>
             <div className="tech-copy">
@@ -200,14 +209,14 @@ const Home = () => {
                    { t: "AI-Powered", d: "Millions of battle simulations every second for true variety." }
                  ].map((item, i) => (
                     <div key={i} className="why-item">
-                      <h5>{item.t}</h5>
-                      <p>{item.d}</p>
+                       <h5>{item.t}</h5>
+                       <p>{item.d}</p>
                     </div>
                  ))}
                </div>
             </div>
             <div className="tech-visual">
-               <img src="/assets/arena_wide.png" alt="Arena Wide" className="preview-img-frame" />
+               <img src={`${import.meta.env.BASE_URL}assets/arena_wide.png`} alt="Arena Wide" className="preview-img-frame" />
             </div>
           </div>
         </section>
