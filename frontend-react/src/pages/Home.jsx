@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Sword, Cpu, Target, Globe, Info, Send, ChevronRight, Activity, Zap, Shield } from 'lucide-react';
+import { Sword, Cpu, Target, Globe, Info, Send, ChevronRight, Activity, Zap, Shield, Github, Mail } from 'lucide-react';
 import Background from '../components/Background';
 import Navbar from '../components/Navbar';
 import './Home.css';
@@ -403,29 +403,47 @@ const Home = () => {
 
 
         {/* 🌑 CINEMATIC FOOTER 🌑 */}
-        <footer className="footer-premium">
-           <div className="footer-main">
-              <div className="f-branding">
-                 <div className="logo-f font-montserrat">BR<span className="accent-magenta">AWL</span>.AI</div>
-                 <p className="f-tagline">DECENTRALIZED NEURAL ARENA</p>
-              </div>
-              <div className="f-links-grid">
-                 <div className="f-col">
-                   <h6>GRID</h6>
-                   <Link to="/">ARENA</Link><Link to="/">RANKINGS</Link><Link to="/">MODES</Link>
-                 </div>
-                 <div className="f-col">
-                   <h6>INTELLIGENCE</h6>
-                   <Link to="/">SYSTEMS</Link><Link to="/">DOCUMENTATION</Link><Link to="/">SUPPORT</Link>
-                 </div>
-                 <div className="f-col social">
-                   <h6>NETWORK</h6>
-                   <div className="social-row"><Globe size={18}/><Info size={18}/><Send size={18}/></div>
-                 </div>
-              </div>
+        <footer className="footer-premium-v2">
+           <div className="footer-branding">
+              <div className="logo-f font-montserrat">BR<span className="accent-magenta">AWL</span>.AI</div>
            </div>
-           <div className="footer-base">
-              <p>© 2026 BRAWL.AI - SECURE SYSTEM ENDPOINT</p>
+
+           <div className="footer-socials">
+             {[
+               { icon: <Globe size={22} />, label: "Website", href: "https://anishaa-07.github.io/brawl.AI/" },
+               { icon: <Github size={22} />, label: "GitHub", href: "https://github.com/anishaa-07/brawl.AI" },
+               { icon: <Mail size={22} />, label: "Email", href: "mailto:anisharanjanaur2007@gmail.com" },
+               { icon: <Send size={22} />, label: "Telegram", href: "#" }
+             ].map((social, i) => (
+               <motion.a 
+                 key={i}
+                 href={social.href}
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 className="social-icon-btn"
+                 whileHover={{ scale: 1.15, y: -5 }}
+                 whileTap={{ scale: 0.95 }}
+                 title={social.label}
+               >
+                 {social.icon}
+               </motion.a>
+             ))}
+           </div>
+
+           <div className="footer-divider" />
+
+           <motion.div 
+             className="footer-tagline"
+             initial={{ opacity: 0, y: 20 }}
+             whileInView={{ opacity: 1, y: 0 }}
+             viewport={{ once: true }}
+             transition={{ duration: 1 }}
+           >
+             <h3>Where logic becomes <span className="accent-magenta text-glow">COMPETITION</span> !</h3>
+           </motion.div>
+
+           <div className="footer-base-v2">
+              <p>© 2026 BRAWL.AI — ALL SYSTEMS OPERATIONAL</p>
            </div>
         </footer>
       </Background>
