@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&family=Rajdhani:wght@300..700&display=swap');
+
 :root {
   --primary: #8a2be2; /* Blue Violet for Darker Aesthetic */
   --primary-glow: rgba(138, 43, 226, 0.4);
@@ -434,7 +436,6 @@
 .mini-s h5 { font-size: 1.8rem; font-weight: 900; color: var(--cyan); }
 .mini-s p { font-size: 0.7rem; font-weight: 800; color: var(--text-dim); }
 
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&family=Rajdhani:wght@300..700&display=swap');
 
 :root {
   --font-gaming: 'Orbitron', sans-serif;

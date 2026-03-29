@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Sword, Cpu, Target, Globe, Info, Send, ChevronRight, Activity, Zap, Shield, Github, Mail } from 'lucide-react';
+import { Sword, Cpu, Target, Globe, Info, Send, ChevronRight, Activity, Zap, Shield, GitFork, Mail } from 'lucide-react';
 import Background from '../components/Background';
 import Navbar from '../components/Navbar';
 import './Home.css';
@@ -411,7 +411,7 @@ const Home = () => {
            <div className="footer-socials">
              {[
                { icon: <Globe size={22} />, label: "Website", href: "https://anishaa-07.github.io/brawl.AI/" },
-               { icon: <Github size={22} />, label: "GitHub", href: "https://github.com/anishaa-07/brawl.AI" },
+               { icon: <GitFork size={22} />, label: "GitHub", href: "https://github.com/anishaa-07/brawl.AI" },
                { icon: <Mail size={22} />, label: "Email", href: "mailto:anisharanjanaur2007@gmail.com" },
                { icon: <Send size={22} />, label: "Telegram", href: "#" }
              ].map((social, i) => (
