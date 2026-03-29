@@ -259,6 +259,62 @@ const Home = () => {
                 ))}
               </div>
             </motion.div>
+
+            {/* 📊 PROGRESS TODAY PANEL 📊 */}
+            <motion.div 
+              className="progress-today-panel"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              <div className="pt-left">
+                <div className="pt-header">
+                  <Activity size={18} className="accent-cyan" />
+                  <h3>TODAY'S <span className="accent-cyan">PROGRESS</span></h3>
+                </div>
+                <div className="pt-tasks">
+                  {[
+                    { task: "Win 3 Battles", done: true, xp: "+300 XP" },
+                    { task: "Complete Daily Challenge", done: true, xp: "+500 XP" },
+                    { task: "Play 2 Ranked Matches", done: false, xp: "+400 XP" },
+                    { task: "Earn 1,000 $CORE", done: false, xp: "+250 XP" }
+                  ].map((t, i) => (
+                    <div key={i} className={`pt-task-row ${t.done ? 'completed' : ''}`}>
+                      <div className="pt-task-check">
+                        {t.done ? '✓' : <div className="pt-task-empty" />}
+                      </div>
+                      <span className="pt-task-name">{t.task}</span>
+                      <span className="pt-task-xp">{t.xp}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="pt-right">
+                <div className="pt-circle-progress">
+                  <svg viewBox="0 0 120 120" className="pt-ring-svg">
+                    <circle cx="60" cy="60" r="52" className="pt-ring-bg" />
+                    <circle cx="60" cy="60" r="52" className="pt-ring-fill" 
+                      strokeDasharray="326.7" 
+                      strokeDashoffset="163.3" 
+                    />
+                  </svg>
+                  <div className="pt-circle-text">
+                    <span className="pt-circle-percent">50%</span>
+                    <span className="pt-circle-label">COMPLETE</span>
+                  </div>
+                </div>
+                <motion.button 
+                  className="claim-reward-btn"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Zap size={16} />
+                  <span>CLAIM REWARD</span>
+                </motion.button>
+                <span className="pt-reward-hint">2/4 tasks completed</span>
+              </div>
+            </motion.div>
           </div>
         </section>
 
