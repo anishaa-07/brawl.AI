@@ -163,34 +163,53 @@
 }
 
 .hero-center-art-v2 {
-  width: 82% !important;
-  max-width: 690px !important;
+  width: 65% !important;
+  max-width: 550px !important;
   height: auto;
   object-fit: contain;
-  filter: drop-shadow(0 0 50px var(--primary-glow));
-  animation: heroFloat 8s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 40px var(--primary-glow));
+  animation: heroFloat 6s ease-in-out infinite alternate, heroPulse 4s ease-in-out infinite, heroGlowCycle 8s linear infinite;
 }
 
 @keyframes heroFloat {
   0% { 
     transform: translateY(0) rotate(0deg) scale(1); 
-    filter: brightness(1) drop-shadow(0 0 30px var(--primary-glow)); 
+  }
+  25% {
+    transform: translateY(-15px) rotate(1.5deg) scale(1.03);
   }
   50% {
-    transform: translateY(-20px) rotate(1deg) scale(1.02);
-    filter: brightness(1.1) drop-shadow(0 0 45px var(--primary-glow));
+    transform: translateY(-25px) rotate(-1deg) scale(1.05);
+  }
+  75% {
+    transform: translateY(-10px) rotate(2deg) scale(1.02);
   }
   100% { 
-    transform: translateY(-5px) rotate(-1deg) scale(1.05); 
-    filter: brightness(1.2) drop-shadow(0 0 60px var(--primary-glow)); 
+    transform: translateY(-20px) rotate(-1.5deg) scale(1.04); 
   }
+}
+
+@keyframes heroPulse {
+  0%, 100% { 
+    filter: brightness(1) drop-shadow(0 0 30px var(--primary-glow)); 
+  }
+  50% { 
+    filter: brightness(1.15) drop-shadow(0 0 60px var(--primary-glow)) drop-shadow(0 0 100px rgba(138, 43, 226, 0.2)); 
+  }
+}
+
+@keyframes heroGlowCycle {
+  0% { filter: drop-shadow(0 0 30px rgba(138, 43, 226, 0.5)) brightness(1); }
+  33% { filter: drop-shadow(0 0 50px rgba(255, 60, 141, 0.4)) brightness(1.1); }
+  66% { filter: drop-shadow(0 0 40px rgba(0, 229, 255, 0.3)) brightness(1.05); }
+  100% { filter: drop-shadow(0 0 30px rgba(138, 43, 226, 0.5)) brightness(1); }
 }
 
 .clash-glow {
   position: absolute;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  width: 600px; height: 600px;
+  width: 500px; height: 500px;
   background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
   z-index: -1;
   opacity: 0.4;
