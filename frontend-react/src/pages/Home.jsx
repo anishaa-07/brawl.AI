@@ -84,7 +84,7 @@ const Home = () => {
               style={{ zIndex: 5 }}
             >
               <div className="hero-art-single">
-                <img src={`${import.meta.env.BASE_URL}assets/hero_main_new.png?v=1.2`} alt="Elite Pilots" className="hero-center-art-v2" />
+                <img src={`${import.meta.env.BASE_URL}assets/hero_main_new.png?v=1.3`} alt="Elite Pilots" className="hero-center-art-v2" />
                 <div className="clash-glow" />
               </div>
             </motion.div>
