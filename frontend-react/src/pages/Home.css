@@ -161,8 +161,8 @@
 }
 
 .hero-center-art {
-  width: 130%;
-  max-width: 1000px;
+  width: 90%;
+  max-width: 750px;
   height: auto;
   object-fit: contain;
   filter: drop-shadow(0 0 50px var(--primary-glow));
