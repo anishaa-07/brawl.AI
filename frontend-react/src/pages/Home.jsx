@@ -212,6 +212,53 @@ const Home = () => {
                 </motion.div>
               ))}
             </div>
+
+            {/* 🔥 STREAK MULTIPLIER VISUAL 🔥 */}
+            <motion.div 
+              className="streak-multiplier-section"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <div className="streak-header">
+                <div className="streak-title-group">
+                  <Zap size={20} className="accent-magenta" />
+                  <h3>STREAK <span className="accent-magenta">MULTIPLIER</span></h3>
+                </div>
+                <span className="streak-subtitle">Consecutive wins boost your XP earnings</span>
+              </div>
+              <div className="streak-bars-container">
+                {[
+                  { wins: 3, multi: "1.5x", height: 20, active: false },
+                  { wins: 5, multi: "2x", height: 32, active: false },
+                  { wins: 7, multi: "3x", height: 44, active: false },
+                  { wins: 10, multi: "4x", height: 56, active: true },
+                  { wins: 15, multi: "5x", height: 68, active: false },
+                  { wins: 20, multi: "7x", height: 80, active: false },
+                  { wins: 30, multi: "10x", height: 100, active: false }
+                ].map((streak, i) => (
+                  <motion.div 
+                    key={i} 
+                    className={`streak-bar-item ${streak.active ? 'active' : ''}`}
+                    initial={{ scaleY: 0 }}
+                    whileInView={{ scaleY: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: i * 0.1 }}
+                  >
+                    <span className="streak-multi-label">{streak.multi}</span>
+                    <div className="streak-bar-track">
+                      <div 
+                        className={`streak-bar-fill ${streak.active ? 'glow-active' : ''} ${i <= 3 ? 'filled' : ''}`}
+                        style={{ height: `${streak.height}%` }}  
+                      />
+                    </div>
+                    <span className="streak-wins-label">{streak.wins} wins</span>
+                    {streak.active && <span className="streak-current-badge">CURRENT</span>}
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
           </div>
         </section>
 
