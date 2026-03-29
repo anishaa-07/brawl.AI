@@ -451,6 +451,137 @@ h1, h2, h3, h4, .logo-f, .nav-logo {
   text-transform: uppercase;
 }
 
+/* ⚡ WHY BRAWL.AI SECTION ⚡ */
+.why-section {
+  padding: 80px 0;
+  position: relative;
+}
+
+.why-top-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  margin-bottom: 60px;
+}
+
+.why-copy-block h2 {
+  font-size: 3.5rem;
+  font-weight: 900;
+  margin-bottom: 20px;
+}
+
+.why-desc {
+  font-size: 1.1rem;
+  color: var(--text-dim);
+  line-height: 1.9;
+  max-width: 500px;
+}
+
+.why-fighters-visual {
+  display: flex;
+  justify-content: center;
+}
+
+.why-fighters-img {
+  width: 100%;
+  max-width: 550px;
+  border-radius: 16px;
+  filter: drop-shadow(0 0 40px var(--primary-glow));
+  animation: fighterFloat 6s ease-in-out infinite alternate;
+}
+
+@keyframes fighterFloat {
+  0% { transform: translateY(0px); }
+  100% { transform: translateY(-12px); }
+}
+
+.why-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.why-card {
+  padding: 28px;
+  border-radius: 12px;
+  transition: 0.3s;
+}
+
+.why-card h4 {
+  font-family: var(--font-gaming);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.why-card p {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  line-height: 1.7;
+}
+
+.why-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.why-card-icon {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.why-card-icon.cyan {
+  background: rgba(0, 229, 255, 0.1);
+  color: var(--accent-cyan);
+}
+
+.why-card-icon.magenta {
+  background: rgba(255, 60, 141, 0.1);
+  color: var(--primary);
+}
+
+.why-card-icon.white {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.why-card-stat {
+  font-family: var(--font-gaming);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid;
+}
+
+.why-card-stat.cyan {
+  color: var(--accent-cyan);
+  border-color: rgba(0, 229, 255, 0.3);
+  background: rgba(0, 229, 255, 0.06);
+}
+
+.why-card-stat.magenta {
+  color: var(--primary);
+  border-color: rgba(255, 60, 141, 0.3);
+  background: rgba(255, 60, 141, 0.06);
+}
+
+.why-card-stat.white {
+  color: rgba(255, 255, 255, 0.7);
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.04);
+}
+
 /* 🎮 COMPACT GLOBAL SPACING 🎮 */
 .preview-section { padding: 30px 0; }
 .tech-spotlight { padding: 30px 0; background: linear-gradient(to right, rgba(255,0,132,0.05), transparent); }

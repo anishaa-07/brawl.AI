@@ -319,27 +319,83 @@ const Home = () => {
         </section>
 
         {/* ⚡ WHY CHOOSE BRAWL.AI ⚡ */}
-        <section className="preview-section">
-          <div className="container-main side-by-side">
-            <div className="tech-copy">
-               <span className="section-label">SYSTEM CORE</span>
-               <h2>WHY <span className="accent-magenta">BRAWL.AI?</span></h2>
-               <div className="why-grid">
-                 {[
-                   { t: "Fast Gameplay", d: "Zero-latency neural processing for instant combat feedback." },
-                   { t: "Fair Matchmaking", d: "ELO-based logic tiers ensure balanced competition." },
-                   { t: "Clean UI", d: "High-end aesthetic inspired by futuristic terminal interfaces." },
-                   { t: "AI-Powered", d: "Millions of battle simulations every second for true variety." }
-                 ].map((item, i) => (
-                    <div key={i} className="why-item">
-                       <h5>{item.t}</h5>
-                       <p>{item.d}</p>
-                    </div>
-                 ))}
-               </div>
+        <section className="why-section" id="about">
+          <div className="container-main">
+            <div className="why-top-row">
+              <motion.div 
+                className="why-copy-block"
+                initial={{ opacity: 0, x: -40 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+              >
+                <span className="section-label">THE EDGE</span>
+                <h2>WHY <span className="accent-magenta text-glow">BRAWL.AI?</span></h2>
+                <p className="why-desc">
+                  Where raw logic meets real-time combat. No luck, no RNG — 
+                  just your code against theirs. Built for developers who live 
+                  to compete, train, and dominate.
+                </p>
+              </motion.div>
+              <motion.div 
+                className="why-fighters-visual"
+                initial={{ opacity: 0, x: 40 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1 }}
+              >
+                <img src={`${import.meta.env.BASE_URL}assets/elite_fighters.png?v=1.0`} alt="Elite Fighters" className="why-fighters-img" />
+              </motion.div>
             </div>
-            <div className="tech-visual">
-               <img src={`${import.meta.env.BASE_URL}assets/arena_wide.png`} alt="Arena Wide" className="preview-img-frame" />
+
+            <div className="why-cards-grid">
+              {[
+                { 
+                  icon: <Zap size={28} />, 
+                  title: "Sub-50ms Execution", 
+                  desc: "Your code compiles, runs, and fights in real-time. Zero lag between logic and action.",
+                  stat: "< 50ms",
+                  color: "cyan"
+                },
+                { 
+                  icon: <Shield size={28} />, 
+                  title: "ELO-Ranked Matchmaking", 
+                  desc: "Skill-based tiers ensure every fight is a fair challenge. Climb from Iron to Grandmaster.",
+                  stat: "2400+ ELO",
+                  color: "magenta"
+                },
+                { 
+                  icon: <Cpu size={28} />, 
+                  title: "Distraction-Free Arena", 
+                  desc: "A terminal-inspired interface designed for pure focus. No clutter, just code and combat.",
+                  stat: "0 ADS",
+                  color: "white"
+                },
+                { 
+                  icon: <Target size={28} />, 
+                  title: "AI Coach & Replay", 
+                  desc: "Post-match AI analysis breaks down your strategy. Learn, adapt, and evolve every round.",
+                  stat: "10M+ SIMS",
+                  color: "cyan"
+                }
+              ].map((card, i) => (
+                <motion.div 
+                  key={i} 
+                  className={`why-card glass-panel`}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.12 }}
+                  whileHover={{ y: -8, scale: 1.02 }}
+                >
+                  <div className="why-card-top">
+                    <div className={`why-card-icon ${card.color}`}>{card.icon}</div>
+                    <span className={`why-card-stat ${card.color}`}>{card.stat}</span>
+                  </div>
+                  <h4>{card.title}</h4>
+                  <p>{card.desc}</p>
+                </motion.div>
+              ))}
             </div>
           </div>
         </section>
