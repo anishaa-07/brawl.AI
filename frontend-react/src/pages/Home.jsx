@@ -148,7 +148,7 @@ const Home = () => {
         <section className="tech-spotlight">
           <div className="container-main side-by-side">
             <div className="tech-visual">
-               <img src={`${import.meta.env.BASE_URL}assets/neural_brain.png`} alt="Neural Brain" className="brain-img" />
+               <img src={`${import.meta.env.BASE_URL}assets/hero_squad.png`} alt="Elite Squad" className="squad-img" />
                <div className="visual-pulse" />
             </div>
             <div className="tech-copy">
