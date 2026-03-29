@@ -75,22 +75,16 @@ const Home = () => {
               </motion.div>
             </motion.div>
 
-            {/* Cinematic Clashing Art */}
+            {/* Cinematic Clashing Art (Single Consolidated Image) */}
             <motion.div 
               className="hero-art-main"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, ease: "easeOut" }}
               style={{ zIndex: 5 }}
             >
-              <div className="hero-art-clash">
-                {/* 🌑 NEW: CINEMATIC MOON BACKGROUND 🌑 */}
-                <img src={`${import.meta.env.BASE_URL}assets/hero_moon_bg.png`} alt="Moon Background" className="hero-moon-back" />
-                
-                {/* ⚔️ NEW CHARACTERS ⚔️ */}
-                <img src={`${import.meta.env.BASE_URL}assets/hero_left_new.png`} alt="White-Hair Pilot" className="clash-image pilot-left" />
-                <img src={`${import.meta.env.BASE_URL}assets/hero_right_new.png`} alt="Tech-Demon" className="clash-image demon-right" />
-                
+              <div className="hero-art-single">
+                <img src={`${import.meta.env.BASE_URL}assets/hero_main_new.png`} alt="Elite Pilots" className="hero-center-art" />
                 <div className="clash-glow" />
               </div>
             </motion.div>

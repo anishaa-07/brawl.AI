@@ -149,63 +149,29 @@
   position: relative;
   width: 100%;
   height: 100%;
-  animation: clashSync 4s ease-in-out infinite alternate;
 }
 
-@keyframes clashSync {
-  0% { transform: scale(1); filter: contrast(100%) brightness(100%); }
-  100% { transform: scale(1.02); filter: contrast(110%) brightness(120%); }
+.hero-art-single {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.hero-moon-back {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 140%;
-  height: 140%;
+.hero-center-art {
+  width: 130%;
+  max-width: 1000px;
+  height: auto;
   object-fit: contain;
-  opacity: 0.15;
-  z-index: 0;
-  pointer-events: none;
-  filter: blur(10px);
-  animation: moonGlow 8s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 50px var(--primary-glow));
+  animation: heroPulse 6s ease-in-out infinite alternate;
 }
 
-@keyframes moonGlow {
-  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.1; }
-  100% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.25; }
-}
-
-.clash-image {
-  position: absolute;
-  width: 90%;
-  height: 90%;
-  object-fit: contain;
-  filter: drop-shadow(0 0 40px var(--primary-glow));
-  transition: 0.5s;
-}
-
-.clash-image.pilot-left {
-  left: -20%;
-  z-index: 2;
-  animation: leftFloat 4s ease-in-out infinite alternate;
-}
-
-.clash-image.demon-right {
-  right: -20%;
-  z-index: 1;
-  animation: rightFloat 4s ease-in-out infinite alternate;
-}
-
-@keyframes leftFloat {
-  0% { transform: translateX(0) scale(1); filter: brightness(1); }
-  100% { transform: translateX(15px) scale(1.02); filter: brightness(1.2); }
-}
-
-@keyframes rightFloat {
-  0% { transform: translateX(0) scale(1); filter: brightness(0.8); }
-  100% { transform: translateX(-15px) scale(1.02); filter: brightness(1); }
+@keyframes heroPulse {
+  0% { transform: scale(1); filter: brightness(1) drop-shadow(0 0 30px var(--primary-glow)); }
+  100% { transform: scale(1.05); filter: brightness(1.2) drop-shadow(0 0 60px var(--primary-glow)); }
 }
 
 .clash-glow {
