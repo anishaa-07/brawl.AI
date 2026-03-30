@@ -195,8 +195,8 @@ const Login = () => {
 
           <div className="showcase-content">
             <h2 className="showcase-title">
-              Completely new<br/>
-              <span className="highlight">customization of things!</span>
+              Where Technology Meets<br/>
+              <span className="highlight">Total Control.</span>
             </h2>
             <p className="showcase-desc">
               Unique skins, modifications and accessories are<br/>
