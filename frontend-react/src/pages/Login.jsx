@@ -82,8 +82,7 @@ const Login = () => {
             <div className="logo-brawl">
               <Flame size={32} color="#FF4F33" className="logo-icon"/>
               <div className="logo-text-wrapper">
-                <span className="logo-sub">Esports Portal</span>
-                <span className="logo-main">BRAWL.AI</span>
+                <span className="logo-main" style={{paddingTop: '6px'}}>BRAWL.AI</span>
               </div>
             </div>
             <p className="header-desc">
@@ -187,11 +186,6 @@ const Login = () => {
         <div className="login-right">
           {/* Subtle background landscape simulation with CSS */}
           <div className="landscape-bg"></div>
-
-          <div className="user-badge">
-            <span className="badge-label">Your account?</span>
-            <span className="badge-name">Unknown Pilot <span className="profile-pic"></span></span>
-          </div>
 
           <div className="showcase-content">
             <h2 className="showcase-title">
