@@ -12,9 +12,17 @@ const usersDummy = [
 const FriendsList = ({ playHover, playClick }) => {
   return (
     <div className="anime-friends-list glow-border h-full flex-col">
-      <div className="anime-panel-header">
-        <h3 className="font-orbitron cyber-text-shadow">OPERATORS</h3>
-        <span className="online-count text-xs text-primary bg-primary-10 px-5 rounded">3 ONLINE</span>
+      <div className="anime-panel-header flex-col items-start gap-10">
+        <div className="flex justify-between items-center w-full">
+          <h3 className="font-orbitron cyber-text-shadow m-0">OPERATORS</h3>
+          <span className="online-count text-xs text-primary bg-primary-10 px-5 rounded">3 ONLINE</span>
+        </div>
+        <button 
+          className="create-squad-btn font-orbitron w-full text-xs font-bold py-8 rounded border-none bg-secondary text-white cursor-pointer hover:bg-white hover:text-secondary transition-all"
+          onMouseEnter={playHover} onClick={playClick}
+        >
+           CREATE SQUAD +
+        </button>
       </div>
 
       <div className="friends-list-container custom-scrollbar">
