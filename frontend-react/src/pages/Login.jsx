@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { User, Lock, Eye, EyeOff, KeyRound, Flame } from 'lucide-react';
-import characterImg from '../assets/login_character.png';
+import characterImg from '../assets/brawl_duo.png';
 import './Login.css';
 
 const Login = () => {
