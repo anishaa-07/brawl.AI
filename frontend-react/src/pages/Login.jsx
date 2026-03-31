@@ -74,6 +74,7 @@ const Login = () => {
 
   return (
     <div className="login-wrapper">
+      <div className="login-wrapper-bg"></div>
       <div className="login-container">
         {/* Left Side: Form */}
         <div className="login-left">

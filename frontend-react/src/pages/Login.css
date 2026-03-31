@@ -1,12 +1,18 @@
 /* Base reset and fonts for exact matching */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
 
-.login-wrapper {
-  background-image: url('https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=2070&auto=format&fit=crop');
+.login-wrapper-bg {
+  position: fixed;
+  top: -20px; left: -20px; right: -20px; bottom: -20px;
+  background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=2070');
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  background-color: #0a0510;
+  filter: blur(5px) brightness(0.6);
+  z-index: 0;
+}
+
+.login-wrapper {
   min-height: 100vh;
   width: 100vw;
   display: flex;
@@ -16,18 +22,7 @@
   color: #fff;
   overflow: hidden;
   position: relative;
-}
-
-.login-wrapper::before {
-  content: '';
-  position: absolute;
-  inset: -20px; /* extends past boundary so blur doesn't have sharp edges */
-  background-image: url('https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=2070&auto=format&fit=crop');
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  filter: blur(5px) brightness(0.7);
-  z-index: 0;
+  background-color: transparent;
 }
 
 .login-container {
