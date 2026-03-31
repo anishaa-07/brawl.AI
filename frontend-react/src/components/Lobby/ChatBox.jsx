@@ -44,12 +44,13 @@ const ChatBox = ({ playHover, playClick }) => {
          <div ref={chatEndRef} />
       </div>
 
-      <div className="quick-messages-bar flex items-center gap-10 px-15 py-5 overflow-x-auto hide-scrollbar" style={{ borderTop: '1px solid rgba(255,255,255,0.05)', backgroundColor: 'rgba(0,0,0,0.3)' }}>
+      <div className="quick-messages-bar flex items-center gap-10 px-15 py-5 custom-scrollbar" style={{ borderTop: '1px solid rgba(255,255,255,0.05)', backgroundColor: 'rgba(0,0,0,0.3)', overflowX: 'auto', paddingBottom: '10px' }}>
          {quickMessages.map((qm, i) => (
            <button 
              key={i} 
              onClick={() => handleSend(qm)} 
-             className="quick-msg-btn font-montserrat text-[10px] bg-black-50 text-gray hover-text-white border border-gray rounded px-10 py-5 whitespace-nowrap cursor-pointer transition-colors hover:border-primary"
+             className="quick-msg-btn font-montserrat bg-black-50 text-gray hover-text-white border border-gray rounded px-10 py-5 cursor-pointer transition-colors"
+             style={{ whiteSpace: 'nowrap', fontSize: '10px' }}
              onMouseEnter={playHover}
            >
              {qm}
@@ -57,8 +58,8 @@ const ChatBox = ({ playHover, playClick }) => {
          ))}
       </div>
 
-      <form onSubmit={onSubmit} className="chat-input-form mt-auto rounded-b-xl border-t border-gray bg-black-50 p-10 flex">
-        <button type="button" className="emoji-btn text-secondary bg-transparent border-none cursor-pointer pr-10 hover:text-white transition-colors" title="Emoji menu unavailable">
+      <form onSubmit={onSubmit} className="chat-input-form mt-auto bg-black-50 p-10 flex" style={{ borderTop: '1px solid #333', borderBottomLeftRadius: '12px', borderBottomRightRadius: '12px' }}>
+        <button type="button" className="emoji-btn text-secondary bg-transparent border-none cursor-pointer hover:text-white transition-colors" style={{ paddingRight: '10px' }} title="Emoji menu">
            <Smile size={18} />
         </button>
         <input 
@@ -68,7 +69,7 @@ const ChatBox = ({ playHover, playClick }) => {
           onChange={(e) => setInput(e.target.value)}
           className="chat-input-anime font-montserrat text-sm bg-transparent flex-1 border-none text-white outline-none placeholder-gray"
         />
-        <button type="submit" className="chat-send-btn-anime w-8 h-8 rounded border border-gray bg-transparent text-white cursor-pointer transition-all hover-bg-secondary hover-text-white ml-10 flex justify-center items-center" onMouseEnter={playHover}>
+        <button type="submit" className="chat-send-btn-anime rounded border border-gray bg-transparent text-white cursor-pointer transition-all hover-bg-secondary hover-text-white flex justify-center items-center" style={{ width: '32px', height: '32px', marginLeft: '10px' }} onMouseEnter={playHover}>
           <Send size={14} />
         </button>
       </form>

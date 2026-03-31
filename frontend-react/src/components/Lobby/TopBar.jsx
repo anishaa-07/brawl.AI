@@ -23,12 +23,12 @@ const TopBar = ({ playHover, playClick, soundOn, toggleSound, setActiveTab, acti
   ];
 
   return (
-    <div className="anime-topbar glow-border flex justify-between items-center px-25 h-100">
+    <div className="anime-topbar glow-border flex justify-between items-center px-25" style={{ height: '100%' }}>
       <div className="anime-brand-logo font-orbitron cyber-text-shadow text-white text-xl cursor-pointer" onClick={() => setActiveTab('home')}>
          BRAWL<span className="text-primary">.AI</span>
       </div>
 
-      <div className="anime-top-nav flex items-center gap-20 font-orbitron text-xs font-bold tracking-widest hidden-sm">
+      <div className="anime-top-nav flex items-center gap-20 font-orbitron text-xs font-bold tracking-widest" style={{ display: 'flex' }}>
         {navItems.map(item => (
           <div 
              key={item.id} 
@@ -42,12 +42,12 @@ const TopBar = ({ playHover, playClick, soundOn, toggleSound, setActiveTab, acti
       </div>
 
       <div className="anime-topbar-actions flex gap-15 items-center relative">
-        <div className="relative cursor-pointer hover:text-white text-gray transition-all" onClick={playClick} onMouseEnter={playHover}>
+        <div className="relative cursor-pointer text-gray transition-all" style={{ color: '#a0a0a0' }} onClick={playClick} onMouseEnter={playHover}>
            <Bell size={20} />
-           {unreadNotifs > 0 && <span className="absolute top-0 right-0 bg-neon text-white text-[10px] w-15 h-15 rounded-full flex justify-center items-center font-bold" style={{ transform: 'translate(50%, -50%)', width: '15px', height: '15px', fontSize: '10px' }}>{unreadNotifs}</span>}
+           {unreadNotifs > 0 && <span className="absolute bg-neon text-white flex justify-center items-center font-bold" style={{ top: '-5px', right: '-5px', borderRadius: '50%', width: '15px', height: '15px', fontSize: '10px' }}>{unreadNotifs}</span>}
         </div>
 
-        <div className="vertical-divider w-[1px] h-20 bg-gray opacity-30 mx-5"></div>
+        <div className="vertical-divider" style={{ width: '1px', height: '20px', backgroundColor: '#a0a0a0', opacity: 0.3, margin: '0 5px' }}></div>
 
         <button className="anime-icon-btn glow-btn hover-primary" onClick={toggleSound} onMouseEnter={playHover}>
           {soundOn ? <Volume2 size={20} /> : <VolumeX size={20} />}

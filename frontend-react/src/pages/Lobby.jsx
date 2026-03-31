@@ -114,8 +114,8 @@ const Lobby = () => {
 
       {/* Full-Screen Matchmaking Overlay */}
       {matchmaking.active && (
-        <div className="matchmaking-overlay absolute inset-0 z-50 flex-col items-center justify-center bg-black-70 backdrop-blur" style={{ backdropFilter: 'blur(10px)' }}>
-          <div className="bg-black-90 bg-opacity-80 p-30 rounded glow-border border border-primary text-center">
+        <div className="matchmaking-overlay absolute inset-0 z-50 flex items-center justify-center bg-black-70" style={{ backdropFilter: 'blur(10px)', display: 'flex' }}>
+          <div className="bg-black-70 p-15 rounded glow-border border border-primary text-center" style={{ padding: '30px', backgroundColor: 'rgba(5,1,10,0.95)' }}>
              <h2 className="font-orbitron cyber-text-shadow text-primary text-2xl mb-15 animate-pulse">
                {matchmaking.found ? 'OPPONENT FOUND!' : 'SEARCHING FOR TARGET...'}
              </h2>
@@ -148,7 +148,7 @@ const Lobby = () => {
         </div>
 
         {/* Left Col: Profile, Stats, Missions */}
-        <div className="grid-left-col-anime flex-col gap-20 overflow-y-auto hide-scrollbar pb-20">
+        <div className="grid-left-col-anime flex-col gap-20 custom-scrollbar" style={{ overflowY: 'auto', paddingBottom: '20px' }}>
           <PlayerProfile 
             profile={profile} 
             playHover={playHover} 
@@ -164,11 +164,11 @@ const Lobby = () => {
         </div>
 
         {/* Right Col: Friends & Chat */}
-        <div className="grid-right-col-anime flex-col gap-20 pb-20">
-          <div className="friends-panel flex-1 min-h-[50%]">
+        <div className="grid-right-col-anime flex-col gap-20" style={{ paddingBottom: '20px' }}>
+          <div className="friends-panel flex-1" style={{ minHeight: '50%' }}>
             <FriendsList playHover={playHover} playClick={playClick} />
           </div>
-          <div className="chat-panel flex-1 min-h-[50%]">
+          <div className="chat-panel flex-1" style={{ minHeight: '50%' }}>
              <ChatBox playHover={playHover} playClick={playClick} />
           </div>
         </div>

@@ -30,17 +30,17 @@ const GameModes = ({ playHover, playClick, startMatchmaking }) => {
 
   if (showAiSubmenu) {
     return (
-      <section className="anime-modes-section h-full flex flex-col justify-center items-center">
-         <div className="bg-black-70 glow-border p-25 rounded-xl border border-primary w-full max-w-lg text-center mx-auto" style={{ maxWidth: '500px' }}>
-            <Bot size={40} className="text-primary mb-10 mx-auto" />
+      <section className="anime-modes-section h-full flex flex-col items-center" style={{ justifyContent: 'center' }}>
+         <div className="bg-black-70 glow-border p-25 rounded border border-primary text-center" style={{ maxWidth: '400px', width: '100%', padding: '30px', margin: '0 auto' }}>
+            <Bot size={40} className="text-primary mb-10" style={{ margin: '0 auto 10px auto' }} />
             <h2 className="font-orbitron cyber-text-shadow text-white mb-20">SELECT AI PERSONALITY</h2>
             
-            <div className="flex-col gap-15 w-full">
+            <div className="flex-col w-full" style={{ gap: '15px' }}>
               {aiModes.map(m => (
                 <button 
                   key={m.id} 
-                  className="ai-diff-btn font-orbitron w-full px-20 py-15 bg-opacity-20 flex justify-between items-center rounded cursor-pointer transition-all hover:scale-105 border"
-                  style={{ borderColor: m.color, color: m.color, background: 'rgba(0,0,0,0.5)' }}
+                  className="ai-diff-btn font-orbitron w-full bg-opacity-20 flex justify-between items-center rounded cursor-pointer transition-all border"
+                  style={{ borderColor: m.color, color: m.color, background: 'rgba(0,0,0,0.5)', padding: '15px 20px', margin: '5px 0' }}
                   onClick={() => startAiMatch(m.id)}
                   onMouseEnter={playHover}
                 >
