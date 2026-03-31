@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
 
 .login-wrapper {
-  background: #202b3a; /* Dark navy outer background */
+  background: url('https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -10,6 +10,16 @@
   font-family: 'Montserrat', sans-serif;
   color: #fff;
   overflow: hidden;
+  position: relative;
+}
+
+.login-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: -30px; /* extends past boundary so blur doesn't have sharp edges */
+  background: inherit;
+  filter: blur(10px) brightness(0.5);
+  z-index: 0;
 }
 
 .login-container {
@@ -19,9 +29,10 @@
   height: 640px;
   background: #151821; /* Dark grey card background */
   border-radius: 24px;
-  box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+  box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 40px rgba(162, 56, 255, 0.4);
   position: relative;
   overflow: hidden;
+  z-index: 1;
 }
 
 @media (max-width: 900px) {
