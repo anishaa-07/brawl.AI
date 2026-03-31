@@ -2,8 +2,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
 
 .login-wrapper {
-  background: url('https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+  background: url('https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat fixed; /* fixed ensures complete cover */
   min-height: 100vh;
+  width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -16,17 +17,17 @@
 .login-wrapper::before {
   content: '';
   position: absolute;
-  inset: -30px; /* extends past boundary so blur doesn't have sharp edges */
+  inset: -20px; /* extends past boundary so blur doesn't have sharp edges */
   background: inherit;
-  filter: blur(10px) brightness(0.5);
+  filter: blur(5px) brightness(0.7);
   z-index: 0;
 }
 
 .login-container {
   display: flex;
-  width: 1020px;
+  width: 850px;
   max-width: 95vw;
-  height: 640px;
+  height: 520px;
   background: #151821; /* Dark grey card background */
   border-radius: 24px;
   box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 40px rgba(162, 56, 255, 0.4);
@@ -47,8 +48,8 @@
    LEFT SIDE (FORM)
    ========================================= */
 .login-left {
-  flex: 0 0 480px;
-  padding: 40px 45px;
+  flex: 0 0 420px;
+  padding: 30px 35px;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -68,8 +69,8 @@
 .logo-header {
   display: flex;
   align-items: flex-start;
-  gap: 30px;
-  margin-bottom: 45px;
+  gap: 20px;
+  margin-bottom: 25px;
 }
 
 .logo-brawl {
@@ -96,7 +97,7 @@
 }
 
 .logo-main {
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-weight: 900;
   font-style: italic;
   letter-spacing: -0.5px;
@@ -118,7 +119,7 @@
   border-radius: 40px;
   padding: 6px;
   gap: 4px;
-  margin-bottom: 40px;
+  margin-bottom: 25px;
   width: fit-content;
 }
 
@@ -171,7 +172,7 @@
   font-size: 0.72rem;
   color: #4a4f5f;
   line-height: 1.5;
-  margin: 0 0 30px 0;
+  margin: 0 0 20px 0;
   font-weight: 500;
 }
 
@@ -420,11 +421,11 @@
 /* Showcase Content */
 .showcase-content {
   position: absolute;
-  bottom: 50px;
-  right: 40px;
+  bottom: 40px;
+  right: 30px;
   text-align: right;
   z-index: 20;
-  width: 380px;
+  width: 320px;
 }
 
 @media (max-width: 900px) {
