@@ -30,9 +30,14 @@
   width: 850px;
   max-width: 95vw;
   height: 520px;
-  background: #151821; /* Dark grey card background */
-  border-radius: 24px;
-  box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 40px rgba(162, 56, 255, 0.4);
+  background: rgba(10, 5, 20, 0.5); /* Glassmorphism start */
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(0, 240, 255, 0.15); /* Cyber grid border */
+  border-radius: 20px;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.8), 
+              0 0 40px rgba(0, 240, 255, 0.1), 
+              inset 0 0 20px rgba(0, 240, 255, 0.05);
   position: relative;
   overflow: hidden;
   z-index: 1;
@@ -56,7 +61,7 @@
   flex-direction: column;
   position: relative;
   z-index: 10;
-  background: #151821;
+  background: transparent;
 }
 
 @media (max-width: 900px) {
@@ -103,6 +108,7 @@
   font-weight: 900;
   font-style: italic;
   letter-spacing: -0.5px;
+  text-shadow: 0 0 15px rgba(255, 79, 51, 0.5);
 }
 
 .header-desc {
@@ -141,8 +147,10 @@
 }
 
 .tab-btn.active {
-  background: #8bec23;
-  color: #0d1017;
+  background: linear-gradient(135deg, #00f0ff, #0080ff);
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
   pointer-events: none;
 }
 
@@ -155,7 +163,7 @@
   height: 0;
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
-  border-top: 6px solid #8bec23;
+  border-top: 6px solid #00f0ff;
 }
 
 /* Authorization Section */
@@ -187,18 +195,21 @@
 
 .input-group {
   position: relative;
-  background: #1b1e28;
-  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-left: 2px solid #00f0ff;
+  border-radius: 8px;
   padding: 12px 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
 }
 
 .input-group:focus-within {
-  background: #20242f;
-  box-shadow: inset 0 0 0 1px #3b4150;
+  background: rgba(0, 240, 255, 0.05);
+  border-left: 2px solid #ff0055;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
 }
 
 .input-label {
@@ -287,7 +298,8 @@
 }
 
 .checkbox-wrap input:checked ~ .checkmark {
-  background-color: #1b1e28;
+  background-color: rgba(0, 240, 255, 0.1);
+  border: 1px solid #00f0ff;
 }
 
 .checkmark:after {
@@ -295,10 +307,11 @@
   display: none;
   width: 6px;
   height: 10px;
-  border: solid #8bec23;
+  border: solid #00f0ff;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
   margin-bottom: 2px;
+  box-shadow: 2px 2px 5px rgba(0, 240, 255, 0.5);
 }
 
 .checkbox-wrap input:checked ~ .checkmark:after {
@@ -311,26 +324,29 @@
 
 /* Action Button */
 .action-btn {
-  background: linear-gradient(to right, #ff5e3a, #ff2a54);
-  color: white;
+  background: linear-gradient(135deg, #00f0ff, #0080ff);
+  color: #fff;
   border: none;
   padding: 16px 20px;
-  border-radius: 12px;
+  border-radius: 8px;
   font-size: 0.95rem;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  box-shadow: 0 10px 20px rgba(255, 62, 70, 0.2);
-  transition: all 0.2s;
+  box-shadow: 0 10px 20px rgba(0, 240, 255, 0.2);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .action-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 25px rgba(255, 62, 70, 0.3);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(0, 240, 255, 0.4);
 }
 
 .action-btn:active {
@@ -348,8 +364,8 @@
 .login-right {
   flex: 1;
   position: relative;
-  border-radius: 0 24px 24px 0;
-  background: #151821;
+  border-radius: 0 20px 20px 0;
+  background: linear-gradient(to right, transparent, rgba(0,0,0,0.4));
   overflow: hidden;
 }
 
@@ -375,8 +391,8 @@
 .landscape-bg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to right, #151821 -5%, transparent 25%),
-              linear-gradient(to top, #151821 -5%, transparent 35%);
+  background: linear-gradient(to right, rgba(15, 10, 25, 0.8) -5%, transparent 40%),
+              linear-gradient(to top, rgba(15, 10, 25, 0.9) -5%, transparent 35%);
   z-index: 5;
   pointer-events: none;
 }
@@ -451,7 +467,8 @@
 }
 
 .highlight {
-  color: #ff5e3a;
+  color: #00f0ff;
+  text-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
 }
 
 .showcase-desc {
@@ -467,7 +484,8 @@
 .showcase-divider {
   width: 80px;
   height: 3px;
-  background: #ff5e3a;
+  background: #00f0ff;
+  box-shadow: 0 0 10px #00f0ff;
   float: right;
   border-radius: 2px;
   clear: both;
