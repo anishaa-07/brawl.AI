@@ -246,9 +246,10 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg-da
   grid-template-rows: 70px 1fr; 
   height: 100vh; 
   width: 100vw;
-  gap: 0; /* Gap managed by column dividers */
+  gap: 0;
   padding: 0; 
   overflow: hidden; 
+  margin: 0;
   position: relative;
   z-index: 10;
 }
@@ -257,6 +258,7 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg-da
   grid-column: 1 / -1; 
   padding: 10px 20px 0;
   z-index: 100;
+  max-height: 70px;
 }
 
 /* Vertical Glow Dividers */
@@ -275,6 +277,7 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg-da
   );
   box-shadow: 0 0 15px rgba(162, 56, 255, 0.2);
   z-index: 5;
+  pointer-events: none;
 }
 
 .anime-grid-layout::before { left: 280px; }
@@ -286,10 +289,11 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg-da
   flex-direction: column; 
   padding: 20px;
   gap: 20px;
-  background: rgba(0, 0, 0, 0.2);
-  border-right: 1px solid rgba(255, 255, 255, 0.03);
+  background: rgba(0, 0, 0, 0.15);
+  border-right: 1px solid rgba(255, 255, 255, 0.02);
   overflow-y: auto;
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none;
+  height: 100%;
 }
 .grid-left-col-anime::-webkit-scrollbar { display: none; }
 
@@ -301,6 +305,7 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg-da
   overflow-y: auto;
   scrollbar-width: none;
   position: relative;
+  height: 100%;
 }
 .grid-center-col-anime::-webkit-scrollbar { display: none; }
 
@@ -310,12 +315,16 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg-da
   flex-direction: column; 
   padding: 20px;
   gap: 20px;
-  background: rgba(0, 0, 0, 0.2);
-  border-left: 1px solid rgba(255, 255, 255, 0.03);
+  background: rgba(0, 0, 0, 0.15);
+  border-left: 1px solid rgba(255, 255, 255, 0.02);
   overflow-y: auto;
-  scrollbar-width: none;
+  scroll-behavior: smooth;
+  height: 100%;
+  width: 100%;
 }
-.grid-right-col-anime::-webkit-scrollbar { display: none; }
+.grid-right-col-anime::-webkit-scrollbar { width: 4px; }
+.grid-right-col-anime::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.2); border-radius: 10px; }
+
 
 
 /* ============================================= */
