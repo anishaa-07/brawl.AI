@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Settings, LogOut, Volume2, VolumeX, Bell, ShoppingCart, Eye, Award } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Settings, LogOut, Volume2, VolumeX, Bell, ShoppingCart, Eye, Award, Maximize, Minimize } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,7 +7,41 @@ const TopBar = ({ playHover, playClick, soundOn, toggleSound, setActiveTab, acti
   const { logout } = useAuth();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const unreadNotifs = 3;
+
+  const toggleFullscreen = () => {
+    playClick();
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch((e) => {
+        console.error(`Error attempting to enable fullscreen: ${e.message} (${e.name})`);
+      });
+      setIsFullscreen(true);
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    }
+  };
+
+  // Shortcut key "F" for toggle
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key.toLowerCase() === 'f' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+        toggleFullscreen();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    const handleFsChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', handleFsChange);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('fullscreenchange', handleFsChange);
+    };
+  }, []);
 
   const handleLogout = () => {
     playClick();
@@ -51,6 +85,15 @@ const TopBar = ({ playHover, playClick, soundOn, toggleSound, setActiveTab, acti
 
         <button className="anime-icon-btn glow-btn hover-primary" onClick={toggleSound} onMouseEnter={playHover}>
           {soundOn ? <Volume2 size={20} /> : <VolumeX size={20} />}
+        </button>
+
+        <button 
+          className="anime-icon-btn glow-btn hover-primary fs-toggle-btn" 
+          onClick={toggleFullscreen} 
+          onMouseEnter={playHover}
+          title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+        >
+          {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
         </button>
 
         <button className="anime-icon-btn glow-btn hover-secondary" onClick={() => { playClick(); setDropdownOpen(!dropdownOpen); }} onMouseEnter={playHover}>
