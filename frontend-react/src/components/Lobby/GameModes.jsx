@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bot, Swords, Users, Trophy, Zap, Rocket, User, Crosshair } from 'lucide-react';
 
-const GameModes = ({ playHover, playClick, startMatchmaking }) => {
+const GameModes = ({ playHover, playClick, startMatchmaking, onModeHover }) => {
   const navigate = useNavigate();
   const [showAiSubmenu, setShowAiSubmenu] = useState(false);
 
@@ -88,7 +88,8 @@ const GameModes = ({ playHover, playClick, startMatchmaking }) => {
              key={mode.id}
              className={`lobby-gm-card lgm-${mode.color}`}
              onClick={() => handleModeClick(mode.id)}
-             onMouseEnter={playHover}
+             onMouseEnter={() => { playHover(); onModeHover(true); }}
+             onMouseLeave={() => onModeHover(false)}
            >
              {mode.badge && <span className={`lobby-gm-badge lgm-badge-${mode.color}`}>{mode.badge}</span>}
              

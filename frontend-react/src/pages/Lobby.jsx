@@ -28,10 +28,16 @@ const Lobby = () => {
   // Advanced State Management
   const [activeTab, setActiveTab] = useState('home');
   const [matchmaking, setMatchmaking] = useState({ active: false, mode: null, time: 0 });
+  const [isCoreBoosted, setIsCoreBoosted] = useState(false);
 
   // Audio elements
   const hoverSound = useRef(new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3'));
   const clickSound = useRef(new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3'));
+
+  const handleCoreHover = (hovering) => {
+    if (hovering) playHover();
+    setIsCoreBoosted(hovering);
+  };
 
   const addNotification = useCallback((message, type) => {
     const id = Date.now();
@@ -134,7 +140,14 @@ const Lobby = () => {
         case 'store': return <Store playHover={playHover} playClick={playClick} />;
         case 'spectate': return <Spectator playHover={playHover} playClick={playClick} />;
         case 'achievements': return <Achievements playHover={playHover} playClick={playClick} />;
-        default: return <GameModes playHover={playHover} playClick={playClick} startMatchmaking={startMatchmaking} />;
+        default: return (
+          <GameModes 
+            playHover={playHover} 
+            playClick={playClick} 
+            startMatchmaking={startMatchmaking} 
+            onModeHover={handleCoreHover}
+          />
+        );
      }
   };
 
@@ -229,7 +242,7 @@ const Lobby = () => {
 
         {/* Center Col: Dynamic Views + Arena Core */}
         <div className="grid-center-col-anime">
-           {activeTab === 'home' && <ArenaCore />}
+           {activeTab === 'home' && <ArenaCore isHovered={isCoreBoosted} />}
            {renderCenterView()}
         </div>
 
