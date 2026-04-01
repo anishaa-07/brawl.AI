@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { Sword, Cpu, Target, Globe, Info, Send, ChevronRight, Activity, Zap, Shield, GitFork, Mail } from 'lucide-react';
 import Background from '../components/Background';
 import Navbar from '../components/Navbar';
+import GameModes from '../components/GameModes';
 import './Home.css';
 
 const Home = () => {
@@ -99,30 +100,7 @@ const Home = () => {
         </section>
 
         {/* 🎮 GAME MODES SECTION 🎮 */}
-        <section className="tech-section" id="modes">
-          <div className="container-main">
-            <div className="section-head center">
-               <span className="section-label">COMBAT INTERFACE</span>
-               <h2>LEVEL UP YOUR <span className="accent-magenta text-glow">SKILLS</span></h2>
-            </div>
-            <div className="features-grid-premium">
-              {[
-                { title: "1v1 Duel", desc: "Face off against elite AI or human pilots in high-stakes logic combat.", icon: <Sword size={32}/>, color: "magenta" },
-                { title: "AI Training", desc: "Refine your algorithms in a sandbox environment with real-time feedback.", icon: <Target size={32}/>, color: "cyan" },
-                { title: "Ranked Match", desc: "Climb the global grid and earn seasonal rewards for your logic mastery.", icon: <Cpu size={32}/>, color: "white" },
-                { title: "Casual Mode", desc: "Experiment with new tactics in a low-pressure environment.", icon: <Zap size={32}/>, color: "cyan" },
-                { title: "Daily Challenges", desc: "Complete daily neural puzzles to earn unique $CORE rewards and XP.", icon: <Zap size={32}/>, color: "magenta" },
-                { title: "Multiplayer", desc: "Large-scale node battles where multiple pilots clash for grid supremacy.", icon: <Globe size={32}/>, color: "white" }
-              ].map((mode, index) => (
-                <motion.div key={index} className="f-card glass-panel" whileHover={{ y: -10, scale: 1.02 }}>
-                  <div className={`f-icon-box ${mode.color}`}>{mode.icon}</div>
-                  <h4>{mode.title}</h4>
-                  <p>{mode.desc}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <GameModes />
 
         {/* 📊 PLAYER STATS SECTION 📊 */}
         <section className="stats-dashboard">

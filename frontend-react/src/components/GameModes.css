@@ -1,0 +1,231 @@
+/* GameModes.css */
+.gm-section {
+  position: relative;
+  padding: 100px 0;
+  background: linear-gradient(180deg, rgba(11,16,22,0) 0%, #150524 50%, rgba(11,16,22,0) 100%);
+  overflow: hidden;
+  color: #fff;
+}
+
+/* Background Animated Particles/Lights */
+.gm-bg-effect {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.gm-particle {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.4;
+  animation: floatAmbient 10s infinite alternate;
+}
+
+.gm-p1 {
+  width: 400px; height: 400px;
+  background: rgba(138, 43, 226, 0.2);
+  top: -100px; left: -100px;
+}
+
+.gm-p2 {
+  width: 300px; height: 300px;
+  background: rgba(255, 0, 64, 0.15);
+  bottom: 0; right: -50px;
+  animation-duration: 8s;
+  animation-delay: 2s;
+}
+
+.gm-p3 {
+  width: 250px; height: 250px;
+  background: rgba(0, 242, 255, 0.15);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  animation-duration: 12s;
+}
+
+@keyframes floatAmbient {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(30px, -50px) scale(1.1); }
+}
+
+.gm-container {
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.gm-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.gm-header h2 {
+  font-family: 'Orbitron', 'Montserrat', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 900;
+  margin-bottom: 15px;
+  letter-spacing: 1px;
+}
+
+.gm-subtitle {
+  font-size: 1.1rem;
+  color: #8b9fb1;
+  font-weight: 500;
+}
+
+.gm-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  justify-content: center;
+}
+
+/* Responsive Rules */
+@media (max-width: 1024px) {
+  .gm-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .gm-grid { grid-template-columns: 1fr; }
+}
+
+/* The Card */
+.gm-card {
+  position: relative;
+  background: rgba(20, 20, 30, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 40px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.gm-card:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+}
+
+.gm-card.cyan:hover { border-color: #00f2ff; box-shadow: 0 15px 40px rgba(0, 242, 255, 0.2); }
+.gm-card.magenta:hover { border-color: #ff0040; box-shadow: 0 15px 40px rgba(255, 0, 64, 0.2); }
+.gm-card.purple:hover { border-color: #8a2be2; box-shadow: 0 15px 40px rgba(138, 43, 226, 0.2); }
+.gm-card.blue:hover { border-color: #007bff; box-shadow: 0 15px 40px rgba(0, 123, 255, 0.2); }
+.gm-card.green:hover { border-color: #00ff88; box-shadow: 0 15px 40px rgba(0, 255, 136, 0.2); }
+
+/* Badge */
+.gm-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 20px;
+  letter-spacing: 1px;
+  z-index: 3;
+}
+.badge-cyan { background: #00f2ff; color: #000; box-shadow: 0 0 10px rgba(0, 242, 255, 0.5); }
+.badge-magenta { background: #ff0040; color: #fff; box-shadow: 0 0 10px rgba(255, 0, 64, 0.5); }
+.badge-purple { background: #8a2be2; color: #fff; box-shadow: 0 0 10px rgba(138, 43, 226, 0.5); }
+.badge-blue { background: #007bff; color: #fff; box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); }
+.badge-green { background: #00ff88; color: #000; box-shadow: 0 0 10px rgba(0, 255, 136, 0.5); }
+
+/* Icon */
+.gm-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 25px;
+  transition: transform 0.4s ease;
+  z-index: 3;
+}
+
+.gm-card:hover .gm-icon-wrapper {
+  transform: scale(1.15) translateY(-5px);
+}
+
+.block-cyan { background: rgba(0, 242, 255, 0.1); color: #00f2ff; border: 1px solid rgba(0, 242, 255, 0.3); }
+.block-magenta { background: rgba(255, 0, 64, 0.1); color: #ff0040; border: 1px solid rgba(255, 0, 64, 0.3); }
+.block-purple { background: rgba(138, 43, 226, 0.1); color: #8a2be2; border: 1px solid rgba(138, 43, 226, 0.3); }
+.block-blue { background: rgba(0, 123, 255, 0.1); color: #007bff; border: 1px solid rgba(0, 123, 255, 0.3); }
+.block-green { background: rgba(0, 255, 136, 0.1); color: #00ff88; border: 1px solid rgba(0, 255, 136, 0.3); }
+
+/* Typography */
+.gm-card-title {
+  font-family: 'Orbitron', 'Montserrat', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-bottom: 15px;
+  color: #fff;
+  z-index: 3;
+}
+
+.gm-card-desc {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.6;
+  margin-bottom: 30px;
+  z-index: 3;
+}
+
+/* Button */
+.gm-play-btn {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 14px 35px;
+  border-radius: 8px;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 0.3s;
+  z-index: 3;
+  margin-top: auto;
+  min-width: 170px;
+}
+
+.gm-card.cyan:hover .gm-play-btn { background: #00f2ff; color: #000; border-color: #00f2ff; box-shadow: 0 0 15px rgba(0, 242, 255, 0.6); }
+.gm-card.magenta:hover .gm-play-btn { background: #ff0040; color: #fff; border-color: #ff0040; box-shadow: 0 0 15px rgba(255, 0, 64, 0.6); }
+.gm-card.purple:hover .gm-play-btn { background: #8a2be2; color: #fff; border-color: #8a2be2; box-shadow: 0 0 15px rgba(138, 43, 226, 0.6); }
+.gm-card.blue:hover .gm-play-btn { background: #007bff; color: #fff; border-color: #007bff; box-shadow: 0 0 15px rgba(0, 123, 255, 0.6); }
+.gm-card.green:hover .gm-play-btn { background: #00ff88; color: #000; border-color: #00ff88; box-shadow: 0 0 15px rgba(0, 255, 136, 0.6); }
+
+/* Inner Hover Glow (Background light animation) */
+.gm-hover-glow {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  bottom: -100px;
+  right: -100px;
+  border-radius: 50%;
+  filter: blur(50px);
+  opacity: 0;
+  transition: opacity 0.5s;
+  z-index: 1;
+}
+
+.gm-card:hover .gm-hover-glow {
+  opacity: 0.4;
+}
+
+.glow-cyan { background: #00f2ff; }
+.glow-magenta { background: #ff0040; }
+.glow-purple { background: #8a2be2; }
+.glow-blue { background: #007bff; }
+.glow-green { background: #00ff88; }
