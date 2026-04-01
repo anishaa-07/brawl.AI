@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bot, Swords, Users, Trophy } from 'lucide-react';
+import { Bot, Swords, Users, Trophy, Zap, Rocket, User, Crosshair } from 'lucide-react';
 
 const GameModes = ({ playHover, playClick, startMatchmaking }) => {
   const navigate = useNavigate();
@@ -8,10 +8,14 @@ const GameModes = ({ playHover, playClick, startMatchmaking }) => {
 
   const handleModeClick = (id) => {
     playClick();
-    if (id === 'ai') {
+    if (id === 'solo') {
        setShowAiSubmenu(true);
     } else if (id === 'duel' || id === 'squad') {
        startMatchmaking(id);
+    } else if (id === 'practice') {
+       navigate('/battle', { state: { difficulty: 'easy' } });
+    } else if (id === 'quick') {
+       startMatchmaking('quick');
     } else {
        navigate('/leaderboard');
     }
@@ -54,6 +58,7 @@ const GameModes = ({ playHover, playClick, startMatchmaking }) => {
                className="mt-20 font-orbitron text-gray bg-transparent border-none underline cursor-pointer hover:text-white"
                onClick={() => setShowAiSubmenu(false)}
                onMouseEnter={playHover}
+               style={{ marginTop: '20px', background: 'transparent', border: 'none', color: '#a0a0a0', cursor: 'pointer', textDecoration: 'underline', fontFamily: 'Orbitron, sans-serif' }}
             >
                RETURN
             </button>
@@ -63,43 +68,44 @@ const GameModes = ({ playHover, playClick, startMatchmaking }) => {
   }
 
   const modes = [
-    { id: 'ai', title: 'AI Showdown', icon: <Bot size={28} />, desc: 'Train your reflexes against neural bots.', tag: 'TRAINING', color: 'cyan', bgImg: 'url("https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=2070&auto=format&fit=crop")' },
-    { id: 'duel', title: 'Quick Match', icon: <Swords size={28} />, desc: 'Jump into intense 1v1 arenas.', tag: 'CASUAL', color: 'pink', bgImg: 'url("https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop")' },
-    { id: 'squad', title: 'Ranked Match', icon: <Users size={28} />, desc: 'Climb the global ladder.', tag: 'COMPETITIVE', color: 'purple', bgImg: 'url("https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2070&auto=format&fit=crop")' },
-    { id: 'custom', title: 'Custom Room', icon: <Trophy size={28} />, desc: 'Host your own ruleset.', tag: 'PRIVATE', color: 'gold', bgImg: 'url("https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2071&auto=format&fit=crop")' }
+    { id: 'solo', title: 'Solo Mode', icon: <User size={32} />, desc: 'Test your AI logic against the machine.', badge: 'POPULAR', color: 'cyan' },
+    { id: 'duel', title: 'Duel Mode', icon: <Crosshair size={32} />, desc: '1v1 high-stakes battle against another pilot.', badge: 'HOT', color: 'pink' },
+    { id: 'squad', title: 'Squad Battle', icon: <Users size={32} />, desc: 'Coordinate multiplayer assaults as a team.', badge: 'NEW', color: 'purple' },
+    { id: 'practice', title: 'Practice Arena', icon: <Zap size={32} />, desc: 'Refine algorithms without losing rank.', badge: '', color: 'blue' },
+    { id: 'quick', title: 'Quick Match', icon: <Rocket size={32} />, desc: 'Jump into casual, unranked combat.', badge: '', color: 'green' }
   ];
 
   return (
     <section className="anime-modes-section">
-      <div className="section-title-anime">
-        <h2 className="font-orbitron cyber-text-glow">SELECT ARENA</h2>
+      <div className="section-title-anime" style={{ marginBottom: '15px' }}>
+        <h2 className="font-orbitron cyber-text-glow" style={{ fontSize: '1.4rem', margin: 0 }}>CHOOSE YOUR BATTLE MODE</h2>
+        <p style={{ margin: '6px 0 0', fontSize: '0.85rem', color: '#a0a0a0', fontFamily: 'Montserrat, sans-serif', borderBottom: 'none' }}>Enter the arena and prove your dominance</p>
       </div>
 
-      <div className="anime-modes-grid">
+      <div className="lobby-gm-grid">
          {modes.map((mode) => (
            <div 
              key={mode.id}
-             className={`anime-card color-theme-${mode.color}`}
+             className={`lobby-gm-card lgm-${mode.color}`}
              onClick={() => handleModeClick(mode.id)}
              onMouseEnter={playHover}
            >
-             <div className="anime-card-bg" style={{ backgroundImage: mode.bgImg }}></div>
-             <div className="anime-card-overlay"></div>
-             <div className="anime-card-content">
-               <div className="anime-tag-bar">
-                 <span className="anime-tag">{mode.tag}</span>
-               </div>
-               
-               <div className="anime-card-center">
-                 <div className="anime-icon-wrapper">{mode.icon}</div>
-                 <h2 className="font-orbitron anime-title">{mode.title}</h2>
-                 <p className="font-montserrat anime-desc">{mode.desc}</p>
-               </div>
-               
-               <div className="anime-card-action">
-                 <button className="anime-btn font-orbitron">{mode.id === 'custom' ? 'CREATE' : 'ENTER'}</button>
-               </div>
+             {mode.badge && <span className={`lobby-gm-badge lgm-badge-${mode.color}`}>{mode.badge}</span>}
+             
+             <div className={`lobby-gm-icon lgm-icon-${mode.color}`}>
+               {mode.icon}
              </div>
+             <h3 className="lobby-gm-title font-orbitron">{mode.title}</h3>
+             <p className="lobby-gm-desc font-montserrat">{mode.desc}</p>
+             
+             <button 
+                className={`lobby-gm-btn lgm-btn-${mode.color} font-orbitron`}
+                onMouseEnter={playHover}
+             >
+                PLAY NOW
+             </button>
+             
+             <div className={`lobby-gm-glow lgm-glow-${mode.color}`}></div>
            </div>
          ))}
       </div>
