@@ -229,26 +229,32 @@ const Lobby = () => {
           />
         </div>
 
-        {/* Left Col: Profile, Stats, Missions */}
-        <div className="grid-left-col-anime flex-col gap-20 custom-scrollbar" style={{ overflowY: 'auto', paddingBottom: '20px' }}>
+        {/* Left Col: Telemetry & Bounty Boards */}
+        <div className="grid-left-col-anime">
+          <div className="sidebar-section-title font-orbitron text-primary text-xs tracking-widest mb-10">CORE TELEMETRY</div>
           <StatsDashboard stats={profile.stats} />
+          <div className="sidebar-section-title font-orbitron text-secondary text-xs tracking-widest mt-20 mb-10">BOUNTY BOARD</div>
           <DailyMissions playHover={playHover} playClick={playClick} />
           <BattleFeed playHover={playHover} />
         </div>
 
-        {/* Center Col: Dynamic Views + Arena Core */}
+        {/* Center Col: Game Mode Protocol */}
         <div className="grid-center-col-anime">
            {activeTab === 'home' && <ArenaCore isHovered={isCoreBoosted} />}
            {renderCenterView()}
         </div>
 
-        {/* Right Col: Profile, Friends & Chat */}
-        <div className="grid-right-col-anime flex-col gap-20" style={{ paddingBottom: '20px' }}>
+        {/* Right Col: Pilot Profile, Operators & Comms */}
+        <div className="grid-right-col-anime">
           <PlayerProfilePanel playHover={playHover} playClick={playClick} />
-          <div className="friends-panel flex-1" style={{ minHeight: '50%' }}>
+          
+          <div className="sidebar-section-title font-orbitron text-primary text-xs tracking-widest mt-10 mb-10">OPERATORS</div>
+          <div className="friends-panel flex-1" style={{ minHeight: '30%' }}>
             <FriendsList playHover={playHover} playClick={playClick} />
           </div>
-          <div className="chat-panel flex-1" style={{ minHeight: '50%' }}>
+
+          <div className="sidebar-section-title font-orbitron text-secondary text-xs tracking-widest mt-10 mb-10">COMMUNICATION</div>
+          <div className="chat-panel flex-1" style={{ minHeight: '30%' }}>
              <ChatBox playHover={playHover} playClick={playClick} />
           </div>
         </div>
