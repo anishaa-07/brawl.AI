@@ -1,15 +1,26 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Swords, User, Users, X } from 'lucide-react';
+import { Swords, User, Users, X, ShieldAlert, ShieldCheck, ShieldOff } from 'lucide-react';
 
 const GameModes = ({ playHover, playClick, onModeHover }) => {
+  const navigate = useNavigate();
+  const [showDifficulty, setShowDifficulty] = useState(false);
   const [showComingSoon, setShowComingSoon] = useState(false);
   const [selectedMode, setSelectedMode] = useState('');
 
-  const handleModeClick = (modeTitle) => {
+  const handleModeClick = (modeId, modeTitle) => {
     playClick();
     setSelectedMode(modeTitle);
-    setShowComingSoon(true);
+    if (modeId === 'ai') {
+      setShowDifficulty(true);
+    } else {
+      setShowComingSoon(true);
+    }
+  };
+
+  const startBattle = (difficulty) => {
+    playClick();
+    navigate('/battle', { state: { difficulty } });
   };
 
   const modes = [
@@ -51,7 +62,7 @@ const GameModes = ({ playHover, playClick, onModeHover }) => {
            <div 
              key={mode.id}
              className={`premium-gm-card gm-${mode.color}`}
-             onClick={() => handleModeClick(mode.title)}
+             onClick={() => handleModeClick(mode.id, mode.title)}
              onMouseEnter={() => { playHover(); onModeHover(true); }}
              onMouseLeave={() => onModeHover(false)}
              style={{ '--card-accent': mode.accent }}
@@ -70,13 +81,44 @@ const GameModes = ({ playHover, playClick, onModeHover }) => {
                <span className="premium-status-text">INITIALIZING...</span>
              </div>
              
-             {/* 3D Reflection Surface */}
              <div className="card-surface-reflection"></div>
-             {/* Glow Layer */}
              <div className={`premium-gm-glow gm-glow-${mode.color}`}></div>
            </div>
          ))}
       </div>
+
+      {/* Difficulty Selector Modal */}
+      {showDifficulty && (
+        <div className="coming-soon-overlay" onClick={() => setShowDifficulty(false)}>
+          <div className="difficulty-modal modal-pulse" onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setShowDifficulty(false)}>
+              <X size={20} />
+            </button>
+            <div className="modal-content">
+              <h2 className="font-orbitron text-primary mb-10">SELECT DIFFICULTY</h2>
+              <p className="font-montserrat mb-20 text-gray text-xs">Choose the AI core complexity level</p>
+              
+              <div className="difficulty-grid">
+                <div className="diff-option easy" onClick={() => startBattle('Easy')}>
+                  <ShieldCheck size={32} />
+                  <span className="font-orbitron">EASY</span>
+                  <p className="font-montserrat">Training Core</p>
+                </div>
+                <div className="diff-option medium" onClick={() => startBattle('Normal')}>
+                  <ShieldAlert size={32} />
+                  <span className="font-orbitron">NORMAL</span>
+                  <p className="font-montserrat">Neural Core</p>
+                </div>
+                <div className="diff-option hard" onClick={() => startBattle('Hard')}>
+                  <ShieldOff size={32} />
+                  <span className="font-orbitron">HARD</span>
+                  <p className="font-montserrat">Elite Core</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Coming Soon Modal */}
       {showComingSoon && (
@@ -100,4 +142,5 @@ const GameModes = ({ playHover, playClick, onModeHover }) => {
 };
 
 export default GameModes;
+
 
