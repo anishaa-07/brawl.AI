@@ -17,7 +17,7 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg-da
 
 /* Helpers */
 .flex { display: flex; } .flex-col { display: flex; flex-direction: column; } .flex-row { display: flex; flex-direction: row; }
-.items-center { align-items: center; } .justify-between { justify-content: space-between; }
+.items-center { align-items: center; } .justify-between { justify-content: space-between; } .justify-center { justify-content: center; }
 .gap-5 { gap: 5px; } .gap-10 { gap: 10px; } .gap-15 { gap: 15px; } .gap-20 { gap: 20px; }
 .relative { position: relative; } .absolute { position: absolute; }
 .z-10 { z-index: 10; } .z-50 { z-index: 50; }
@@ -27,19 +27,25 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg-da
 .p-10 { padding: 10px; } .p-15 { padding: 15px; } .px-5 { padding-left: 5px; padding-right: 5px; } .px-15 { padding: 0 15px; } .px-25 { padding: 0 25px; } .py-5 { padding-top: 5px; padding-bottom: 5px; }
 .m-0 { margin: 0; }
 .w-fit { width: fit-content; }
-.text-xs { font-size: 0.75rem; } .text-sm { font-size: 0.85rem; } .text-lg { font-size: 1.1rem; } .text-xl { font-size: 1.5rem; }
+.text-xs { font-size: 0.75rem; } .text-sm { font-size: 0.85rem; } .text-lg { font-size: 1.1rem; } .text-xl { font-size: 1.5rem; } .text-2xl { font-size: 1.8rem; }
 .text-primary { color: var(--primary); } .text-secondary { color: var(--secondary); } .text-neon { color: var(--neon); } .text-gold { color: var(--gold); }
 .text-white { color: #fff; } .text-gray { color: #a0a0a0; } .text-dark-gray { color: #555; }
-.bg-primary { background: var(--primary); } .bg-primary-10 { background: rgba(0,240,255,0.1); } .bg-black-50 { background: rgba(0,0,0,0.5); } .bg-black-70 { background: rgba(0,0,0,0.7); } .bg-gray { background: #333; }
+.bg-primary { background: var(--primary); } .bg-primary-10 { background: rgba(0,240,255,0.1); } .bg-black-50 { background: rgba(0,0,0,0.5); } .bg-black-70 { background: rgba(0,0,0,0.7); } .bg-gray { background: #333; } .bg-neon { background: var(--neon); } .bg-secondary { background: var(--secondary); }
 .bg-opacity-20 { background: rgba(255,255,255,0.05); }
-.border-b { border-bottom: 1px solid rgba(255,255,255,0.1); }
+.border-b { border-bottom: 1px solid rgba(255,255,255,0.1); } .border { border: 1px solid; } .border-gray { border-color: rgba(255,255,255,0.1); } .border-primary { border-color: var(--primary); }
 .rounded { border-radius: 8px; }
 .cursor-pointer { cursor: pointer; } .inline { display: inline; }
 .line-through { text-decoration: line-through; }
-.grayscale-100 { filter: grayscale(1); }
 .ring-primary { border: 2px solid var(--primary); box-shadow: 0 0 10px var(--primary); }
 .ring-gray { border: 2px solid #555; }
 .fill-primary { fill: var(--primary); }
+.animate-pulse { animation: pulse 1.5s infinite; }
+.animate-spin { animation: spinLoader 1s linear infinite; }
+@keyframes spinLoader { 100% { transform: rotate(360deg); } }
+.mx-auto { margin-left: auto; margin-right: auto; }
+.text-center { text-align: center; }
+.tracking-widest { letter-spacing: 2px; }
+.uppercase { text-transform: uppercase; }
 
 /* Custom Scrollbar */
 .custom-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(162, 56, 255, 0.4) rgba(0, 0, 0, 0.3); }
@@ -51,12 +57,14 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg-da
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Missing Actions */
+/* Hover helpers */
 .hover-border-primary:hover { border-color: var(--primary) !important; box-shadow: 0 0 15px rgba(0,240,255,0.2); }
 .hover-white:hover { background: #fff !important; color: #000 !important; }
 .hover-bg-secondary:hover { background: var(--secondary) !important; border-color: var(--secondary) !important; }
 .hover-text-white:hover { color: #fff !important; }
 .hover-scale-img:hover { transform: scale(1.1); }
+.transition-all { transition: all 0.3s; }
+.transition-colors { transition: color 0.3s, background-color 0.3s, border-color 0.3s; }
 
 /* Typography & Glows */
 .cyber-text-shadow { text-shadow: 0 2px 5px rgba(0,0,0,0.8), 0 0 10px rgba(162,56,255,0.5); }
@@ -72,142 +80,418 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg-da
 @keyframes load { 0% { width: 0%; } 100% { width: 100%; } }
 @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-/* Base App Layout */
-.anime-lobby-container { min-height: 100vh; position: relative; overflow-x: hidden; }
-.anime-bg-main { position: absolute; inset: 0; background-size: cover; background-position: center; filter: saturate(1.2) hue-rotate(280deg); opacity: 0.6; z-index: 0; }
-.anime-bg-overlay { position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(5,1,10,0.6) 0%, rgba(5,1,10,0.95) 100%); z-index: 1; pointer-events: none; }
-.anime-particles { position: absolute; inset: 0; z-index: 2; background-image: radial-gradient(circle, rgba(162,56,255,0.2) 1px, transparent 1px); background-size: 60px 60px; animation: rise 40s linear infinite; pointer-events: none; }
+/* ============================================= */
+/* 🌌 BASE LAYOUT & BACKGROUND LAYERS 🌌       */
+/* ============================================= */
+.anime-lobby-container { min-height: 100vh; position: relative; overflow: hidden; }
+.anime-bg-main { position: absolute; inset: 0; background-size: cover; background-position: center; filter: saturate(1.5) hue-rotate(280deg); opacity: 0.5; z-index: 0; }
+.anime-bg-overlay { position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 20%, rgba(162,56,255,0.08) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(0,240,255,0.06) 0%, transparent 50%), radial-gradient(circle at center, rgba(5,1,10,0.7) 0%, rgba(5,1,10,0.95) 100%); z-index: 1; pointer-events: none; }
+.anime-particles { position: absolute; inset: 0; z-index: 2; background-image: radial-gradient(circle, rgba(162,56,255,0.15) 1px, transparent 1px); background-size: 60px 60px; animation: rise 40s linear infinite; pointer-events: none; }
 @keyframes rise { from { background-position: 0 0; } to { background-position: 0 -1000px; } }
 
-/* Grid Layout */
+/* Particle Canvas */
+.lobby-particles-canvas { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+
+/* LAYER: Light Streaks (cyberpunk vibe) */
+.lobby-light-streaks { position: absolute; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
+.light-streak {
+  position: absolute;
+  width: 2px;
+  height: 200px;
+  border-radius: 50%;
+  filter: blur(1px);
+  opacity: 0;
+}
+.ls-1 {
+  left: 15%;
+  background: linear-gradient(180deg, transparent, var(--primary), transparent);
+  animation: streakMove 8s ease-in-out infinite;
+}
+.ls-2 {
+  left: 55%;
+  background: linear-gradient(180deg, transparent, var(--secondary), transparent);
+  animation: streakMove 10s ease-in-out 3s infinite;
+}
+.ls-3 {
+  left: 80%;
+  background: linear-gradient(180deg, transparent, var(--neon), transparent);
+  animation: streakMove 7s ease-in-out 5s infinite;
+}
+@keyframes streakMove {
+  0% { top: -200px; opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% { top: calc(100% + 200px); opacity: 0; }
+}
+
+/* LAYER: Floating Orbs */
+.lobby-orbs-layer { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.lobby-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.25;
+  animation: orbFloat 12s ease-in-out infinite alternate;
+}
+.orb-cyan { width: 350px; height: 350px; background: var(--primary); top: -50px; right: 10%; }
+.orb-purple { width: 400px; height: 400px; background: var(--secondary); bottom: -100px; left: 5%; animation-duration: 15s; animation-delay: 2s; }
+.orb-pink { width: 250px; height: 250px; background: var(--neon); top: 40%; left: 40%; animation-duration: 10s; animation-delay: 4s; }
+@keyframes orbFloat {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(40px, -60px) scale(1.15); }
+}
+
+/* LAYER: Anime Characters */
+.lobby-anime-chars { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+.lobby-anime-char {
+  position: absolute;
+  height: 70vh;
+  max-height: 700px;
+  object-fit: contain;
+  opacity: 0.12;
+  filter: drop-shadow(0 0 30px var(--secondary));
+  animation: charFloat 8s ease-in-out infinite alternate;
+}
+.char-left { left: -5%; bottom: 0; }
+.char-right { right: -5%; bottom: 0; animation-delay: 3s; filter: drop-shadow(0 0 30px var(--neon)); }
+@keyframes charFloat {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-15px) scale(1.02); }
+}
+
+/* ============================================= */
+/* 🔲 GRID LAYOUT                               */
+/* ============================================= */
 .anime-grid-layout { position: relative; z-index: 10; display: grid; grid-template-columns: 320px 1fr 320px; grid-template-rows: 80px 1fr; gap: 20px; padding: 20px 30px; min-height: 100vh; }
 .grid-header-anime { grid-column: 1 / -1; }
 .grid-left-col-anime { grid-column: 1 / 2; display: flex; flex-direction: column; }
 .grid-center-col-anime { grid-column: 2 / 3; display: flex; flex-direction: column; overflow: hidden; }
 .grid-right-col-anime { grid-column: 3 / 4; display: flex; flex-direction: column; }
 
-/* Panels & Glassmorphism */
+/* ============================================= */
+/* 🔳 PANELS & GLASSMORPHISM                    */
+/* ============================================= */
 .glow-border {
   background: rgba(5, 2, 12, 0.65);
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 12px;
   position: relative;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 .glow-border:hover {
-  border-color: rgba(162,56,255,0.3);
+  border-color: rgba(162,56,255,0.25);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(162,56,255,0.08);
 }
+
+/* Neon Reflection Effect on Panels */
+.glow-border::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,240,255,0.3), rgba(162,56,255,0.3), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.glow-border:hover::after { opacity: 1; }
+
 .anime-panel-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.3); border-top-left-radius: 12px; border-top-right-radius: 12px; }
 
-/* Top Bar */
-.anime-topbar { height: 100%; border-radius: 16px; border-bottom: 2px solid var(--secondary); box-shadow: 0 5px 20px rgba(162,56,255,0.2); }
+/* ============================================= */
+/* 🔝 TOP BAR                                   */
+/* ============================================= */
+.anime-topbar { height: 100%; border-radius: 16px; border-bottom: 2px solid var(--secondary); box-shadow: 0 5px 30px rgba(162,56,255,0.15); }
 .anime-brand-logo { letter-spacing: 2px; }
-.anime-icon-btn { background: transparent; border: 1px solid rgba(255,255,255,0.1); width: 44px; height: 44px; border-radius: 8px; color: #fff; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s; }
+.anime-icon-btn { background: transparent; border: 1px solid rgba(255,255,255,0.1); width: 44px; height: 44px; border-radius: 8px; color: #fff; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.3s; }
 .anime-icon-btn:hover.hover-primary { border-color: var(--primary); box-shadow: 0 0 15px rgba(0,240,255,0.4); color: var(--primary); background: rgba(0,240,255,0.1); }
 .anime-icon-btn:hover.hover-secondary { border-color: var(--secondary); box-shadow: 0 0 15px rgba(162,56,255,0.4); color: var(--secondary); background: rgba(162,56,255,0.1); }
 .anime-dropdown-menu { border: 1px solid var(--neon); box-shadow: 0 0 20px rgba(255,0,85,0.4); border-radius: 8px; overflow: hidden; }
+.nav-link { transition: all 0.3s; padding: 8px 0; }
+.nav-link:hover { transform: translateY(-2px); }
 
-/* Player Profile */
+/* ============================================= */
+/* 👤 PLAYER PROFILE (ENHANCED)                 */
+/* ============================================= */
 .anime-player-profile { padding: 25px; display: flex; flex-direction: column; }
 .profile-header-anime { display: flex; align-items: center; gap: 20px; }
-.avatar-container-anime { position: relative; width: 80px; height: 80px; }
-.avatar-image-anime { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; position: relative; z-index: 2; border: 2px solid var(--rank-color, #fff); }
+.avatar-container-anime { position: relative; width: 80px; height: 80px; cursor: pointer; }
+.avatar-image-anime { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; position: relative; z-index: 2; border: 2px solid var(--rank-color, #fff); transition: transform 0.3s; }
+.avatar-container-anime:hover .avatar-image-anime { transform: scale(1.08); }
+
+/* Pulsing Avatar Aura */
 .avatar-aura-effect { position: absolute; inset: -4px; border-radius: 50%; z-index: 1; border: 2px dashed; animation: spin 10s linear infinite; }
+.avatar-aura-pulse { animation: spin 10s linear infinite, auraPulse 2s ease-in-out infinite alternate !important; }
+@keyframes auraPulse {
+  0% { box-shadow: 0 0 10px var(--rank-color), inset 0 0 5px var(--rank-color); transform: rotate(0deg) scale(1); }
+  100% { box-shadow: 0 0 25px var(--rank-color), inset 0 0 15px var(--rank-color); }
+}
 @keyframes spin { 100% { transform: rotate(360deg); } }
+
 .level-badge-anime { position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); background: var(--bg-dark); color: #fff; font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 10px; border: 1px solid var(--rank-color, #fff); z-index: 5; white-space: nowrap; box-shadow: 0 0 10px var(--rank-color, #fff); }
+
+/* Rank Badge Shine */
+.rank-shine-overlay {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  z-index: 0;
+  background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.15), transparent 30%);
+  animation: rankShine 4s linear infinite;
+}
+@keyframes rankShine { 100% { transform: rotate(360deg); } }
+
+.rank-badge-text { animation: rankShimmer 3s ease-in-out infinite; }
+@keyframes rankShimmer {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; text-shadow: 0 0 8px currentColor; }
+}
+
 .user-details-anime { flex: 1; }
 .rank-display { text-shadow: 0 0 5px currentColor; font-size: 0.85rem; font-weight: 800; letter-spacing: 1px; }
-.xp-track-anime { height: 8px; background: rgba(0,0,0,0.6); border-radius: 4px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8); overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
-.xp-bar-anime { height: 100%; position: relative; box-shadow: 0 0 10px currentColor; transition: width 1s ease-out; }
 
-/* Missions */
+/* Animated XP Bar */
+.xp-track-anime { height: 8px; background: rgba(0,0,0,0.6); border-radius: 4px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8); overflow: hidden; border: 1px solid rgba(255,255,255,0.1); position: relative; }
+.xp-bar-anime { height: 100%; position: relative; box-shadow: 0 0 10px currentColor; transition: width 0.1s linear; border-radius: 4px; }
+.xp-bar-glow::after {
+  content: '';
+  position: absolute;
+  right: 0; top: -2px; bottom: -2px;
+  width: 12px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #fff, 0 0 20px currentColor;
+  animation: xpPulse 1.5s ease-in-out infinite;
+}
+@keyframes xpPulse {
+  0%, 100% { opacity: 0.6; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+.xp-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+  animation: shimmerMove 2s ease-in-out infinite;
+}
+@keyframes shimmerMove {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ============================================= */
+/* ⚔️ STATS DASHBOARD                           */
+/* ============================================= */
+.stat-box-anime { transition: all 0.3s; }
+.stat-box-anime:hover { transform: translateY(-3px); }
+
+/* ============================================= */
+/* 🎯 DAILY MISSIONS                            */
+/* ============================================= */
 .anime-missions-panel { display: flex; flex-direction: column; flex: 1; }
 .anime-mission-list { padding: 15px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
-.anime-mission-card { background: rgba(0,0,0,0.4); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); transition: 0.2s; position: relative; overflow: hidden; }
-.anime-mission-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--secondary); transition: 0.2s; }
+.anime-mission-card { background: rgba(0,0,0,0.4); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; position: relative; overflow: hidden; }
+.anime-mission-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--secondary); transition: 0.3s; }
 .anime-mission-card:hover:not(.completed-mission) { transform: translateX(5px); background: rgba(255,255,255,0.05); border-color: rgba(162,56,255,0.3); }
 .anime-mission-card:hover:not(.completed-mission)::before { width: 4px; box-shadow: 0 0 10px var(--secondary); }
 .completed-mission { opacity: 0.6; filter: grayscale(0.5); border-color: transparent; }
 .completed-mission::before { background: var(--neon); }
-.bounty-btn { transition: 0.2s; } .bounty-btn:hover:not([disabled]) { box-shadow: 0 0 15px var(--primary); background: #fff; }
+.bounty-btn { transition: 0.3s; } .bounty-btn:hover:not([disabled]) { box-shadow: 0 0 15px var(--primary); background: #fff; }
 
-/* Friends List */
+/* ============================================= */
+/* 🔥 BATTLE FEED (NEW!)                        */
+/* ============================================= */
+.battle-feed-panel { margin-top: 20px; max-height: 300px; display: flex; flex-direction: column; }
+.bf-live-dot-wrap { display: flex; align-items: center; gap: 8px; }
+.bf-live-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--neon);
+  box-shadow: 0 0 6px var(--neon);
+  animation: livePulse 1.5s ease-in-out infinite;
+}
+@keyframes livePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+.bf-feed-list { padding: 10px 15px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.bf-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 6px;
+  border-left: 3px solid var(--primary);
+  font-size: 0.8rem;
+  animation: feedSlideIn 0.4s ease-out forwards;
+  opacity: 0;
+  transform: translateX(-15px);
+  transition: background 0.2s;
+}
+.bf-item:hover { background: rgba(255,255,255,0.05); }
+@keyframes feedSlideIn {
+  to { opacity: 1; transform: translateX(0); }
+}
+.bf-emoji { font-size: 1rem; min-width: 20px; }
+.bf-text { flex: 1; color: rgba(255,255,255,0.8); }
+.bf-time { font-size: 0.6rem; color: #555; letter-spacing: 1px; min-width: 45px; text-align: right; }
+
+/* ============================================= */
+/* 🌀 ARENA CORE WIDGET                         */
+/* ============================================= */
+.arena-core-widget {
+  position: relative;
+  width: 120px; height: 120px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.ac-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px dashed;
+}
+.ac-ring-outer {
+  width: 120px; height: 120px;
+  border-color: rgba(0,240,255,0.3);
+  animation: spin 15s linear infinite;
+}
+.ac-ring-inner {
+  width: 90px; height: 90px;
+  border-color: rgba(162,56,255,0.4);
+  animation: spin 10s linear infinite reverse;
+}
+.ac-core-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+.ac-count {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--primary);
+  text-shadow: 0 0 15px var(--primary);
+}
+.ac-label {
+  font-size: 0.55rem;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+.ac-pulse {
+  position: absolute;
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,240,255,0.1) 0%, transparent 70%);
+  animation: corePulseAnim 3s ease-in-out infinite alternate;
+}
+@keyframes corePulseAnim {
+  0% { transform: scale(0.8); opacity: 0.3; }
+  100% { transform: scale(1.3); opacity: 0.6; }
+}
+
+/* ============================================= */
+/* 👥 FRIENDS LIST (ENHANCED)                    */
+/* ============================================= */
+.anime-friends-list { display: flex; flex-direction: column; }
 .friends-list-container { padding: 10px; flex: 1; overflow-y: auto; }
-.anime-friend-item { display: flex; align-items: center; gap: 15px; padding: 12px; border-radius: 8px; transition: 0.2s; cursor: pointer; border: 1px solid transparent; }
+.anime-friend-item { display: flex; align-items: center; gap: 15px; padding: 12px; border-radius: 8px; transition: all 0.3s; cursor: pointer; border: 1px solid transparent; }
 .anime-friend-item:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); transform: translateX(5px); box-shadow: inset 5px 0 0 var(--secondary); }
-.friend-avatar-wrap { position: relative; width: 40px; height: 40px; }
-.friend-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-.status-indicator { position: absolute; bottom: 0; right: 0; background: var(--bg-dark); border-radius: 50%; padding: 1px; }
+
+/* Staggered entry animation */
+.friend-item-animate {
+  animation: friendSlideIn 0.4s ease-out forwards;
+  opacity: 0;
+  transform: translateX(-10px);
+}
+@keyframes friendSlideIn {
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.friend-avatar-wrap { position: relative; width: 40px; height: 40px; flex-shrink: 0; }
+.friend-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; transition: transform 0.3s; }
+.anime-friend-item:hover .friend-avatar { transform: scale(1.1); }
+
+/* Pulsing Online Status Dot */
+.friend-status-dot {
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-dark);
+}
+.online-pulse {
+  background: #00ff88;
+  box-shadow: 0 0 6px #00ff88;
+  animation: onlinePulse 2s ease-in-out infinite;
+}
+.offline-dot { background: #444; }
+@keyframes onlinePulse {
+  0%, 100% { box-shadow: 0 0 4px #00ff88; transform: scale(1); }
+  50% { box-shadow: 0 0 12px #00ff88, 0 0 20px rgba(0,255,136,0.3); transform: scale(1.2); }
+}
+
 .friend-info { flex: 1; display: flex; flex-direction: column; }
-.invite-btn-anime { background: transparent; border: 1px solid rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 6px; color: #fff; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
+.invite-btn-anime { background: transparent; border: 1px solid rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 6px; color: #fff; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; flex-shrink: 0; }
 .anime-friend-item:hover .invite-btn-anime:not([disabled]) { border-color: var(--primary); color: var(--primary); background: rgba(0,240,255,0.1); }
 .invite-btn-anime:hover:not([disabled]) { box-shadow: 0 0 10px var(--primary); background: var(--primary) !important; color: #000 !important; }
 
-/* Chat Box */
+/* ============================================= */
+/* 💬 CHAT BOX (ENHANCED)                        */
+/* ============================================= */
 .anime-chat-box { flex: 1; display: flex; flex-direction: column; }
 .chat-msg-area { padding: 15px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; max-height: 250px; }
-.chat-line-anime { font-family: 'Montserrat', sans-serif; font-size: 0.85rem; line-height: 1.4; padding: 6px 10px; border-radius: 6px; background: rgba(0,0,0,0.3); border-left: 2px solid transparent; }
-.chat-line-anime:hover { background: rgba(255,255,255,0.05); }
+.chat-line-anime { font-family: 'Montserrat', sans-serif; font-size: 0.85rem; line-height: 1.4; padding: 6px 10px; border-radius: 6px; background: rgba(0,0,0,0.3); border-left: 2px solid transparent; transition: all 0.2s; }
+.chat-line-anime:hover { background: rgba(255,255,255,0.05); transform: translateX(3px); }
 .system-msg { color: var(--primary); font-style: italic; border-left-color: var(--primary); background: rgba(0,240,255,0.05); }
 .chat-sender-anime { font-family: 'Orbitron', sans-serif; font-weight: 700; margin-right: 8px; font-size: 0.75rem; }
 .chat-text-anime { color: #ddd; }
+
+/* Message slide-in animation */
+.chat-msg-animate {
+  animation: chatMsgIn 0.3s ease-out forwards;
+  opacity: 0;
+  transform: translateY(8px);
+}
+@keyframes chatMsgIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Typing Indicator */
+.chat-typing-indicator { display: flex; gap: 4px; align-items: center; padding: 0 8px; }
+.typing-dot {
+  width: 5px; height: 5px;
+  background: var(--secondary);
+  border-radius: 50%;
+  animation: typingBounce 1.2s ease-in-out infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typingBounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+  40% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* Quick React Buttons */
+.quick-react-btn { transition: all 0.2s !important; }
+.quick-react-btn:hover { background: rgba(162,56,255,0.2) !important; border-color: var(--secondary) !important; color: #fff !important; transform: translateY(-2px); box-shadow: 0 3px 10px rgba(162,56,255,0.2); }
+
 .chat-input-form { display: flex; border-top: 1px solid rgba(255,255,255,0.1); padding: 10px 15px; background: rgba(0,0,0,0.5); border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
 .chat-input-anime { flex: 1; background: transparent; border: none; color: #fff; outline: none; }
-.chat-send-btn-anime { background: transparent; border: 1px solid rgba(255,255,255,0.2); width: 35px; height: 35px; border-radius: 8px; color: #fff; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
+.chat-send-btn-anime { background: transparent; border: 1px solid rgba(255,255,255,0.2); width: 35px; height: 35px; border-radius: 8px; color: #fff; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; }
 .chat-send-btn-anime:hover { background: var(--secondary); border-color: var(--secondary); color: #fff; box-shadow: 0 0 15px var(--secondary); transform: scale(1.05); }
 
-
-/* Game Modes Center Container */
-.anime-modes-section { height: 100%; display: flex; flex-direction: column; gap: 20px; }
+/* ============================================= */
+/* 🎮 GAME MODE CARDS (CENTER)                   */
+/* ============================================= */
+.anime-modes-section { height: 100%; display: flex; flex-direction: column; gap: 15px; }
 .section-title-anime { display: inline-block; padding-bottom: 5px; border-bottom: 2px solid var(--secondary); width: fit-content; }
 .section-title-anime h2 { font-size: 1.6rem; color: #fff; margin: 0; }
-.anime-modes-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 20px; flex: 1; }
 
-.anime-card {
-  position: relative; border-radius: 16px; overflow: hidden; cursor: pointer;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s;
-  border: 1px solid rgba(255,255,255,0.05);
-}
-.anime-card-bg { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.6s ease; z-index: 0; }
-.anime-card-overlay { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(5,1,10,0.95) 0%, rgba(5,1,10,0.7) 50%, rgba(5,1,10,0.3) 100%); z-index: 1; transition: opacity 0.4s; }
-
-.anime-card:hover { transform: translateY(-10px) scale(1.02); z-index: 20; border-color: var(--theme-color); box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px var(--theme-color-glow); }
-.anime-card:hover .anime-card-bg { transform: scale(1.1); filter: contrast(1.2); }
-.anime-card:hover .anime-card-overlay { opacity: 0.8; background: linear-gradient(0deg, var(--theme-color-dark) 0%, rgba(5,1,10,0.5) 50%, transparent 100%); }
-
-.anime-card-content { position: relative; z-index: 10; padding: 25px; height: 100%; display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center; }
-.anime-tag-bar { width: 100%; text-align: left; }
-.anime-tag { font-family: 'Orbitron', sans-serif; font-size: 0.7rem; font-weight: 800; letter-spacing: 2px; padding: 4px 12px; border-radius: 4px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
-.anime-card:hover .anime-tag { background: var(--theme-color-glow); border-color: var(--theme-color); text-shadow: 0 0 5px var(--theme-color); }
-
-.anime-card-center { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 20px; transition: transform 0.3s; }
-.anime-card:hover .anime-card-center { transform: translateY(-5px); }
-.anime-icon-wrapper { color: var(--theme-color); filter: drop-shadow(0 0 10px var(--theme-color)); transition: transform 0.3s; }
-.anime-card:hover .anime-icon-wrapper { transform: scale(1.2); color: #fff; }
-
-.anime-title { font-size: 2rem; margin: 0; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.8); letter-spacing: 1px; transition: text-shadow 0.3s, color 0.3s; }
-.anime-card:hover .anime-title { color: #fff; text-shadow: 0 0 15px var(--theme-color), 0 0 30px var(--theme-color); }
-
-.anime-desc { font-size: 0.85rem; color: #ccc; margin: 10px 0 0 0; line-height: 1.4; opacity: 0.8; transition: opacity 0.3s; }
-.anime-card:hover .anime-desc { opacity: 1; color: #fff; }
-
-.anime-card-action { margin-top: auto; opacity: 0; transform: translateY(15px); transition: all 0.3s ease-out; width: 100%; }
-.anime-card:hover .anime-card-action { opacity: 1; transform: translateY(0); }
-.anime-btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: 800; font-size: 1rem; letter-spacing: 2px; cursor: pointer; background: var(--theme-color); color: #000; transition: box-shadow 0.2s, background 0.2s; }
-.anime-btn:hover { background: #fff; box-shadow: 0 0 20px var(--theme-color); }
-
-/* Theme Colors for Cards */
-.color-theme-cyan { --theme-color: var(--primary); --theme-color-glow: rgba(0,240,255,0.3); --theme-color-dark: rgba(0,240,255,0.1); }
-.color-theme-pink { --theme-color: var(--neon); --theme-color-glow: rgba(255,0,85,0.3); --theme-color-dark: rgba(255,0,85,0.1); }
-.color-theme-purple { --theme-color: var(--secondary); --theme-color-glow: rgba(162,56,255,0.3); --theme-color-dark: rgba(162,56,255,0.1); }
-.color-theme-gold { --theme-color: var(--gold); --theme-color-glow: rgba(255,215,0,0.3); --theme-color-dark: rgba(255,215,0,0.1); }
-
-/* ============================================= */
-/*  🎮 PREMIUM LOBBY GAME MODE CARDS 🎮         */
-/* ============================================= */
 .lobby-gm-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -251,12 +535,43 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg-da
   box-shadow: 0 16px 40px rgba(0,0,0,0.6);
 }
 
-/* Color-specific hover borders & shadows */
-.lgm-cyan:hover { border-color: var(--primary); box-shadow: 0 16px 40px rgba(0,240,255,0.15), 0 0 20px rgba(0,240,255,0.1); }
-.lgm-pink:hover { border-color: var(--neon); box-shadow: 0 16px 40px rgba(255,0,85,0.15), 0 0 20px rgba(255,0,85,0.1); }
-.lgm-purple:hover { border-color: var(--secondary); box-shadow: 0 16px 40px rgba(162,56,255,0.15), 0 0 20px rgba(162,56,255,0.1); }
-.lgm-blue:hover { border-color: #007bff; box-shadow: 0 16px 40px rgba(0,123,255,0.15), 0 0 20px rgba(0,123,255,0.1); }
-.lgm-green:hover { border-color: #00ff88; box-shadow: 0 16px 40px rgba(0,255,136,0.15), 0 0 20px rgba(0,255,136,0.1); }
+/* Animated Neon Border Pulse */
+.lobby-gm-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 18px;
+  padding: 1px;
+  background: linear-gradient(135deg, transparent 40%, var(--card-accent, rgba(255,255,255,0.1)) 50%, transparent 60%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s;
+  animation: neonBorderRotate 4s linear infinite;
+}
+.lobby-gm-card:hover::before { opacity: 1; }
+@keyframes neonBorderRotate {
+  0% { background: linear-gradient(0deg, transparent 40%, var(--card-accent, rgba(255,255,255,0.2)) 50%, transparent 60%); }
+  25% { background: linear-gradient(90deg, transparent 40%, var(--card-accent, rgba(255,255,255,0.2)) 50%, transparent 60%); }
+  50% { background: linear-gradient(180deg, transparent 40%, var(--card-accent, rgba(255,255,255,0.2)) 50%, transparent 60%); }
+  75% { background: linear-gradient(270deg, transparent 40%, var(--card-accent, rgba(255,255,255,0.2)) 50%, transparent 60%); }
+  100% { background: linear-gradient(360deg, transparent 40%, var(--card-accent, rgba(255,255,255,0.2)) 50%, transparent 60%); }
+}
+
+/* Card Color Themes + accents */
+.lgm-cyan { --card-accent: var(--primary); }
+.lgm-pink { --card-accent: var(--neon); }
+.lgm-purple { --card-accent: var(--secondary); }
+.lgm-blue { --card-accent: #007bff; }
+.lgm-green { --card-accent: #00ff88; }
+
+.lgm-cyan:hover { border-color: var(--primary); box-shadow: 0 16px 40px rgba(0,240,255,0.15), 0 0 25px rgba(0,240,255,0.08); }
+.lgm-pink:hover { border-color: var(--neon); box-shadow: 0 16px 40px rgba(255,0,85,0.15), 0 0 25px rgba(255,0,85,0.08); }
+.lgm-purple:hover { border-color: var(--secondary); box-shadow: 0 16px 40px rgba(162,56,255,0.15), 0 0 25px rgba(162,56,255,0.08); }
+.lgm-blue:hover { border-color: #007bff; box-shadow: 0 16px 40px rgba(0,123,255,0.15), 0 0 25px rgba(0,123,255,0.08); }
+.lgm-green:hover { border-color: #00ff88; box-shadow: 0 16px 40px rgba(0,255,136,0.15), 0 0 25px rgba(0,255,136,0.08); }
 
 /* Badge */
 .lobby-gm-badge {
@@ -269,6 +584,11 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg-da
   padding: 4px 12px;
   border-radius: 20px;
   z-index: 3;
+  animation: badgePulse 2s ease-in-out infinite;
+}
+@keyframes badgePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }
 .lgm-badge-cyan { background: var(--primary); color: #000; box-shadow: 0 0 8px rgba(0,240,255,0.5); }
 .lgm-badge-pink { background: var(--neon); color: #fff; box-shadow: 0 0 8px rgba(255,0,85,0.5); }
@@ -276,7 +596,7 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg-da
 .lgm-badge-blue { background: #007bff; color: #fff; box-shadow: 0 0 8px rgba(0,123,255,0.5); }
 .lgm-badge-green { background: #00ff88; color: #000; box-shadow: 0 0 8px rgba(0,255,136,0.5); }
 
-/* Icon Circle */
+/* Icon Circle with hover animation */
 .lobby-gm-icon {
   width: 68px; height: 68px;
   border-radius: 50%;
@@ -285,37 +605,24 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg-da
   transition: transform 0.4s ease, box-shadow 0.3s;
   z-index: 2;
 }
-.lobby-gm-card:hover .lobby-gm-icon { transform: scale(1.15) translateY(-4px); }
+.lobby-gm-card:hover .lobby-gm-icon { transform: scale(1.15) translateY(-4px) rotate(5deg); }
 .lgm-icon-cyan { background: rgba(0,240,255,0.1); color: var(--primary); border: 1px solid rgba(0,240,255,0.25); }
 .lgm-icon-pink { background: rgba(255,0,85,0.1); color: var(--neon); border: 1px solid rgba(255,0,85,0.25); }
 .lgm-icon-purple { background: rgba(162,56,255,0.1); color: var(--secondary); border: 1px solid rgba(162,56,255,0.25); }
 .lgm-icon-blue { background: rgba(0,123,255,0.1); color: #007bff; border: 1px solid rgba(0,123,255,0.25); }
 .lgm-icon-green { background: rgba(0,255,136,0.1); color: #00ff88; border: 1px solid rgba(0,255,136,0.25); }
 
-.lobby-gm-card:hover .lgm-icon-cyan { box-shadow: 0 0 15px rgba(0,240,255,0.4); }
-.lobby-gm-card:hover .lgm-icon-pink { box-shadow: 0 0 15px rgba(255,0,85,0.4); }
-.lobby-gm-card:hover .lgm-icon-purple { box-shadow: 0 0 15px rgba(162,56,255,0.4); }
-.lobby-gm-card:hover .lgm-icon-blue { box-shadow: 0 0 15px rgba(0,123,255,0.4); }
-.lobby-gm-card:hover .lgm-icon-green { box-shadow: 0 0 15px rgba(0,255,136,0.4); }
+.lobby-gm-card:hover .lgm-icon-cyan { box-shadow: 0 0 20px rgba(0,240,255,0.4); }
+.lobby-gm-card:hover .lgm-icon-pink { box-shadow: 0 0 20px rgba(255,0,85,0.4); }
+.lobby-gm-card:hover .lgm-icon-purple { box-shadow: 0 0 20px rgba(162,56,255,0.4); }
+.lobby-gm-card:hover .lgm-icon-blue { box-shadow: 0 0 20px rgba(0,123,255,0.4); }
+.lobby-gm-card:hover .lgm-icon-green { box-shadow: 0 0 20px rgba(0,255,136,0.4); }
 
-/* Title & Description */
-.lobby-gm-title {
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: 1.5px;
-  margin: 0 0 10px;
-  color: #fff;
-  z-index: 2;
-}
-.lobby-gm-desc {
-  font-size: 0.8rem;
-  color: rgba(255,255,255,0.6);
-  line-height: 1.5;
-  margin: 0 0 20px;
-  z-index: 2;
-}
+/* Card Title & Desc */
+.lobby-gm-title { font-size: 1rem; font-weight: 800; letter-spacing: 1.5px; margin: 0 0 10px; color: #fff; z-index: 2; }
+.lobby-gm-desc { font-size: 0.8rem; color: rgba(255,255,255,0.6); line-height: 1.5; margin: 0 0 20px; z-index: 2; }
 
-/* Play Now Button */
+/* Play Now Button with glow on hover */
 .lobby-gm-btn {
   background: transparent;
   color: rgba(255,255,255,0.6);
@@ -330,12 +637,11 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg-da
   z-index: 2;
   margin-top: auto;
 }
-
-.lobby-gm-card:hover .lgm-btn-cyan { background: var(--primary); color: #000; border-color: var(--primary); box-shadow: 0 0 12px rgba(0,240,255,0.5); }
-.lobby-gm-card:hover .lgm-btn-pink { background: var(--neon); color: #fff; border-color: var(--neon); box-shadow: 0 0 12px rgba(255,0,85,0.5); }
-.lobby-gm-card:hover .lgm-btn-purple { background: var(--secondary); color: #fff; border-color: var(--secondary); box-shadow: 0 0 12px rgba(162,56,255,0.5); }
-.lobby-gm-card:hover .lgm-btn-blue { background: #007bff; color: #fff; border-color: #007bff; box-shadow: 0 0 12px rgba(0,123,255,0.5); }
-.lobby-gm-card:hover .lgm-btn-green { background: #00ff88; color: #000; border-color: #00ff88; box-shadow: 0 0 12px rgba(0,255,136,0.5); }
+.lobby-gm-card:hover .lgm-btn-cyan { background: var(--primary); color: #000; border-color: var(--primary); box-shadow: 0 0 15px rgba(0,240,255,0.5); }
+.lobby-gm-card:hover .lgm-btn-pink { background: var(--neon); color: #fff; border-color: var(--neon); box-shadow: 0 0 15px rgba(255,0,85,0.5); }
+.lobby-gm-card:hover .lgm-btn-purple { background: var(--secondary); color: #fff; border-color: var(--secondary); box-shadow: 0 0 15px rgba(162,56,255,0.5); }
+.lobby-gm-card:hover .lgm-btn-blue { background: #007bff; color: #fff; border-color: #007bff; box-shadow: 0 0 15px rgba(0,123,255,0.5); }
+.lobby-gm-card:hover .lgm-btn-green { background: #00ff88; color: #000; border-color: #00ff88; box-shadow: 0 0 15px rgba(0,255,136,0.5); }
 
 /* Inner Hover Glow */
 .lobby-gm-glow {
@@ -356,11 +662,14 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg-da
 .lgm-glow-blue { background: #007bff; }
 .lgm-glow-green { background: #00ff88; }
 
-/* Responsive adjustments */
+/* ============================================= */
+/* 📱 RESPONSIVE                                 */
+/* ============================================= */
 @media (max-width: 1400px) {
   .anime-grid-layout { grid-template-columns: 280px 1fr 280px; }
   .anime-title { font-size: 1.6rem; }
   .lobby-gm-grid { grid-template-columns: repeat(3, 1fr); }
+  .lobby-anime-char { opacity: 0.08; }
 }
 @media (max-width: 1024px) {
   .anime-grid-layout { grid-template-columns: 1fr 300px; grid-template-rows: auto auto auto; overflow-y: auto; overflow-x: hidden; }
@@ -369,7 +678,10 @@ body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg-da
   .grid-center-col-anime { grid-column: 1 / 2; grid-row: 3 / 4; height: auto; min-height: 600px; }
   .grid-right-col-anime { grid-column: 2 / 3; grid-row: 2 / 4; }
   .lobby-gm-grid { grid-template-columns: repeat(2, 1fr); }
+  .lobby-anime-chars { display: none; }
 }
 @media (max-width: 768px) {
   .lobby-gm-grid { grid-template-columns: 1fr; }
+  .anime-grid-layout { grid-template-columns: 1fr; }
+  .grid-right-col-anime { grid-column: 1; grid-row: auto; }
 }

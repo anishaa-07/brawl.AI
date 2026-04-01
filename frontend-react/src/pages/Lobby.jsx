@@ -13,6 +13,8 @@ import DailyMissions from '../components/Lobby/DailyMissions';
 import Achievements from '../components/Lobby/Achievements';
 import Store from '../components/Lobby/Store';
 import Spectator from '../components/Lobby/Spectator';
+import BattleFeed from '../components/Lobby/BattleFeed';
+import ArenaCore from '../components/Lobby/ArenaCore';
 import { Loader2 } from 'lucide-react';
 
 const Lobby = () => {
@@ -22,7 +24,7 @@ const Lobby = () => {
   const [soundOn, setSoundOn] = useState(true);
   
   // Advanced State Management
-  const [activeTab, setActiveTab] = useState('home'); // 'home', 'store', 'spectate', 'achievements'
+  const [activeTab, setActiveTab] = useState('home');
   const [matchmaking, setMatchmaking] = useState({ active: false, mode: null, time: 0 });
 
   // Audio elements
@@ -51,11 +53,11 @@ const Lobby = () => {
     if (matchmaking.active) {
       interval = setInterval(() => {
         setMatchmaking(prev => {
-          if (prev.time >= 3) { // Simulate match found after 3 seconds
+          if (prev.time >= 3) {
              clearInterval(interval);
              setTimeout(() => {
                navigate('/battle', { state: { mode: prev.mode } });
-             }, 500); // short delay before navigating
+             }, 500);
              return { ...prev, active: false, found: true };
           }
           return { ...prev, time: prev.time + 1 };
@@ -107,10 +109,33 @@ const Lobby = () => {
 
   return (
     <div className="anime-lobby-container">
-      {/* Dynamic Background */}
+      {/* Dynamic Background Layers */}
       <div className="anime-bg-main" style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=2074&auto=format&fit=crop")' }}></div>
       <div className="anime-bg-overlay"></div>
       <div className="anime-particles"></div>
+
+      {/* LAYER 1: Floating Light Streaks */}
+      <div className="lobby-light-streaks">
+        <div className="light-streak ls-1"></div>
+        <div className="light-streak ls-2"></div>
+        <div className="light-streak ls-3"></div>
+      </div>
+
+      {/* LAYER 2: Floating Orbs */}
+      <div className="lobby-orbs-layer">
+        <div className="lobby-orb orb-cyan"></div>
+        <div className="lobby-orb orb-purple"></div>
+        <div className="lobby-orb orb-pink"></div>
+      </div>
+
+      {/* LAYER 3: Animated Star Particles */}
+      <canvas id="lobby-particles-canvas" className="lobby-particles-canvas"></canvas>
+
+      {/* LAYER 4: Anime Characters (unique) */}
+      <div className="lobby-anime-chars">
+        <img src={`${import.meta.env.BASE_URL}assets/lobby_warrior.png`} alt="" className="lobby-anime-char char-left" />
+        <img src={`${import.meta.env.BASE_URL}assets/lobby_assassin.png`} alt="" className="lobby-anime-char char-right" />
+      </div>
 
       {/* Full-Screen Matchmaking Overlay */}
       {matchmaking.active && (
@@ -156,10 +181,12 @@ const Lobby = () => {
           />
           <StatsDashboard stats={profile.stats} />
           <DailyMissions playHover={playHover} playClick={playClick} />
+          <BattleFeed playHover={playHover} />
         </div>
 
-        {/* Center Col: Dynamic Views */}
+        {/* Center Col: Dynamic Views + Arena Core */}
         <div className="grid-center-col-anime">
+           {activeTab === 'home' && <ArenaCore />}
            {renderCenterView()}
         </div>
 
@@ -174,8 +201,69 @@ const Lobby = () => {
         </div>
 
       </div>
+
+      {/* Particle Canvas Init Script */}
+      <ParticleEffect />
     </div>
   );
+};
+
+/* Particle Effect Component - renders floating dots/stars onto the canvas */
+const ParticleEffect = () => {
+  useEffect(() => {
+    const canvas = document.getElementById('lobby-particles-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let animationId;
+    let particles = [];
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    for (let i = 0; i < 60; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2 + 0.5,
+        speedX: (Math.random() - 0.5) * 0.3,
+        speedY: (Math.random() - 0.5) * 0.3,
+        opacity: Math.random() * 0.5 + 0.2,
+        color: ['#00f0ff', '#a238ff', '#ff0055'][Math.floor(Math.random() * 3)]
+      });
+    }
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.x += p.speedX;
+        p.y += p.speedY;
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.opacity;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      });
+      animationId = requestAnimationFrame(animate);
+    };
+    animate();
+
+    return () => {
+      cancelAnimationFrame(animationId);
+      window.removeEventListener('resize', resize);
+    };
+  }, []);
+
+  return null;
 };
 
 export default Lobby;
