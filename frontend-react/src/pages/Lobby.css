@@ -195,6 +195,26 @@
 
 .modal-title { margin-bottom: 30px; letter-spacing: 4px; font-size: 1.4rem; color: #fff; text-shadow: 0 0 15px var(--primary); }
 
+.modal-close-x {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close-x:hover {
+  color: var(--primary);
+  transform: rotate(90deg);
+  text-shadow: 0 0 10px var(--primary);
+}
+
 .difficulty-grid { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
 
 .difficulty-card {

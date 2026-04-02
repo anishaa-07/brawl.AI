@@ -1,5 +1,6 @@
 import React from 'react';
 import './Lobby.css';
+import { X } from 'lucide-react';
 
 const Lobby = () => {
   // 👤 PLAYER PROFILE STATUS SYSTEM
@@ -40,8 +41,13 @@ const Lobby = () => {
     <div className="lobby-wrapper">
       {/* 🌑 MODAL OVERLAY (DIM BACKGROUND) */}
       {isModalOpen && (
-        <div className="modal-overlay">
+        <div className="modal-overlay" onClick={(e) => { if (e.target.className === 'modal-overlay') setIsModalOpen(false); }}>
           <div className="difficulty-modal glass-panel fadeInScale">
+            {/* CLOSE BUTTON */}
+            <button className="modal-close-x" onClick={() => setIsModalOpen(false)}>
+              <X size={20} />
+            </button>
+
             <h2 className="modal-title font-orbitron">SELECT AI DIFFICULTY</h2>
             
             <div className="difficulty-grid">
@@ -63,6 +69,7 @@ const Lobby = () => {
           </div>
         </div>
       )}
+
 
       {/* 🚀 STATUS MESSAGE */}
       {statusMessage && (
