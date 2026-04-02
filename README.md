@@ -1,4 +1,4 @@
-<h1 align="center">⚔️ Brawl.AI</h1>
+<h1 align="center">⚔️ Brawl.AI ⚔️</h1>
 <h3 align="center">Battle. Think. Dominate. 🤖🔥</h3>
 
 <p align="center">
