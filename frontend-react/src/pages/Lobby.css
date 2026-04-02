@@ -28,6 +28,8 @@
   margin: 0;
   overflow: hidden;
   background: var(--bg-dark);
+  position: relative;
+  z-index: 5; /* BRING TO FRONT */
 }
 
 /* 🔝 HEADER */
@@ -49,7 +51,10 @@
   padding: 16px;
   overflow: hidden; /* Default overflow hidden */
   position: relative;
+  z-index: 5;
+  color: #ffffff;
 }
+
 
 /* Sidebars must be scrollable internally */
 .left, .right {
@@ -106,8 +111,25 @@ h1, h2, h3, h4, p { margin: 0; }
   margin-top: 10px;
 }
 
+/* 🖼️ BACKGROUNDS SHIELDED FROM UI */
+.anime-bg-main {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.4);
+  z-index: 0;
+}
+
+.anime-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.8) 100%);
+  z-index: 1;
+}
+
 /* 🖼️ CHARACTERS & FX */
-.lobby-anime-chars { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+.lobby-anime-chars { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
 .lobby-anime-char {
   position: absolute;
   height: 80vh;
