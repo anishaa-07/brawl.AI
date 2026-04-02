@@ -106,3 +106,69 @@ button {
 input {
   font-family: 'Inter', sans-serif;
 }
+
+/* 🛠️ CYBER-UTILITY CLASSES (TAILWIND-STYLE SHIM) 🛠️ */
+.flex { display: flex !important; }
+.flex-col { display: flex !important; flex-direction: column !important; }
+.flex-1 { flex: 1 !important; }
+.items-center { align-items: center !important; }
+.justify-between { justify-content: space-between !important; }
+.justify-center { justify-content: center !important; }
+
+/* Gap utilities */
+.gap-5 { gap: 5px !important; }
+.gap-10 { gap: 10px !important; }
+.gap-15 { gap: 15px !important; }
+.gap-20 { gap: 20px !important; }
+
+/* Padding/Margin utilities */
+.p-10 { padding: 10px !important; }
+.p-15 { padding: 15px !important; }
+.px-25 { padding-left: 25px !important; padding-right: 25px !important; }
+.mt-5 { margin-top: 5px !important; }
+.mt-10 { margin-top: 10px !important; }
+.mt-20 { margin-top: 20px !important; }
+.mb-5 { margin-bottom: 5px !important; }
+.mb-10 { margin-bottom: 10px !important; }
+.m-0 { margin: 0 !important; }
+
+/* Text/Colors */
+.text-white { color: #ffffff !important; }
+.text-gray { color: #a0a0a0 !important; }
+.text-primary { color: var(--primary) !important; }
+.text-secondary { color: var(--secondary) !important; }
+.text-neon { color: var(--neon) !important; }
+.text-xl { font-size: 1.5rem !important; }
+.text-lg { font-size: 1.25rem !important; }
+.text-md { font-size: 1.1rem !important; }
+.text-sm { font-size: 0.9rem !important; }
+.text-xs { font-size: 0.75rem !important; }
+.tracking-widest { letter-spacing: 0.2em !important; }
+.font-bold { font-weight: 700 !important; }
+
+/* Borders/Backgrounds */
+.border { border: 1px solid rgba(255, 255, 255, 0.1) !important; }
+.border-b-2 { border-bottom-width: 2px !important; }
+.border-gray { border-color: #3b4150 !important; }
+.border-primary { border-color: var(--primary) !important; }
+.border-transparent { border-color: transparent !important; }
+.rounded { border-radius: 8px !important; }
+.bg-black-50 { background: rgba(0, 0, 0, 0.5) !important; }
+.bg-black-70 { background: rgba(10, 5, 20, 0.7) !important; }
+.bg-neon { background: var(--neon) !important; }
+
+/* Hover States */
+.cursor-pointer { cursor: pointer !important; }
+.hover-border-primary:hover { border-color: var(--primary) !important; }
+.nav-link:hover { color: #fff !important; border-bottom: 2px solid #fff !important; }
+.hover\:text-white:hover { color: #fff !important; }
+.hover\:border-white:hover { border-color: #fff !important; }
+.hover\:bg-black-50:hover { background: rgba(0, 0, 0, 0.5) !important; }
+
+/* Utilities for z-indexing */
+.z-50 { z-index: 50 !important; }
+.relative { position: relative !important; }
+.absolute { position: absolute !important; }
+.right-0 { right: 0 !important; }
+.top-100 { top: 100% !important; }
+
