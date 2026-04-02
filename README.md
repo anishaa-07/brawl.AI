@@ -1,61 +1,83 @@
-<h1 align="center">⚔️ Brawl.AI ⚔️</h1>
-<h3 align="center">Battle. Think. Dominate. 🤖🔥</h3>
+<h1 align="center">⚔️ Brawl.AI</h1>
 
 <p align="center">
-  🚀 AI-Powered Gaming Arena where Intelligence meets Competition
+  <b>Battle. Think. Dominate.</b><br>
+  🚀 AI-Powered Gaming Arena
+</p>
+
+<p align="center">
+  <img src="https://readme-typing-svg.herokuapp.com?color=00F7FF&center=true&vCenter=true&lines=Fight.+Adapt.+Win.;Outsmart+Your+Opponent.;Enter+The+Arena.;Real-time+AI+Battles." />
 </p>
 
 ---
 
-### 🎮 Play Modes
-> 🧠 Think fast. React faster.
+## 🎮 Overview
 
-- 🤖 **Player vs AI**
-- ⚔️ **Player vs Player**
-- 👥 **Multiplayer Battles**
+> Brawl.AI is a futuristic AI-powered gaming platform where players compete in real-time battles using intelligence, strategy, and speed.
+
+💡 Designed with a modern neon gaming interface.
 
 ---
 
-### ⚡ Tech Stack
+## ⚔️ Game Modes
+
+* 🤖 Player vs AI
+* ⚔️ Player vs Player
+* 👥 Multiplayer Battles
+
+---
+
+## ⚡ Features
+
+* 🎯 Real-time gameplay
+* 🎨 Neon gaming UI
+* 🔊 Sound + animation effects
+* 🧠 Strategy-based mechanics
+* 🚀 Smooth transitions
+* 📱 Responsive design
+
+---
+
+## 🛠️ Tech Stack
+
+React • Node.js • MongoDB • JavaScript • HTML • CSS
+
+---
+
+## 📸 Preview
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Frontend-React-blue?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/Backend-Node.js-green?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/Database-MongoDB-brightgreen?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/Status-In%20Development-orange?style=for-the-badge"/>
+  <img src="YOUR_IMAGE_1" width="600"/><br><br>
+  <img src="YOUR_IMAGE_2" width="600"/>
 </p>
 
 ---
 
-### 🧠 About the Project
+## 🚀 Installation
 
-> Brawl.AI is an interactive AI-powered gaming platform where users can battle against AI or real players in a futuristic arena.
-
-✨ Features:
-- 🎯 Real-time battles  
-- 🎨 Neon gaming UI  
-- 🔊 Sound + animation effects  
-- 🧩 Strategy-based gameplay  
+git clone https://github.com/YOUR_USERNAME/brawl.ai.git
+cd brawl.ai
+npm install
+npm start
 
 ---
 
-### 📂 Table of Contents
+## 🎯 Future Plans
 
-- 🚀 Features
-- ⚙️ Tech Stack
-- 🎮 Gameplay
-- 📸 Screenshots
-- 📦 Installation
-- 🤝 Contributing
+* 🧠 Advanced AI
+* 🏆 Leaderboards
+* 💬 Live chat
+* 🎮 Custom avatars
 
 ---
 
-### 🎮 Gameplay Vision
+## 🏆 Status
 
-> Enter the arena. Choose your mode. Prove your intelligence.
+🚧 Currently in Development
 
 ---
 
-### 📸 Preview
+<p align="center">
+  ⭐ Star this repo if you like it!
+</p>
 
-<!-- Add your screenshots here -->
