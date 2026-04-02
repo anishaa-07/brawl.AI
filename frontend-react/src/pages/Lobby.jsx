@@ -2,9 +2,33 @@ import React from 'react';
 import './Lobby.css';
 
 const Lobby = () => {
+  // 👤 PLAYER PROFILE STATUS SYSTEM
+  const [profile, setProfile] = React.useState({
+    username: 'PlayerX',
+    level: 1,
+    xp: 0,
+    coins: 250
+  });
+
+  React.useEffect(() => {
+    // 💾 Load from localStorage
+    const saved = localStorage.getItem('brawl_profile');
+    let currentProfile = saved ? JSON.parse(saved) : profile;
+
+    // 🚀 Simulate XP gain on load
+    currentProfile.xp += 10;
+    if (currentProfile.xp >= 100) {
+      currentProfile.level += 1;
+      currentProfile.xp = 0;
+    }
+
+    setProfile(currentProfile);
+    localStorage.setItem('brawl_profile', JSON.stringify(currentProfile));
+  }, []);
+
   return (
     <div className="lobby-wrapper">
-      {/* BACKGROUND PARTICLES LAYER (No impact on layout) */}
+      {/* BACKGROUND PARTICLES LAYER */}
       <div className="bg-particles">
         <div className="particle"></div>
         <div className="particle"></div>
@@ -55,15 +79,33 @@ const Lobby = () => {
 
         {/* RIGHT SIDEBAR */}
         <div className="right">
-          <div className="simple-card">
-            <h3>PLAYER PROFILE</h3>
-            <p>Username: Pilot_X</p>
-            <p>Level: 12</p>
+          {/* FUNCTIONAL PLAYER PROFILE */}
+          <div className="profile-card simple-card">
+            <div className="profile-header">
+               <span className="username font-orbitron">{profile.username}</span>
+               <span className="level text-secondary">Lv. {profile.level}</span>
+            </div>
+            
+            <div className="xp-container">
+               <div className="xp-header">
+                 <span>XP FEED</span>
+                 <span>{profile.xp} / 100</span>
+               </div>
+               <div className="xp-track">
+                  <div className="xp-fill" style={{ width: `${profile.xp}%` }}></div>
+               </div>
+            </div>
+
+            <div className="coins-display text-primary">
+               <span>CREDITS: {profile.coins} CR</span>
+            </div>
           </div>
+
           <div className="simple-card">
             <h3>OPERATORS</h3>
             <p>No active units deployed.</p>
           </div>
+          
           <div className="simple-card chat-section">
             <h3>CHAT</h3>
             <div className="chat-content">
@@ -76,5 +118,6 @@ const Lobby = () => {
     </div>
   );
 };
+
 
 export default Lobby;
