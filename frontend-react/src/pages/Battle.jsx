@@ -1,178 +1,174 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Swords, Zap, Timer, ChevronLeft, Bot, Terminal, SkipForward, RefreshCw } from 'lucide-react';
+import {
+  Swords, Zap, ChevronLeft, Terminal, SkipForward,
+  RefreshCw, Tag, Lightbulb, CheckCircle, XCircle, Clock,
+} from 'lucide-react';
+import {
+  QUESTIONS, pickQuestion, checkAnswer, parseKeywords,
+  TOTAL_ROUNDS, TIMER_DURATION, XP_PER_CORRECT,
+} from './questionsData';
 import './Battle.css';
 
-// ── CHALLENGE POOL ──────────────────────────────────────────────
-const CHALLENGES = {
-  Easy: [
-    { task: 'Reverse the string', input: '"hello"', answer: 'OLLEH', hint: 'Read it backwards' },
-    { task: 'What is 8 × 7?', input: 'Multiply 8 and 7', answer: '56', hint: 'Basic arithmetic' },
-    { task: 'Reverse the string', input: '"cyber"', answer: 'REBYC', hint: 'Read it backwards' },
-    { task: 'What is 15 + 27?', input: 'Add 15 and 27', answer: '42', hint: 'Basic addition' },
-    { task: 'Uppercase this word', input: '"ghost"', answer: 'GHOST', hint: 'All caps' },
-  ],
-  Medium: [
-    { task: 'FizzBuzz for 15', input: 'Is 15 divisible by 3 and 5?', answer: 'FIZZBUZZ', hint: 'Divisible by both → FizzBuzz' },
-    { task: 'First + Last char of string', input: '"BRAWL"', answer: 'BL', hint: 'Index 0 and last index' },
-    { task: 'Count vowels in the word', input: '"OPERATOR"', answer: '4', hint: 'O, E, A, O' },
-    { task: 'What is 2^10?', input: 'Power of 2 to 10', answer: '1024', hint: 'Binary max for 10 bits' },
-    { task: 'Reverse + Uppercase', input: '"node"', answer: 'EDON', hint: 'Reverse then uppercase' },
-  ],
-  Hard: [
-    { task: 'Sum of digits', input: 'Number: 9876', answer: '30', hint: '9+8+7+6' },
-    { task: 'Palindrome check', input: '"RACECAR"', answer: 'TRUE', hint: 'Same forwards and backwards' },
-    { task: 'Binary to Decimal', input: '0b1010', answer: '10', hint: 'Powers of 2: 8+2' },
-    { task: 'Fibonacci index 8', input: 'F(8) in sequence 0,1,1,2...', answer: '21', hint: 'Count carefully' },
-    { task: 'Rotate array left by 1', input: '[3,7,1,9]', answer: '[7,1,9,3]', hint: 'First element goes to end' },
-  ],
+// ── SUB-COMPONENT: Question Text with keyword highlighting ───────
+const HighlightedQuestion = ({ raw }) => {
+  const segments = parseKeywords(raw);
+  return (
+    <span>
+      {segments.map((seg, i) =>
+        seg.highlight
+          ? <mark key={i} className="kw-highlight">{seg.text}</mark>
+          : <span key={i}>{seg.text}</span>
+      )}
+    </span>
+  );
 };
 
-const TOTAL_ROUNDS = 3;
-const TIMER_DURATION = { Easy: 60, Medium: 45, Hard: 30 };
+// ── SUB-COMPONENT: Topic tag badge ──────────────────────────────
+const TagBadge = ({ label }) => (
+  <span className="topic-tag font-orbitron">
+    <Tag size={9} /> {label}
+  </span>
+);
 
-// ── HELPER: pick a random challenge, avoid repeats ──────────────
-function pickChallenge(pool, usedIndices) {
-  const available = pool.map((_, i) => i).filter(i => !usedIndices.includes(i));
-  if (available.length === 0) return { idx: 0, challenge: pool[0] };
-  const idx = available[Math.floor(Math.random() * available.length)];
-  return { idx, challenge: pool[idx] };
-}
-
-// ── COMPONENT ───────────────────────────────────────────────────
+// ── MAIN BATTLE COMPONENT ────────────────────────────────────────
 const Battle = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const difficulty = location.state?.difficulty || 'Medium';
-  const pool = CHALLENGES[difficulty] || CHALLENGES.Medium;
+  const navigate  = useNavigate();
+  const location  = useLocation();
+
+  const difficulty   = location.state?.difficulty || 'Medium';
+  const pool         = QUESTIONS[difficulty] || QUESTIONS.Medium;
   const roundDuration = TIMER_DURATION[difficulty] || 45;
 
-  // ── State ──
-  const [round, setRound] = useState(1);
-  const [timeLeft, setTimeLeft] = useState(roundDuration);
-  const [playerHp, setPlayerHp] = useState(100);
-  const [aiHp, setAiHp] = useState(100);
-  const [userInput, setUserInput] = useState('');
-  const [isAttacking, setIsAttacking] = useState(false);
-  const [feedback, setFeedback] = useState(null); // { type: 'hit'|'miss'|'timeout', msg }
-  const [phase, setPhase] = useState('battle'); // 'battle' | 'result' | 'end'
-  const [battleResult, setBattleResult] = useState(''); // 'VICTORY' | 'DEFEAT' | 'DRAW'
-  const [roundResult, setRoundResult] = useState(null); // null | 'hit' | 'miss' | 'timeout'
-  const [usedIndices, setUsedIndices] = useState([]);
-  const [currentChallenge, setCurrentChallenge] = useState(() => {
-    const { idx, challenge } = pickChallenge(pool, []);
-    return { idx, ...challenge };
-  });
-  const [showEntrance, setShowEntrance] = useState(true);
-  const [showHint, setShowHint] = useState(false);
+  // ── State ───────────────────────────────────────────────────
+  const [round,         setRound]         = useState(1);
+  const [timeLeft,      setTimeLeft]      = useState(roundDuration);
+  const [playerHp,      setPlayerHp]      = useState(100);
+  const [aiHp,          setAiHp]          = useState(100);
+  const [totalXp,       setTotalXp]       = useState(0);
+  const [userInput,     setUserInput]      = useState('');
+  const [isAttacking,   setIsAttacking]   = useState(false);
+  const [feedback,      setFeedback]      = useState(null);
+  const [phase,         setPhase]         = useState('battle');
+  const [battleResult,  setBattleResult]  = useState('');
+  const [usedIds,       setUsedIds]       = useState([]);
+  const [question,      setQuestion]      = useState(() => pickQuestion(pool, []));
+  const [showHint,      setShowHint]      = useState(false);
+  const [showEntrance,  setShowEntrance]  = useState(true);
+  const [wrongAttempts, setWrongAttempts] = useState(0); // track misses per round
   const inputRef = useRef(null);
 
-  // ── Entrance Animation ──
+  // Derived
+  const timerPct    = (timeLeft / roundDuration) * 100;
+  const timerDanger = timeLeft <= 10;
+  const playerName  = user?.username?.toUpperCase() || 'PLAYERX';
+  const diffColor   = { Easy: '#00ff73', Medium: '#a238ff', Hard: '#ff3c8d' }[difficulty] || '#a238ff';
+  const diffLabel   = { Easy: 'BEGINNER', Medium: 'ADVANCED', Hard: 'ELITE' }[difficulty] || 'STANDARD';
+  const xpPerHit    = XP_PER_CORRECT[difficulty] || 10;
+  const isLastRound = round >= TOTAL_ROUNDS || aiHp <= 0 || playerHp <= 0;
+
+  // ── Entrance Animation ──────────────────────────────────────
   useEffect(() => {
     const t = setTimeout(() => setShowEntrance(false), 800);
     return () => clearTimeout(t);
   }, []);
 
-  // ── Timer ──
+  // ── Focus input on battle phase ─────────────────────────────
   useEffect(() => {
-    if (phase !== 'battle') return;
-    if (timeLeft <= 0) {
-      handleTimeOut();
-      return;
-    }
-    const t = setInterval(() => setTimeLeft(p => p - 1), 1000);
-    return () => clearInterval(t);
-  }, [timeLeft, phase]);
-
-  // Focus input when battle phase activates
-  useEffect(() => {
-    if (phase === 'battle') {
-      setTimeout(() => inputRef.current?.focus(), 200);
-    }
+    if (phase === 'battle') setTimeout(() => inputRef.current?.focus(), 150);
   }, [phase]);
 
-  // ── Attack Handler ──
+  // ── Timer ───────────────────────────────────────────────────
+  useEffect(() => {
+    if (phase !== 'battle') return;
+    if (timeLeft <= 0) { handleTimeOut(); return; }
+    const t = setInterval(() => setTimeLeft(p => p - 1), 1000);
+    return () => clearInterval(t);
+  }, [timeLeft, phase]); // eslint-disable-line
+
+  // ── Submit Attack ───────────────────────────────────────────
   const handleAttack = useCallback(() => {
-    if (isAttacking || phase !== 'battle') return;
-    const answer = userInput.trim().toUpperCase();
-    const correct = currentChallenge.answer.toUpperCase();
-    const isHit = answer === correct;
+    if (isAttacking || phase !== 'battle' || !userInput.trim()) return;
     setIsAttacking(true);
     setShowHint(false);
+
+    const isHit = checkAnswer(question, userInput);
 
     setTimeout(() => {
       if (isHit) {
         const dmg = difficulty === 'Easy' ? 34 : difficulty === 'Medium' ? 38 : 42;
         setAiHp(prev => Math.max(0, prev - dmg));
-        setFeedback({ type: 'hit', msg: 'CRITICAL HIT! ⚡ AI CORE DAMAGED.' });
-        setRoundResult('hit');
+        setTotalXp(prev => prev + xpPerHit);
+        setFeedback({ type: 'hit', xp: xpPerHit });
+        setWrongAttempts(0);
       } else {
-        const dmg = difficulty === 'Easy' ? 18 : difficulty === 'Medium' ? 22 : 28;
+        const dmg = wrongAttempts === 0
+          ? (difficulty === 'Easy' ? 18 : difficulty === 'Medium' ? 22 : 28)
+          : 8; // reduced damage on retry
         setPlayerHp(prev => Math.max(0, prev - dmg));
-        setFeedback({ type: 'miss', msg: 'MISS! ❌ AI COUNTER-ATTACK!' });
-        setRoundResult('miss');
+        setWrongAttempts(prev => prev + 1);
+        setFeedback({ type: 'miss', answer: question.answer[0] });
       }
+      setUserInput('');
       setIsAttacking(false);
       setPhase('result');
-    }, 700);
-  }, [isAttacking, phase, userInput, currentChallenge, difficulty]);
+    }, 650);
+  }, [isAttacking, phase, userInput, question, difficulty, wrongAttempts, xpPerHit]);
 
   const handleTimeOut = useCallback(() => {
-    const dmg = 15;
-    setPlayerHp(prev => Math.max(0, prev - dmg));
-    setFeedback({ type: 'timeout', msg: 'TIME EXPIRED! ⏱ AI GAINS ADVANTAGE.' });
-    setRoundResult('timeout');
+    setPlayerHp(prev => Math.max(0, prev - 15));
+    setFeedback({ type: 'timeout', answer: question.answer[0] });
+    setWrongAttempts(0);
     setPhase('result');
-  }, []);
+  }, [question]);
 
-  // ── After Result: Next Round or End ──
+  // ── Next Round ──────────────────────────────────────────────
   const handleNext = useCallback(() => {
-    const newAiHp = aiHp;
+    const newAiHp     = aiHp;
     const newPlayerHp = playerHp;
+    const ending      = round >= TOTAL_ROUNDS || newAiHp <= 0 || newPlayerHp <= 0;
 
-    if (round >= TOTAL_ROUNDS || newAiHp <= 0 || newPlayerHp <= 0) {
-      // End battle
+    if (ending) {
       let result;
-      if (newAiHp <= 0 && newPlayerHp > 0) result = 'VICTORY';
-      else if (newPlayerHp <= 0) result = 'DEFEAT';
-      else if (newAiHp < newPlayerHp) result = 'VICTORY';
-      else if (newPlayerHp < newAiHp) result = 'DEFEAT';
-      else result = 'DRAW';
+      if      (newAiHp <= 0 && newPlayerHp > 0) result = 'VICTORY';
+      else if (newPlayerHp <= 0)                 result = 'DEFEAT';
+      else if (newAiHp < newPlayerHp)            result = 'VICTORY';
+      else if (newPlayerHp < newAiHp)            result = 'DEFEAT';
+      else                                        result = 'DRAW';
       setBattleResult(result);
       setPhase('end');
       return;
     }
 
-    // Next round
-    const newUsed = [...usedIndices, currentChallenge.idx];
-    setUsedIndices(newUsed);
-    const { idx, challenge } = pickChallenge(pool, newUsed);
-    setCurrentChallenge({ idx, ...challenge });
+    // Advance to next round
+    const newUsed = [...usedIds, question.id];
+    setUsedIds(newUsed);
+    const next = pickQuestion(pool, newUsed);
+    setQuestion(next);
     setRound(r => r + 1);
     setTimeLeft(roundDuration);
     setUserInput('');
     setFeedback(null);
-    setRoundResult(null);
-    setIsAttacking(false);
+    setWrongAttempts(0);
     setShowHint(false);
+    setIsAttacking(false);
     setPhase('battle');
-  }, [round, aiHp, playerHp, usedIndices, currentChallenge, pool, roundDuration]);
+  }, [round, aiHp, playerHp, usedIds, question.id, pool, roundDuration]);
 
-  const handleRetry = () => window.location.reload();
+  const handleRetry   = () => window.location.reload();
   const handleRetreat = () => navigate('/lobby');
 
-  const timerPct = (timeLeft / roundDuration) * 100;
-  const timerDanger = timeLeft <= 10;
-  const playerName = user?.username?.toUpperCase() || 'PLAYERX';
-
-  // Difficulty color
-  const diffColor = { Easy: '#00ff73', Medium: '#a238ff', Hard: '#ff3c8d' }[difficulty] || '#a238ff';
-  const diffLabel = { Easy: 'BEGINNER', Medium: 'ADVANCED', Hard: 'ELITE' }[difficulty] || 'STANDARD';
+  // XP totals for end screen
+  const maxXp    = TOTAL_ROUNDS * xpPerHit;
+  const xpBonus  = battleResult === 'VICTORY'
+    ? (difficulty === 'Easy' ? 150 : difficulty === 'Medium' ? 250 : 400)
+    : 0;
 
   return (
     <div className={`battle-screen ${showEntrance ? 'battle-enter' : ''} ${isAttacking ? 'screen-shake' : ''}`}>
+
       {/* ── ANIMATED BACKGROUND ── */}
       <div className="battle-bg">
         <div className="bg-grid"></div>
@@ -186,11 +182,9 @@ const Battle = () => {
 
       {/* ── HUD: TOP BAR ── */}
       <header className="battle-hud glass-panel">
-        {/* Player Side */}
+        {/* Player */}
         <div className="hud-fighter hud-player">
-          <div className="hud-name font-orbitron">
-            <span className="hud-icon">⚡</span> {playerName}
-          </div>
+          <div className="hud-name font-orbitron"><span className="hud-icon">⚡</span> {playerName}</div>
           <div className="hud-bar-track">
             <div className="hud-bar-fill player-fill" style={{ width: `${playerHp}%` }}></div>
             <div className="hud-bar-glow player-glow" style={{ width: `${playerHp}%` }}></div>
@@ -198,7 +192,7 @@ const Battle = () => {
           <div className="hud-hp-label font-orbitron">{playerHp}<span>%</span></div>
         </div>
 
-        {/* Center Info */}
+        {/* Timer + XP */}
         <div className="hud-center">
           <div className={`timer-circle ${timerDanger ? 'timer-danger' : ''}`}>
             <svg viewBox="0 0 56 56" className="timer-svg">
@@ -215,16 +209,19 @@ const Battle = () => {
           </div>
           <div className="hud-round font-orbitron">RD {round}/{TOTAL_ROUNDS}</div>
           <div className="diff-badge font-orbitron" style={{ color: diffColor }}>{diffLabel}</div>
+          <div className="xp-counter font-orbitron">
+            <Zap size={11} /> {totalXp} XP
+          </div>
         </div>
 
-        {/* AI Side */}
+        {/* AI */}
         <div className="hud-fighter hud-ai">
           <div className="hud-name font-orbitron" style={{ justifyContent: 'flex-end' }}>
             AI-CORE-X <span className="hud-icon">🤖</span>
           </div>
           <div className="hud-bar-track">
-            <div className="hud-bar-fill ai-fill" style={{ width: `${aiHp}%` }}></div>
-            <div className="hud-bar-glow ai-glow" style={{ width: `${aiHp}%` }}></div>
+            <div className="hud-bar-fill ai-fill"  style={{ width: `${aiHp}%` }}></div>
+            <div className="hud-bar-glow ai-glow"  style={{ width: `${aiHp}%` }}></div>
           </div>
           <div className="hud-hp-label font-orbitron" style={{ textAlign: 'right' }}>{aiHp}<span>%</span></div>
         </div>
@@ -233,11 +230,15 @@ const Battle = () => {
       {/* ── MAIN BATTLE ZONE ── */}
       <main className="battle-main">
 
-        {/* ── CHALLENGE TERMINAL ── */}
-        <div className="challenge-card glass-panel">
+        {/* ── CODING QUESTION TERMINAL ── */}
+        <div className="challenge-card glass-panel" key={question.id}>
+          {/* Terminal top-bar */}
           <div className="card-topbar font-orbitron">
-            <Terminal size={16} />
+            <Terminal size={15} />
             <span>NEURAL CHALLENGE — ROUND {round}</span>
+            <div className="q-tags">
+              {question.tags.map(t => <TagBadge key={t} label={t} />)}
+            </div>
             <div className="card-dots">
               <span style={{ background: '#ff5f56' }}></span>
               <span style={{ background: '#ffbd2e' }}></span>
@@ -245,25 +246,41 @@ const Battle = () => {
             </div>
           </div>
 
+          {/* Question body */}
           <div className="card-body">
-            <p className="terminal-line dim">&gt; ACCESSING NEURAL DATABASE...</p>
-            <p className="terminal-line dim">&gt; CHALLENGE LOADED: <span className="text-bright">{currentChallenge.task.toUpperCase()}</span></p>
+            {/* title */}
+            <div className="q-title font-orbitron">{question.title}</div>
 
-            <div className="challenge-input-box font-orbitron">
-              {currentChallenge.input}
+            {/* problem statement with highlighted keywords */}
+            <p className="q-statement">
+              <HighlightedQuestion raw={question.question} />
+            </p>
+
+            {/* Example box */}
+            <div className="example-box">
+              <div className="example-row">
+                <span className="ex-label font-orbitron">INPUT</span>
+                <span className="ex-value font-orbitron">{question.example.input}</span>
+              </div>
+              <div className="example-divider"></div>
+              <div className="example-row">
+                <span className="ex-label font-orbitron">OUTPUT</span>
+                <span className="ex-value font-orbitron output-val">{question.example.output}</span>
+              </div>
             </div>
 
-            <p className="terminal-line prompt">&gt; ENTER YOUR SOLUTION:</p>
+            <p className="terminal-line prompt">&gt; ENTER YOUR ANSWER:</p>
           </div>
 
+          {/* Hint strip */}
           {showHint && (
             <div className="hint-bar font-orbitron">
-              💡 HINT: {currentChallenge.hint}
+              <Lightbulb size={13} /> HINT: {question.hint}
             </div>
           )}
         </div>
 
-        {/* ── ACTION AREA (battle phase) ── */}
+        {/* ── INPUT + BUTTONS (battle phase) ── */}
         {phase === 'battle' && (
           <div className="battle-action-zone">
             <div className="input-wrapper">
@@ -278,6 +295,7 @@ const Battle = () => {
                 disabled={isAttacking}
                 autoComplete="off"
                 spellCheck={false}
+                id="answer-input"
               />
               <div className="input-border-glow"></div>
             </div>
@@ -296,11 +314,12 @@ const Battle = () => {
               </button>
 
               <button
-                className="hint-btn font-orbitron"
+                className={`hint-btn font-orbitron ${showHint ? 'hint-active' : ''}`}
                 onClick={() => setShowHint(v => !v)}
                 id="hint-btn"
               >
-                {showHint ? '🙈 HIDE HINT' : '💡 HINT'}
+                <Lightbulb size={15} />
+                {showHint ? 'HIDE' : 'HINT'}
               </button>
             </div>
           </div>
@@ -309,28 +328,44 @@ const Battle = () => {
         {/* ── RESULT FEEDBACK (result phase) ── */}
         {phase === 'result' && feedback && (
           <div className={`result-feedback-card ${feedback.type} animate-fade-in`}>
-            <div className={`result-icon-big ${feedback.type}`}>
-              {feedback.type === 'hit' ? '💥' : feedback.type === 'miss' ? '❌' : '⏱'}
+
+            {/* Icon */}
+            <div className="result-icon-big">
+              {feedback.type === 'hit'
+                ? <CheckCircle size={52} color="#00ff73" strokeWidth={1.5} />
+                : feedback.type === 'miss'
+                ? <XCircle    size={52} color="#ff3c8d" strokeWidth={1.5} />
+                : <Clock      size={52} color="#ffbe00" strokeWidth={1.5} />
+              }
             </div>
+
+            {/* Label */}
             <div className={`result-label font-orbitron ${feedback.type}`}>
               {feedback.type === 'hit' ? 'HIT!' : feedback.type === 'miss' ? 'MISS!' : 'TIMEOUT!'}
             </div>
-            <p className="result-msg font-orbitron">{feedback.msg}</p>
 
-            {feedback.type !== 'hit' && (
-              <p className="answer-reveal font-orbitron">
-                CORRECT ANSWER: <span>{currentChallenge.answer}</span>
-              </p>
+            {/* XP / message */}
+            {feedback.type === 'hit' ? (
+              <div className="xp-pop font-orbitron">
+                + {feedback.xp} XP  EARNED <Zap size={14} />
+              </div>
+            ) : (
+              <p className="result-try font-orbitron">Try again next round.</p>
             )}
 
-            <button
-              className="next-btn font-orbitron"
-              onClick={handleNext}
-              id="next-round-btn"
-            >
-              {round >= TOTAL_ROUNDS || aiHp <= 0 || playerHp <= 0
-                ? <><SkipForward size={18} /> END BATTLE</>
-                : <><SkipForward size={18} /> NEXT ROUND</>
+            {/* Show correct answer on miss/timeout */}
+            {feedback.type !== 'hit' && (
+              <div className="answer-reveal-box font-orbitron">
+                <span className="ar-label">CORRECT ANSWER</span>
+                <span className="ar-value">{feedback.answer}</span>
+              </div>
+            )}
+
+            {/* Next / End button */}
+            <button className="next-btn font-orbitron" onClick={handleNext} id="next-round-btn">
+              {isLastRound
+                ? <><SkipForward size={16} /> END BATTLE</>
+                : <><SkipForward size={16} /> NEXT ROUND</>
               }
             </button>
           </div>
@@ -341,10 +376,12 @@ const Battle = () => {
       {/* ── FOOTER ── */}
       <footer className="battle-footer">
         <button className="retreat-btn font-orbitron" onClick={handleRetreat} id="retreat-btn">
-          <ChevronLeft size={16} /> RETREAT
+          <ChevronLeft size={14} /> RETREAT
         </button>
         <div className="footer-sparks">
-          {[...Array(5)].map((_, i) => <div className="spark" key={i} style={{ '--d': `${i * 0.4}s` }}></div>)}
+          {[...Array(5)].map((_, i) => (
+            <div className="spark" key={i} style={{ '--d': `${i * 0.4}s` }}></div>
+          ))}
         </div>
       </footer>
 
@@ -363,6 +400,8 @@ const Battle = () => {
                 ? 'SYSTEM OVERRIDE. YOU WERE OUTMATCHED.'
                 : 'STALEMATE. THE WAR CONTINUES.'}
             </p>
+
+            {/* Stats grid */}
             <div className="end-stats glass-panel">
               <div className="stat-item">
                 <span className="stat-label font-orbitron">DIFFICULTY</span>
@@ -377,26 +416,30 @@ const Battle = () => {
                 <span className="stat-val font-orbitron" style={{ color: playerHp > 50 ? '#00ff73' : '#ff3c8d' }}>{playerHp}%</span>
               </div>
               <div className="stat-item">
-                <span className="stat-label font-orbitron">AI HP</span>
-                <span className="stat-val font-orbitron" style={{ color: aiHp > 50 ? '#ff3c8d' : '#00ff73' }}>{aiHp}%</span>
+                <span className="stat-label font-orbitron">CODE XP</span>
+                <span className="stat-val font-orbitron" style={{ color: '#a238ff' }}>{totalXp}</span>
               </div>
             </div>
-            {battleResult === 'VICTORY' && (
-              <div className="xp-reward font-orbitron">
-                <Zap size={18} /> +{difficulty === 'Easy' ? 150 : difficulty === 'Medium' ? 250 : 400} XP EARNED
-              </div>
-            )}
+
+            {/* XP reward */}
+            <div className="xp-reward font-orbitron">
+              <Zap size={16} />
+              CODE XP: {totalXp}
+              {xpBonus > 0 && <span className="bonus-pill">+{xpBonus} VICTORY BONUS</span>}
+            </div>
+
             <div className="end-actions">
               <button className="end-btn primary font-orbitron" onClick={handleRetry} id="retry-btn">
-                <RefreshCw size={16} /> RETRY BATTLE
+                <RefreshCw size={14} /> RETRY
               </button>
               <button className="end-btn secondary font-orbitron" onClick={handleRetreat} id="lobby-btn">
-                <ChevronLeft size={16} /> LOBBY
+                <ChevronLeft size={14} /> LOBBY
               </button>
             </div>
           </div>
         </div>
       )}
+
     </div>
   );
 };
