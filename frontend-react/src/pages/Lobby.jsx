@@ -1,8 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Lobby.css';
 import { X } from 'lucide-react';
 
 const Lobby = () => {
+  const navigate = useNavigate();
   // 👤 PLAYER PROFILE STATUS SYSTEM
   const [profile, setProfile] = React.useState({
     username: 'PlayerX',
@@ -34,7 +36,9 @@ const Lobby = () => {
   const handleDifficultySelect = (diff) => {
     setIsModalOpen(false);
     setStatusMessage(`Initializing AI Battle [${diff.toUpperCase()}]...`);
-    setTimeout(() => setStatusMessage(''), 3000); // Clear after 3s
+    setTimeout(() => {
+      navigate('/battle', { state: { difficulty: diff } });
+    }, 900);
   };
 
   return (
