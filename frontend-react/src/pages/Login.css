@@ -20,7 +20,7 @@
   align-items: center;
   font-family: 'Orbitron', 'Montserrat', sans-serif;
   color: #fff;
-  overflow: hidden;
+  overflow: clip;
   position: relative;
   background-color: transparent;
 }

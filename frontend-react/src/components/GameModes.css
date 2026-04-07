@@ -2,7 +2,7 @@
 .gm-section {
   position: relative;
   padding: 20px 0;
-  overflow: hidden;
+  overflow: clip;
   color: #fff;
 }
 
