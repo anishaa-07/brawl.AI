@@ -17,10 +17,15 @@ const diffBg    = { Easy: 'rgba(0,255,115,0.08)', Medium: 'rgba(162,56,255,0.08)
 const QCard = React.memo(({ q, isSelected, onClick }) => (
   <div
     className={`q-card ${isSelected ? 'q-card-active' : ''}`}
-    onClick={() => onClick(q)}
+    onClick={(e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      onClick(q);
+    }}
     role="button"
     tabIndex={0}
     id={`q-${q.id}`}
+    style={{ cursor: 'pointer', position: 'relative', zIndex: 100, pointerEvents: 'auto' }}
   >
     <div className="qc-left">
       <span className="qc-title font-orbitron">{q.title}</span>

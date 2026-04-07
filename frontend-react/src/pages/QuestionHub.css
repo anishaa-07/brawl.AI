@@ -179,6 +179,8 @@
   gap: 14px;
   padding: 0 14px 14px;
   z-index: 10;
+  position: relative;
+  pointer-events: auto;
   overflow: hidden;
   min-height: 0;
 }
@@ -277,6 +279,9 @@
   gap: 0;
   overflow: hidden;
   min-height: 0;
+  position: relative;
+  z-index: 20;
+  pointer-events: auto;
 }
 
 .hub-list-inner {
@@ -306,6 +311,15 @@
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   width: 100%;
   gap: 12px;
+  position: relative;
+  z-index: 30;
+  pointer-events: auto;
+}
+
+.q-card:active {
+  background: rgba(162,56,255,0.2) !important;
+  border-color: #fff !important;
+  transform: scale(0.98);
 }
 
 .q-card:hover {
