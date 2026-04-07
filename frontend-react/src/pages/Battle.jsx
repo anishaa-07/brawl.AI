@@ -252,179 +252,188 @@ const Battle = () => {
 
       {/* ── MAIN BATTLE ZONE ── */}
       <main className="battle-main">
+        <div className="battle-split">
 
-        {/* ── CODING QUESTION TERMINAL ── */}
-        <div className="challenge-card glass-panel" key={question?.id || 'unknown'}>
-          {/* Terminal top-bar */}
-          <div className="card-topbar font-orbitron">
-            <Terminal size={15} />
-            <span>NEURAL CHALLENGE — ROUND {round}</span>
-            <div className="q-tags">
-              {Array.isArray(question?.tags) && question.tags.map(t => <TagBadge key={t} label={t} />)}
-            </div>
-            <div className="card-dots">
-              <span style={{ background: '#ff5f56' }}></span>
-              <span style={{ background: '#ffbd2e' }}></span>
-              <span style={{ background: '#27c93f' }}></span>
-            </div>
-          </div>
-
-          {/* Question body */}
-          <div className="card-body">
-            {/* title */}
-            <div className="q-title font-orbitron">{question?.title || 'Unknown Override'}</div>
-
-            {/* problem statement with highlighted keywords */}
-            <p className="q-statement">
-              <HighlightedQuestion raw={question?.question || question?.description || 'Process sequence...'} />
-            </p>
-
-            {/* Example box */}
-            {question?.example && (
-              <div className="example-box">
-                <div className="example-row">
-                  <span className="ex-label font-orbitron">INPUT FORMAT</span>
-                  <span className="ex-value font-orbitron">{question.example.input || ''}</span>
+          {/* ══════════════════════ LEFT: QUESTION PANEL ══════════════════════ */}
+          <div className="question-panel glass-panel">
+            {question ? (
+              <>
+                {/* Panel header */}
+                <div className="qp-topbar font-orbitron">
+                  <Terminal size={14} />
+                  <span>NEURAL CHALLENGE — ROUND {round}</span>
+                  <div className="q-tags">
+                    {Array.isArray(question?.tags) && question.tags.map(t => <TagBadge key={t} label={t} />)}
+                  </div>
+                  <div className="card-dots">
+                    <span style={{ background: '#ff5f56' }}></span>
+                    <span style={{ background: '#ffbd2e' }}></span>
+                    <span style={{ background: '#27c93f' }}></span>
+                  </div>
                 </div>
-                <div className="example-divider"></div>
-                <div className="example-row">
-                  <span className="ex-label font-orbitron">EXPECTED OUTPUT</span>
-                  <span className="ex-value font-orbitron output-val">{question.example.output || ''}</span>
+
+                {/* Question body */}
+                <div className="qp-body">
+                  {/* Title */}
+                  <div className="q-title font-orbitron">{question.title || 'Unknown Challenge'}</div>
+
+                  {/* Description */}
+                  <div className="qp-section-label font-orbitron">PROBLEM</div>
+                  <p className="q-statement">
+                    <HighlightedQuestion raw={question.question || question.description || 'No description available.'} />
+                  </p>
+
+                  {/* Input / Output Format */}
+                  {question.example && (
+                    <div className="qp-io-grid">
+                      <div className="qp-io-block">
+                        <div className="qp-io-label font-orbitron">
+                          <span className="qp-io-dot input-dot"></span>INPUT FORMAT
+                        </div>
+                        <pre className="qp-io-value">{question.example.input || '—'}</pre>
+                      </div>
+                      <div className="qp-io-block">
+                        <div className="qp-io-label font-orbitron">
+                          <span className="qp-io-dot output-dot"></span>EXPECTED OUTPUT
+                        </div>
+                        <pre className="qp-io-value output-val">{question.example.output || '—'}</pre>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Hint */}
+                  {showHint && (
+                    <div className="hint-bar font-orbitron" style={{ marginTop: '12px' }}>
+                      <Lightbulb size={13} /> HINT: {question.hint || 'No hint available.'}
+                    </div>
+                  )}
                 </div>
-              </div>
-            )}
-
-            <p className="terminal-line prompt">&gt; ENTER YOUR ANSWER:</p>
-          </div>
-
-          {/* Hint strip */}
-          {showHint && (
-            <div className="hint-bar font-orbitron">
-              <Lightbulb size={13} /> HINT: {question?.hint || 'No hint available for this sector.'}
-            </div>
-          )}
-        </div>
-
-        {/* ── CODE EDITOR (REPLACES SIMPLE INPUT) ── */}
-        {phase === 'battle' && (
-          <div className="battle-action-zone code-mode">
-            <div className="code-editor-wrapper">
-              <div className="editor-header font-orbitron">
-                <div className="editor-tab active">solution.code</div>
-                <select className="lang-dropdown font-orbitron" defaultValue="javascript">
-                  <option value="javascript">JavaScript</option>
-                  <option value="python">Python</option>
-                  <option value="java">Java</option>
-                  <option value="cpp">C++</option>
-                </select>
-              </div>
-              <div className="editor-body">
-                <div className="editor-lines">
-                  {Array.from({ length: Math.max(6, (userInput.match(/\n/g) || []).length + 1) }).map((_, i) => (
-                    <div key={i} className="line-num font-orbitron">{i + 1}</div>
-                  ))}
-                </div>
-                <textarea
-                  ref={inputRef}
-                  value={userInput}
-                  onChange={e => setUserInput(e.target.value)}
-                  onKeyDown={e => {
-                    if (e.key === 'Tab') {
-                      e.preventDefault();
-                      const target = e.target;
-                      const { selectionStart, selectionEnd } = target;
-                      setUserInput(userInput.substring(0, selectionStart) + '  ' + userInput.substring(selectionEnd));
-                      setTimeout(() => { target.selectionStart = target.selectionEnd = selectionStart + 2; }, 0);
-                    }
-                  }}
-                  className="code-textarea"
-                  placeholder="// Implement your solution here..."
-                  disabled={isAttacking}
-                  spellCheck={false}
-                />
-              </div>
-            </div>
-
-            <div className="action-buttons code-actions">
-              <button 
-                className="reset-btn font-orbitron" 
-                onClick={() => setUserInput('')}
-                disabled={isAttacking}
-              >
-                <RefreshCw size={15} /> RESET CODE
-              </button>
-
-              <button
-                className={`attack-btn font-orbitron ${isAttacking ? 'btn-loading' : ''}`}
-                onClick={handleAttack}
-                disabled={isAttacking || !userInput.trim()}
-                id="submit-attack-btn"
-              >
-                {isAttacking
-                  ? <><Zap size={18} className="spin-icon" /> COMPILING...</>
-                  : <><Terminal size={18} /> RUN CODE & ATTACK ⚡</>
-                }
-              </button>
-
-              <button
-                className={`hint-btn font-orbitron ${showHint ? 'hint-active' : ''}`}
-                onClick={() => setShowHint(v => !v)}
-                id="hint-btn"
-              >
-                <Lightbulb size={15} />
-                {showHint ? 'HIDE' : 'HINT'}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* ── RESULT FEEDBACK (result phase) ── */}
-        {phase === 'result' && feedback && (
-          <div className={`result-feedback-card ${feedback.type} animate-fade-in`}>
-
-            {/* Icon */}
-            <div className="result-icon-big">
-              {feedback.type === 'hit'
-                ? <CheckCircle size={52} color="#00ff73" strokeWidth={1.5} />
-                : feedback.type === 'miss'
-                ? <XCircle    size={52} color="#ff3c8d" strokeWidth={1.5} />
-                : <Clock      size={52} color="#ffbe00" strokeWidth={1.5} />
-              }
-            </div>
-
-            {/* Label */}
-            <div className={`result-label font-orbitron ${feedback.type}`}>
-              {feedback.type === 'hit' ? 'Hit! +XP ⚡' : feedback.type === 'miss' ? 'Compilation Failed ❌' : 'Timeout Failed ❌'}
-            </div>
-
-            {/* XP / message */}
-            {feedback.type === 'hit' ? (
-              <div className="xp-pop font-orbitron">
-                + {feedback.xp} XP  EARNED <Zap size={14} />
-              </div>
+              </>
             ) : (
-              <p className="result-try font-orbitron">Try again next round.</p>
+              /* Fallback when no question */
+              <div className="qp-no-question">
+                <Terminal size={36} style={{ color: '#3d4a5c', marginBottom: '16px' }} />
+                <p className="font-orbitron qp-no-q-text">No question selected.</p>
+                <p className="qp-no-q-sub">Please choose a challenge from the Question Hub.</p>
+              </div>
             )}
+          </div>
 
-            {/* Show correct answer on miss/timeout */}
-            {feedback.type !== 'hit' && (
-              <div className="answer-reveal-box font-orbitron">
-                <span className="ar-label">CORRECT ANSWER</span>
-                <span className="ar-value">{feedback.answer}</span>
+          {/* ══════════════════════ RIGHT: EDITOR PANEL ══════════════════════ */}
+          <div className="editor-panel">
+
+            {/* ── CODE EDITOR ── */}
+            {phase === 'battle' && (
+              <div className="battle-action-zone code-mode" style={{ maxWidth: '100%' }}>
+                <div className="code-editor-wrapper">
+                  <div className="editor-header font-orbitron">
+                    <div className="editor-tab active">solution.code</div>
+                    <select className="lang-dropdown font-orbitron" defaultValue="javascript">
+                      <option value="javascript">JavaScript</option>
+                      <option value="python">Python</option>
+                      <option value="java">Java</option>
+                      <option value="cpp">C++</option>
+                    </select>
+                  </div>
+                  <div className="editor-body">
+                    <div className="editor-lines">
+                      {Array.from({ length: Math.max(10, (userInput.match(/\n/g) || []).length + 1) }).map((_, i) => (
+                        <div key={i} className="line-num font-orbitron">{i + 1}</div>
+                      ))}
+                    </div>
+                    <textarea
+                      ref={inputRef}
+                      value={userInput}
+                      onChange={e => setUserInput(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === 'Tab') {
+                          e.preventDefault();
+                          const target = e.target;
+                          const { selectionStart, selectionEnd } = target;
+                          setUserInput(userInput.substring(0, selectionStart) + '  ' + userInput.substring(selectionEnd));
+                          setTimeout(() => { target.selectionStart = target.selectionEnd = selectionStart + 2; }, 0);
+                        }
+                      }}
+                      className="code-textarea"
+                      placeholder={"// Write your solution here...\n// Example:\nfunction solution(input) {\n  // your logic\n}"}
+                      disabled={isAttacking}
+                      spellCheck={false}
+                    />
+                  </div>
+                </div>
+
+                <div className="action-buttons code-actions">
+                  <button
+                    className="reset-btn font-orbitron"
+                    onClick={() => setUserInput('')}
+                    disabled={isAttacking}
+                  >
+                    <RefreshCw size={15} /> RESET
+                  </button>
+
+                  <button
+                    className={`attack-btn font-orbitron ${isAttacking ? 'btn-loading' : ''}`}
+                    onClick={handleAttack}
+                    disabled={isAttacking || !userInput.trim()}
+                    id="submit-attack-btn"
+                  >
+                    {isAttacking
+                      ? <><Zap size={18} className="spin-icon" /> COMPILING...</>
+                      : <><Terminal size={18} /> RUN &amp; ATTACK ⚡</>
+                    }
+                  </button>
+
+                  <button
+                    className={`hint-btn font-orbitron ${showHint ? 'hint-active' : ''}`}
+                    onClick={() => setShowHint(v => !v)}
+                    id="hint-btn"
+                  >
+                    <Lightbulb size={15} />
+                    {showHint ? 'HIDE HINT' : 'HINT'}
+                  </button>
+                </div>
               </div>
             )}
 
-            {/* Next / End button */}
-            <button className="next-btn font-orbitron" onClick={handleNext} id="next-round-btn">
-              {isLastRound
-                ? <><SkipForward size={16} /> END BATTLE</>
-                : <><SkipForward size={16} /> NEXT ROUND</>
-              }
-            </button>
-          </div>
-        )}
+            {/* ── RESULT FEEDBACK ── */}
+            {phase === 'result' && feedback && (
+              <div className={`result-feedback-card ${feedback.type} animate-fade-in`}>
+                <div className="result-icon-big">
+                  {feedback.type === 'hit'
+                    ? <CheckCircle size={52} color="#00ff73" strokeWidth={1.5} />
+                    : feedback.type === 'miss'
+                    ? <XCircle    size={52} color="#ff3c8d" strokeWidth={1.5} />
+                    : <Clock      size={52} color="#ffbe00" strokeWidth={1.5} />
+                  }
+                </div>
+                <div className={`result-label font-orbitron ${feedback.type}`}>
+                  {feedback.type === 'hit' ? 'HIT! +XP ⚡' : feedback.type === 'miss' ? 'Compilation Failed ❌' : 'Timeout ❌'}
+                </div>
+                {feedback.type === 'hit' ? (
+                  <div className="xp-pop font-orbitron">+{feedback.xp} XP EARNED <Zap size={14} /></div>
+                ) : (
+                  <p className="result-try font-orbitron">Check your logic and try again.</p>
+                )}
+                {feedback.type !== 'hit' && (
+                  <div className="answer-reveal-box font-orbitron">
+                    <span className="ar-label">CORRECT ANSWER</span>
+                    <span className="ar-value">{feedback.answer}</span>
+                  </div>
+                )}
+                <button className="next-btn font-orbitron" onClick={handleNext} id="next-round-btn">
+                  {isLastRound
+                    ? <><SkipForward size={16} /> END BATTLE</>
+                    : <><SkipForward size={16} /> NEXT ROUND</>
+                  }
+                </button>
+              </div>
+            )}
 
+          </div>{/* end editor-panel */}
+        </div>{/* end battle-split */}
       </main>
+
+
 
       {/* ── FOOTER ── */}
       <footer className="battle-footer">
