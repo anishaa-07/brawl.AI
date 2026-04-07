@@ -169,6 +169,26 @@ const Battle = () => {
     ? (difficulty === 'Easy' ? 150 : difficulty === 'Medium' ? 250 : 400)
     : 0;
 
+  if (!question) {
+    return (
+      <div className="battle-screen">
+        <div className="battle-bg">
+          <div className="bg-grid"></div>
+          <div className="bg-orb orb-1"></div>
+          <div className="bg-orb orb-2"></div>
+          <div className="bg-scanlines"></div>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#fff', position: 'relative', zIndex: 10 }}>
+           <h2 className="font-orbitron" style={{ fontSize: '1.5rem', letterSpacing: '4px' }}>Loading battle...</h2>
+           <p className="font-orbitron" style={{ color: '#aaa', marginTop: '10px', fontSize: '0.8rem', letterSpacing: '2px' }}>Initializing combat data.</p>
+           <button className="retreat-btn font-orbitron" style={{ marginTop: '30px', padding: '10px 20px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.2)' }} onClick={() => navigate('/lobby')}>
+             <ChevronLeft size={16} /> RETURN TO LOBBY
+           </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`battle-screen ${showEntrance ? 'battle-enter' : ''} ${isAttacking ? 'screen-shake' : ''}`}>
 
@@ -234,13 +254,13 @@ const Battle = () => {
       <main className="battle-main">
 
         {/* ── CODING QUESTION TERMINAL ── */}
-        <div className="challenge-card glass-panel" key={question.id}>
+        <div className="challenge-card glass-panel" key={question?.id || 'unknown'}>
           {/* Terminal top-bar */}
           <div className="card-topbar font-orbitron">
             <Terminal size={15} />
             <span>NEURAL CHALLENGE — ROUND {round}</span>
             <div className="q-tags">
-              {question.tags.map(t => <TagBadge key={t} label={t} />)}
+              {Array.isArray(question?.tags) && question.tags.map(t => <TagBadge key={t} label={t} />)}
             </div>
             <div className="card-dots">
               <span style={{ background: '#ff5f56' }}></span>
@@ -252,25 +272,27 @@ const Battle = () => {
           {/* Question body */}
           <div className="card-body">
             {/* title */}
-            <div className="q-title font-orbitron">{question.title}</div>
+            <div className="q-title font-orbitron">{question?.title || 'Unknown Override'}</div>
 
             {/* problem statement with highlighted keywords */}
             <p className="q-statement">
-              <HighlightedQuestion raw={question.question} />
+              <HighlightedQuestion raw={question?.question || question?.description || 'Process sequence...'} />
             </p>
 
             {/* Example box */}
-            <div className="example-box">
-              <div className="example-row">
-                <span className="ex-label font-orbitron">INPUT</span>
-                <span className="ex-value font-orbitron">{question.example.input}</span>
+            {question?.example && (
+              <div className="example-box">
+                <div className="example-row">
+                  <span className="ex-label font-orbitron">INPUT</span>
+                  <span className="ex-value font-orbitron">{question.example.input || ''}</span>
+                </div>
+                <div className="example-divider"></div>
+                <div className="example-row">
+                  <span className="ex-label font-orbitron">OUTPUT</span>
+                  <span className="ex-value font-orbitron output-val">{question.example.output || ''}</span>
+                </div>
               </div>
-              <div className="example-divider"></div>
-              <div className="example-row">
-                <span className="ex-label font-orbitron">OUTPUT</span>
-                <span className="ex-value font-orbitron output-val">{question.example.output}</span>
-              </div>
-            </div>
+            )}
 
             <p className="terminal-line prompt">&gt; ENTER YOUR ANSWER:</p>
           </div>
@@ -278,7 +300,7 @@ const Battle = () => {
           {/* Hint strip */}
           {showHint && (
             <div className="hint-bar font-orbitron">
-              <Lightbulb size={13} /> HINT: {question.hint}
+              <Lightbulb size={13} /> HINT: {question?.hint || 'No hint available for this sector.'}
             </div>
           )}
         </div>

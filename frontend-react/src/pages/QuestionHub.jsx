@@ -14,38 +14,41 @@ const diffColor = { Easy: '#00ff73', Medium: '#a238ff', Hard: '#ff3c8d' };
 const diffBg    = { Easy: 'rgba(0,255,115,0.08)', Medium: 'rgba(162,56,255,0.08)', Hard: 'rgba(255,60,141,0.08)' };
 
 // ── Question Card ────────────────────────────────────────────
-const QCard = React.memo(({ q, isSelected, onClick }) => (
-  <div
-    className={`q-card ${isSelected ? 'q-card-active' : ''}`}
-    onClick={(e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      onClick(q);
-    }}
-    role="button"
-    tabIndex={0}
-    id={`q-${q.id}`}
-    style={{ cursor: 'pointer', position: 'relative', zIndex: 100, pointerEvents: 'auto' }}
-  >
-    <div className="qc-left">
-      <span className="qc-title font-orbitron">{q.title}</span>
-      <div className="qc-tags">
-        {q.tags.slice(0,2).map(t => (
-          <span key={t} className="qc-tag">{t}</span>
-        ))}
+const QCard = React.memo(({ q, isSelected, onClick }) => {
+  if (!q) return null;
+  return (
+    <div
+      className={`q-card ${isSelected ? 'q-card-active' : ''}`}
+      onClick={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        if (onClick) onClick(q);
+      }}
+      role="button"
+      tabIndex={0}
+      id={`q-${q.id || 'unknown'}`}
+      style={{ cursor: 'pointer', position: 'relative', zIndex: 100, pointerEvents: 'auto' }}
+    >
+      <div className="qc-left">
+        <span className="qc-title font-orbitron">{q.title || 'Untitled'}</span>
+        <div className="qc-tags">
+          {Array.isArray(q.tags) && q.tags.slice(0, 2).map((t, idx) => (
+            <span key={t || idx} className="qc-tag">{t}</span>
+          ))}
+        </div>
+      </div>
+      <div className="qc-right">
+        <span
+          className="qc-diff font-orbitron"
+          style={{ color: diffColor[q.difficulty || 'Easy'], background: diffBg[q.difficulty || 'Easy'] }}
+        >
+          {q.difficulty || 'Unknown'}
+        </span>
+        <span className="qc-xp font-orbitron">+{q.xp || 0}xp</span>
       </div>
     </div>
-    <div className="qc-right">
-      <span
-        className="qc-diff font-orbitron"
-        style={{ color: diffColor[q.difficulty], background: diffBg[q.difficulty] }}
-      >
-        {q.difficulty}
-      </span>
-      <span className="qc-xp font-orbitron">+{q.xp}xp</span>
-    </div>
-  </div>
-));
+  );
+});
 
 // ── Preview Panel ────────────────────────────────────────────
 const PreviewPanel = ({ q, onStart, onRandom }) => {
@@ -59,37 +62,39 @@ const PreviewPanel = ({ q, onStart, onRandom }) => {
         </div>
       ) : (
         <>
-          <div className="pp-diff-banner" style={{ background: diffBg[q.difficulty], borderColor: diffColor[q.difficulty] }}>
-            <span className="pp-diff font-orbitron" style={{ color: diffColor[q.difficulty] }}>
-              {q.difficulty.toUpperCase()}
+          <div className="pp-diff-banner" style={{ background: diffBg[q.difficulty || 'Easy'], borderColor: diffColor[q.difficulty || 'Easy'] }}>
+            <span className="pp-diff font-orbitron" style={{ color: diffColor[q.difficulty || 'Easy'] }}>
+              {(q.difficulty || 'Unknown').toUpperCase()}
             </span>
-            <span className="pp-cat font-orbitron">{q.category}</span>
-            <span className="pp-xp font-orbitron"><Zap size={11} /> {q.xp} XP</span>
+            <span className="pp-cat font-orbitron">{q.category || 'Uncategorized'}</span>
+            <span className="pp-xp font-orbitron"><Zap size={11} /> {q.xp || 0} XP</span>
           </div>
 
-          <h2 className="pp-title font-orbitron">{q.title}</h2>
+          <h2 className="pp-title font-orbitron">{q.title || 'Untitled'}</h2>
 
-          <p className="pp-desc">{q.description.replace(/\[\[|\]\]/g, '')}</p>
+          <p className="pp-desc">{(q.description || '').replace(/\[\[|\]\]/g, '')}</p>
 
-          <div className="pp-example">
-            <div className="pp-ex-row">
-              <span className="pp-ex-label font-orbitron">INPUT</span>
-              <span className="pp-ex-val font-orbitron">{q.example.input}</span>
+          {q.example && (
+            <div className="pp-example">
+              <div className="pp-ex-row">
+                <span className="pp-ex-label font-orbitron">INPUT</span>
+                <span className="pp-ex-val font-orbitron">{q.example.input}</span>
+              </div>
+              <div className="pp-ex-div"></div>
+              <div className="pp-ex-row">
+                <span className="pp-ex-label font-orbitron">OUTPUT</span>
+                <span className="pp-ex-val font-orbitron" style={{ color: '#00ff73' }}>{q.example.output}</span>
+              </div>
             </div>
-            <div className="pp-ex-div"></div>
-            <div className="pp-ex-row">
-              <span className="pp-ex-label font-orbitron">OUTPUT</span>
-              <span className="pp-ex-val font-orbitron" style={{ color: '#00ff73' }}>{q.example.output}</span>
-            </div>
-          </div>
+          )}
 
           <div className="pp-tags">
-            {q.tags.map(t => (
-              <span key={t} className="pp-tag font-orbitron"><Tag size={9} />{t}</span>
+            {Array.isArray(q.tags) && q.tags.map((t, idx) => (
+              <span key={t || idx} className="pp-tag font-orbitron"><Tag size={9} />{t}</span>
             ))}
           </div>
 
-          <div className="pp-hint font-orbitron">💡 {q.hint}</div>
+          <div className="pp-hint font-orbitron">💡 {q.hint || 'No hint available'}</div>
         </>
       )}
 
@@ -102,7 +107,7 @@ const PreviewPanel = ({ q, onStart, onRandom }) => {
         <button
           className="start-battle-btn font-orbitron"
           disabled={!q}
-          onClick={() => q && onStart(q)}
+          onClick={() => q && onStart && onStart(q)}
           id="start-battle-btn"
           style={{ opacity: q ? 1 : 0.4, cursor: q ? 'pointer' : 'not-allowed' }}
         >
@@ -115,6 +120,7 @@ const PreviewPanel = ({ q, onStart, onRandom }) => {
 
 // ── Pagination Bar ───────────────────────────────────────────
 const Pagination = ({ page, totalPages, onChange }) => {
+  if (!totalPages || totalPages <= 1) return null;
   const pages = [];
   const start = Math.max(1, page - 2);
   const end   = Math.min(totalPages, start + 4);
@@ -122,7 +128,7 @@ const Pagination = ({ page, totalPages, onChange }) => {
 
   return (
     <div className="pagination font-orbitron">
-      <button className="pg-btn" onClick={() => onChange(page - 1)} disabled={page === 1}>
+      <button className="pg-btn" onClick={() => onChange(page - 1)} disabled={page <= 1}>
         <ChevronLeft size={14} />
       </button>
       {start > 1 && <><button className="pg-btn" onClick={() => onChange(1)}>1</button><span className="pg-dots">…</span></>}
@@ -130,7 +136,7 @@ const Pagination = ({ page, totalPages, onChange }) => {
         <button key={p} className={`pg-btn ${p === page ? 'pg-active' : ''}`} onClick={() => onChange(p)}>{p}</button>
       ))}
       {end < totalPages && <><span className="pg-dots">…</span><button className="pg-btn" onClick={() => onChange(totalPages)}>{totalPages}</button></>}
-      <button className="pg-btn" onClick={() => onChange(page + 1)} disabled={page === totalPages}>
+      <button className="pg-btn" onClick={() => onChange(page + 1)} disabled={page >= totalPages}>
         <ChevronRight size={14} />
       </button>
     </div>
@@ -151,11 +157,18 @@ const QuestionHub = () => {
 
   // ── Filter + Search ─────────────────────────────────────
   const filtered = useMemo(() => {
-    const s = search.trim().toLowerCase();
+    if (!ALL_QUESTIONS || !Array.isArray(ALL_QUESTIONS)) return [];
+    
+    const s = (search || '').trim().toLowerCase();
     return ALL_QUESTIONS.filter(q => {
-      if (difficulty !== 'All' && q.difficulty !== difficulty) return false;
-      if (category   !== 'All' && q.category   !== category)   return false;
-      if (s && !q.title.toLowerCase().includes(s) && !q.category.toLowerCase().includes(s)) return false;
+      if (!q) return false;
+      const qDiff = q.difficulty || 'Easy';
+      const qCat = q.category || 'Uncategorized';
+      const qTitle = q.title || '';
+      
+      if (difficulty !== 'All' && qDiff !== difficulty) return false;
+      if (category   !== 'All' && qCat   !== category)   return false;
+      if (s && !qTitle.toLowerCase().includes(s) && !qCat.toLowerCase().includes(s)) return false;
       return true;
     });
   }, [difficulty, category, search]);
@@ -189,11 +202,34 @@ const QuestionHub = () => {
   }, [filtered, handleStart]);
 
   // Stats
-  const counts = useMemo(() => ({
-    Easy:   ALL_QUESTIONS.filter(q => q.difficulty === 'Easy').length,
-    Medium: ALL_QUESTIONS.filter(q => q.difficulty === 'Medium').length,
-    Hard:   ALL_QUESTIONS.filter(q => q.difficulty === 'Hard').length,
-  }), []);
+  const counts = useMemo(() => {
+    if (!ALL_QUESTIONS || !Array.isArray(ALL_QUESTIONS)) return { Easy: 0, Medium: 0, Hard: 0 };
+    return {
+      Easy:   ALL_QUESTIONS.filter(q => q?.difficulty === 'Easy').length,
+      Medium: ALL_QUESTIONS.filter(q => q?.difficulty === 'Medium').length,
+      Hard:   ALL_QUESTIONS.filter(q => q?.difficulty === 'Hard').length,
+    };
+  }, []);
+
+  if (!ALL_QUESTIONS || !Array.isArray(ALL_QUESTIONS) || ALL_QUESTIONS.length === 0) {
+    return (
+      <div className="hub-screen">
+        <div className="hub-bg">
+          <div className="hub-grid"></div>
+          <div className="hub-orb hub-orb-1"></div>
+          <div className="hub-orb hub-orb-2"></div>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', position: 'relative', zIndex: 10, color: '#fff' }}>
+          <Book size={48} style={{ color: '#a238ff', marginBottom: '20px' }} />
+          <h2 className="font-orbitron" style={{ fontSize: '1.2rem', letterSpacing: '4px' }}>Loading questions...</h2>
+          <p className="font-orbitron" style={{ color: '#aaa', marginTop: '10px', fontSize: '0.6rem', letterSpacing: '2px' }}>Securely fetching battle data from the mainframe.</p>
+          <button className="hub-back-btn font-orbitron" style={{ marginTop: '30px' }} onClick={() => navigate('/lobby')}>
+            <ChevronLeft size={16} /> RETURN TO LOBBY
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="hub-screen">
