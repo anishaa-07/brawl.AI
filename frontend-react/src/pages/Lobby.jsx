@@ -14,6 +14,19 @@ const Lobby = () => {
   const [loading, setLoading] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   
+  // Cinematic Boot State
+  const [isBooting, setIsBooting] = useState(() => !sessionStorage.getItem('brawl_booted'));
+
+  useEffect(() => {
+    if (isBooting) {
+      const timer = setTimeout(() => {
+        setIsBooting(false);
+        sessionStorage.setItem('brawl_booted', 'true');
+      }, 2800);
+      return () => clearTimeout(timer);
+    }
+  }, [isBooting]);
+  
   // Real-time calculated properties from user
   const currentLevel = user?.level || 1;
   const currentXP = user?.xp || 0;
@@ -60,9 +73,24 @@ const Lobby = () => {
   };
 
   return (
-    <div className="lobby-v4-wrapper animate-page-fade">
-      
-      {/* 🔙 BACK BUTTON */}
+    <>
+      {/* 🎬 CINEMATIC BOOT SCREEN */}
+      {isBooting && (
+        <div className="cinematic-boot-overlay">
+          <div className="boot-content">
+            <h1 className="boot-title font-orbitron">BRAWL.AI</h1>
+            <p className="boot-subtitle font-orbitron">INITIALIZING...</p>
+            <div className="boot-progress-bar">
+              <div className="boot-progress-fill"></div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Main Lobby - only visible/zoomed when not booting */}
+      <div className={`lobby-v4-wrapper ${!isBooting ? 'animate-lobby-entry' : 'hidden-lobby'}`}>
+        
+        {/* 🔙 BACK BUTTON */}
       <UniversalBackBtn 
         warnTitle="EXIT TO LOGIN?"
         warnMessage="Are you sure you want to disconnect from the terminal?"
@@ -235,6 +263,7 @@ const Lobby = () => {
       </button>
 
     </div>
+    </>
   );
 };
 
