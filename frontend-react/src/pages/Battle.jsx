@@ -104,7 +104,7 @@ const Battle = () => {
   const [phase,         setPhase]         = useState('battle');
   const [battleResult,  setBattleResult]  = useState('');
   const [usedIds,       setUsedIds]       = useState(() => preSelected ? [preSelected.id] : []);
-  const [question,      setQuestion]      = useState(() => preSelected || null);
+  const [question,      setQuestion]      = useState(() => preSelected || pickQuestion(pool, []));
   const [showHint,      setShowHint]      = useState(false);
   const [showEntrance,  setShowEntrance]  = useState(true);
   const [wrongAttempts, setWrongAttempts] = useState(0);
