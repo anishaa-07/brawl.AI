@@ -188,9 +188,13 @@ const QuestionHub = () => {
   }, []);
 
   const handleStart = useCallback((q) => {
+    console.log("[QuestionHub] Routing to tactical arena with selectedQuestion:", q);
+    if (!q || (!q.id && !q.title)) {
+      console.warn("WARNING: Question array may be empty or selected component is invalid.");
+    }
     navigate('/battle', {
       state: {
-        difficulty: q.difficulty,
+        difficulty: q.difficulty || 'Easy',
         selectedQuestion: q,
       },
     });

@@ -7,6 +7,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import UniversalBackBtn from '../components/UniversalBackBtn';
 import SettingsModal from '../components/SettingsModal';
+import { ALL_QUESTIONS } from '../data/questionsDB';
 import './Lobby.css';
 
 const Lobby = () => {
@@ -68,9 +69,17 @@ const Lobby = () => {
   };
 
   const startBattle = (mode) => {
+    console.log(`[Lobby] Initiating mode: ${mode}`);
     if (mode === 'quick') {
-      // Instant execution per user request
-      navigate('/battle', { state: { mode: 'random' } });
+      const qs = ALL_QUESTIONS || [];
+      if (qs.length === 0) {
+        console.error("No questions available in ALL_QUESTIONS!");
+        return;
+      }
+      const randomQ = qs[Math.floor(Math.random() * qs.length)];
+      console.log("[Quick Battle] Selected Question:", randomQ);
+      // Instant execution per user request with specific question
+      navigate('/battle', { state: { mode: 'random', selectedQuestion: randomQ, difficulty: randomQ.difficulty } });
       return;
     }
     

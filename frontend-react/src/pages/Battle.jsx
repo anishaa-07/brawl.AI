@@ -104,7 +104,7 @@ const Battle = () => {
   const [phase,         setPhase]         = useState('battle');
   const [battleResult,  setBattleResult]  = useState('');
   const [usedIds,       setUsedIds]       = useState(() => preSelected ? [preSelected.id] : []);
-  const [question,      setQuestion]      = useState(() => preSelected || pickQuestion(pool, []));
+  const [question,      setQuestion]      = useState(() => preSelected || null);
   const [showHint,      setShowHint]      = useState(false);
   const [showEntrance,  setShowEntrance]  = useState(true);
   const [wrongAttempts, setWrongAttempts] = useState(0);
@@ -371,7 +371,7 @@ const Battle = () => {
     }
 
     // Advance to next round
-    const newUsed = [...usedIds, question.id];
+    const newUsed = [...usedIds, question?.id].filter(Boolean);
     setUsedIds(newUsed);
     const next = pickQuestion(pool, newUsed);
     setQuestion(next);
