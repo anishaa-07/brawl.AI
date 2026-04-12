@@ -6,6 +6,7 @@ import {
   ChevronRight, BarChart2, Filter, Star,
 } from 'lucide-react';
 import { ALL_QUESTIONS, CATEGORIES, DIFFICULTIES } from '../data/questionsDB';
+import UniversalBackBtn from '../components/UniversalBackBtn';
 import './QuestionHub.css';
 
 const PAGE_SIZE = 20;
@@ -233,6 +234,7 @@ const QuestionHub = () => {
 
   return (
     <div className="hub-screen">
+      <UniversalBackBtn to="/lobby" />
       {/* ── ANIMATED BG ── */}
       <div className="hub-bg">
         <div className="hub-grid"></div>
@@ -241,11 +243,7 @@ const QuestionHub = () => {
       </div>
 
       {/* ── HEADER ── */}
-      <header className="hub-header glass-panel">
-        <button className="hub-back-btn font-orbitron" onClick={() => navigate('/lobby')} id="back-lobby-btn">
-          <ChevronLeft size={16} /> LOBBY
-        </button>
-
+      <header className="hub-header glass-panel" style={{ position: 'relative' }}>
         <div className="hub-title-group">
           <Book size={22} className="hub-title-icon" />
           <div>

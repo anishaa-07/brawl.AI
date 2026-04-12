@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Maximize, Minimize, Swords, Users, Target, 
-  Trophy, Activity, User, Crown, Loader2, ArrowRight, ArrowLeft
+  Trophy, Activity, User, Crown, Loader2, ArrowRight
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import UniversalBackBtn from '../components/UniversalBackBtn';
 import './Lobby.css';
 
 const Lobby = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const [loading, setLoading] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [profile, setProfile] = useState({
@@ -55,9 +58,15 @@ const Lobby = () => {
     <div className="lobby-v4-wrapper animate-page-fade">
       
       {/* 🔙 BACK BUTTON */}
-      <button className="back-btn-v4" onClick={() => navigate(-1)} title="Go Back">
-        <ArrowLeft size={24} />
-      </button>
+      <UniversalBackBtn 
+        warnTitle="EXIT TO LOGIN?"
+        warnMessage="Are you sure you want to disconnect from the terminal?"
+        customAction={() => {
+          logout();
+          navigate('/login');
+        }}
+        confirmLabel="DISCONNECT"
+      />
 
       {/* 🧬 BACKGROUND */}
       <div className="lobby-v4-bg">

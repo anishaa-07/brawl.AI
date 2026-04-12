@@ -9,6 +9,7 @@ import {
   QUESTIONS, pickQuestion, checkAnswer, parseKeywords,
   TOTAL_ROUNDS, TIMER_DURATION, XP_PER_CORRECT,
 } from './questionsData';
+import UniversalBackBtn from '../components/UniversalBackBtn';
 import './Battle.css';
 
 // ── SUB-COMPONENT: Question Text with keyword highlighting ───────
@@ -62,7 +63,6 @@ const Battle = () => {
   const [showEntrance,  setShowEntrance]  = useState(true);
   const [wrongAttempts, setWrongAttempts] = useState(0); // track misses per round
   const [damageOverlay, setDamageOverlay] = useState(null); // { target, amount, text }
-  const [showExitConfirm, setShowExitConfirm] = useState(false);
   const inputRef = useRef(null);
 
   // Derived
@@ -84,23 +84,6 @@ const Battle = () => {
   useEffect(() => {
     if (phase === 'battle') setTimeout(() => inputRef.current?.focus(), 150);
   }, [phase]);
-
-  // ── Keyboard Shortcuts (ESC to Retreat) ───────────────────────
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
-        if (showExitConfirm) {
-          setShowExitConfirm(false);
-        } else if (phase !== 'end') {
-          setShowExitConfirm(true);
-        } else {
-          navigate('/lobby');
-        }
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showExitConfirm, phase, navigate]);
 
   // ── Timer ───────────────────────────────────────────────────
   useEffect(() => {
@@ -181,9 +164,11 @@ const Battle = () => {
   }, [round, aiHp, playerHp, usedIds, question.id, pool, roundDuration]);
 
   const handleRetry   = () => window.location.reload();
-  const handleRetreatPrompt = () => setShowExitConfirm(true);
-  const handleConfirmExit = () => navigate('/lobby');
-  const handleCancelExit = () => setShowExitConfirm(false);
+  const handleRetreatPrompt = () => {
+    const backBtn = document.querySelector('.global-back-btn');
+    if (backBtn) backBtn.click();
+  };
+  const handleRetreat = () => navigate('/lobby');
 
   // XP totals for end screen
   const maxXp    = TOTAL_ROUNDS * xpPerHit;
@@ -213,6 +198,13 @@ const Battle = () => {
 
   return (
     <div className={`battle-screen ${showEntrance ? 'battle-enter' : ''} ${damageOverlay?.target === 'player' ? 'screen-shake' : ''}`}>
+
+      <UniversalBackBtn 
+        to={phase === 'end' ? '/lobby' : '/question-hub'} 
+        warnTitle={phase !== 'end' ? "WARN: EXIT BATTLE?" : null}
+        warnMessage={phase !== 'end' ? "Leaving battle will lose progress. Continue?" : null}
+        confirmLabel="LEAVE BATTLE"
+      />
 
       {/* ── ANIMATED BACKGROUND ── */}
       <div className="battle-bg">
@@ -490,22 +482,6 @@ const Battle = () => {
         </div>
       </footer>
 
-      {/* ── EXIT CONFIRMATION MODAL ── */}
-      {showExitConfirm && (
-        <div className="exit-confirm-overlay">
-          <div className="exit-confirm-card glass-panel animate-fade-in">
-            <h2 className="font-orbitron">WARN: EXIT BATTLE?</h2>
-            <p className="font-orbitron" style={{ color: '#aaa', fontSize: '0.8rem', marginTop: '10px' }}>
-              Are you sure you want to exit? Your progress will be lost.
-            </p>
-            <div className="exit-actions">
-              <button className="end-btn secondary font-orbitron" onClick={handleCancelExit}>CANCEL (ESC)</button>
-              <button className="end-btn primary font-orbitron" onClick={handleConfirmExit}>CONFIRM</button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* ── BATTLE END OVERLAY ── */}
       {phase === 'end' && (
         <div className="end-overlay">
@@ -553,7 +529,7 @@ const Battle = () => {
               <button className="end-btn primary font-orbitron" onClick={handleRetry} id="retry-btn">
                 <RefreshCw size={14} /> RETRY
               </button>
-              <button className="end-btn secondary font-orbitron" onClick={handleConfirmExit} id="lobby-btn">
+              <button className="end-btn secondary font-orbitron" onClick={handleRetreat} id="lobby-btn">
                 <ChevronLeft size={14} /> LOBBY
               </button>
             </div>

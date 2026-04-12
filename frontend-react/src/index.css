@@ -164,3 +164,83 @@ input {
 .right-0 { right: 0 !important; }
 .top-100 { top: 100% !important; }
 
+/* ── GLOBAL BACK BTN ── */
+.global-back-btn {
+  position: fixed;
+  top: 30px;
+  left: 30px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(10, 15, 25, 0.45);
+  backdrop-filter: blur(10px);
+  border: 1px solid #00f2ff;
+  color: #00f2ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100;
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: pageFadeBtn 0.8s ease-out;
+}
+
+@keyframes pageFadeBtn { 
+  from { opacity: 0; transform: scale(0.98); } 
+  to { opacity: 1; transform: scale(1); } 
+}
+
+.global-back-btn:hover {
+  transform: scale(1.15);
+  background: rgba(162, 56, 255, 0.1);
+  border-color: #a238ff;
+  color: #a238ff;
+  box-shadow: 0 0 25px rgba(162, 56, 255, 0.6);
+}
+
+.global-back-btn:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 767px) {
+  .global-back-btn {
+    top: 20px;
+    left: 20px;
+    width: 55px; /* Keep it slightly bigger on mobile */
+    height: 55px;
+  }
+}
+
+/* ── EXIT CONFIRMATION (GLOBAL) ── */
+.exit-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.exit-confirm-card {
+  max-width: 400px;
+  width: 90%;
+  padding: 30px;
+  text-align: center;
+  border-radius: 16px;
+  border: 1px solid #ff3c8d;
+  box-shadow: 0 0 30px rgba(255, 60, 141, 0.3);
+}
+.exit-confirm-card h2 {
+  color: #ff3c8d;
+  margin: 0;
+  font-size: 1.5rem;
+  letter-spacing: 4px;
+}
+.exit-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 25px;
+}
