@@ -1,234 +1,234 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { 
+  Maximize, Minimize, Swords, Users, Target, 
+  Trophy, Zap, Shield, Activity, Calendar, 
+  ArrowRight, Flame, User, MessageSquare, Terminal 
+} from 'lucide-react';
 import './Lobby.css';
-import { X, Maximize, Minimize } from 'lucide-react';
 
 const Lobby = () => {
   const navigate = useNavigate();
-  // 👤 PLAYER PROFILE STATUS SYSTEM
-  const [profile, setProfile] = React.useState({
-    username: 'PlayerX',
-    level: 1,
-    xp: 0,
-    coins: 250
+  const [loading, setLoading] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [profile, setProfile] = useState({
+    username: 'PLAYER_X',
+    level: 5,
+    xp: 45,
+    rank: 'Silver III',
+    credits: 1250
   });
 
-  // 🛡️ MODAL SYSTEM
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [statusMessage, setStatusMessage] = React.useState('');
+  // 🧬 MOCK DATA
+  const leaders = [
+    { rank: 1, name: 'NEURAL_CRUSHER', level: 99, xp: '999k' },
+    { rank: 2, name: 'VOID_WALKER', level: 85, xp: '750k' },
+    { rank: 3, name: 'CYBER_PUNK_77', level: 72, xp: '620k' }
+  ];
 
-  // 📺 FULLSCREEN SYSTEM
-  const [isFullscreen, setIsFullscreen] = React.useState(false);
+  const activities = [
+    { type: 'battle', text: 'Won 1v1 vs AI-Core-Delta', time: '2m ago' },
+    { type: 'xp', text: 'Rewarded +250 XP for Daily Login', time: '1h ago' },
+    { type: 'achievement', text: 'Unlocked "Code Ninja" badge', time: '3h ago' }
+  ];
 
-  React.useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  // 📺 FULLSCREEN LOGIC
+  useEffect(() => {
+    const handleFsChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', handleFsChange);
+    return () => document.removeEventListener('fullscreenchange', handleFsChange);
   }, []);
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(err => console.error(err));
+      document.documentElement.requestFullscreen().catch(e => console.error(e));
     } else {
-      document.exitFullscreen().catch(err => console.error(err));
+      document.exitFullscreen().catch(e => console.error(e));
     }
   };
 
-  React.useEffect(() => {
-    const handleKeydown = (e) => {
-      if (e.key.toLowerCase() === 'f') {
-        if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-          toggleFullscreen();
-        }
-      }
-    };
-    window.addEventListener('keydown', handleKeydown);
-    return () => window.removeEventListener('keydown', handleKeydown);
-  }, []);
-
-  React.useEffect(() => {
-    // 💾 Load from localStorage
-    const saved = localStorage.getItem('brawl_profile');
-    let currentProfile = saved ? JSON.parse(saved) : profile;
-
-    // 🚀 Simulate XP gain on load
-    currentProfile.xp += 10;
-    if (currentProfile.xp >= 100) {
-      currentProfile.level += 1;
-      currentProfile.xp = 0;
-    }
-
-    setProfile(currentProfile);
-    localStorage.setItem('brawl_profile', JSON.stringify(currentProfile));
-  }, []);
-
-  const handleDifficultySelect = (diff) => {
-    setIsModalOpen(false);
-    setStatusMessage(`Initializing AI Battle [${diff.toUpperCase()}]...`);
+  const startBattle = (mode) => {
+    setLoading(true);
     setTimeout(() => {
-      navigate('/battle', { state: { difficulty: diff } });
-    }, 900);
+      navigate('/battle', { state: { mode } });
+    }, 1500);
   };
 
   return (
     <div className="lobby-wrapper">
-      {/* 🌑 MODAL OVERLAY (DIM BACKGROUND) */}
-      {isModalOpen && (
-        <div className="modal-overlay" onClick={(e) => { if (e.target.className === 'modal-overlay') setIsModalOpen(false); }}>
-          <div className="difficulty-modal glass-panel fadeInScale">
-            {/* CLOSE BUTTON */}
-            <button className="modal-close-x" onClick={() => setIsModalOpen(false)}>
-              <X size={20} />
-            </button>
+      {/* 🧬 BACKGROUND ANIMATION */}
+      <div className="lobby-bg-anim">
+        <div className="bg-grid-move"></div>
+      </div>
 
-            <h2 className="modal-title font-orbitron">SELECT AI DIFFICULTY</h2>
+      {loading && (
+        <div className="loading-overlay">
+          <div className="spinner-hex"></div>
+          <h2 className="font-orbitron" style={{ letterSpacing: '4px' }}>INITIALIZING BATTLE_GRID</h2>
+          <div className="loading-scanner"></div>
+        </div>
+      )}
+
+      {/* 📱 MAIN 3-COLUMN GRID */}
+      <div className="lobby-main-grid">
+        
+        {/* ⬅️ LEFT COLUMN: PROFILE & STATS */}
+        <aside className="left-column">
+          <div className="glass-panel profile-card neon-border-blue">
+            <div className="avatar-container">
+              <div className="avatar-ring"></div>
+              <div className="avatar-circle">
+                <User size={50} color="var(--neon-blue)" />
+              </div>
+            </div>
+            <div className="rank-badge">SILVER III</div>
             
-            <div className="difficulty-grid">
-              <div className="difficulty-card" onClick={() => handleDifficultySelect('Easy')}>
-                <span className="diff-label text-primary">BEGINNER AI</span>
-                <p className="diff-desc">Slow and predictable neural patterns.</p>
+            <div className="profile-info">
+              <h2 className="profile-name font-orbitron">{profile.username}</h2>
+              <p className="profile-tag font-orbitron">LEVEL {profile.level} PILOT</p>
+            </div>
+
+            <div className="xp-container">
+              <div className="xp-header font-orbitron">
+                <span>PROGRESS</span>
+                <span>{profile.xp}%</span>
               </div>
-              <div className="difficulty-card" onClick={() => handleDifficultySelect('Medium')}>
-                <span className="diff-label text-secondary">SMART AI</span>
-                <p className="diff-desc">Balanced tactical challenge.</p>
-              </div>
-              <div className="difficulty-card" onClick={() => handleDifficultySelect('Hard')}>
-                <span className="diff-label text-neon">AGGRESSIVE AI</span>
-                <p className="diff-desc">Competitive and hyper-fast response.</p>
+              <div className="xp-bar-track">
+                <div className="xp-bar-fill" style={{ width: `${profile.xp}%` }}>
+                  <div className="xp-glimmer"></div>
+                </div>
               </div>
             </div>
 
-            <button className="cancel-btn font-orbitron" onClick={() => setIsModalOpen(false)}>ABORT MISSION</button>
+            <div className="widget-row" style={{ marginTop: '10px', width: '100%' }}>
+              <div className="stat-pill" style={{ flex: 1, padding: '10px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', textAlign: 'center' }}>
+                <span style={{ fontSize: '0.6rem', color: '#666' }}>CREDITS</span>
+                <div className="font-orbitron" style={{ color: 'var(--neon-blue)' }}>{profile.credits}</div>
+              </div>
+            </div>
           </div>
-        </div>
-      )}
 
+          <div className="glass-panel neon-border-purple" style={{ marginTop: '20px' }}>
+            <h3 className="panel-title font-orbitron"><Trophy size={16} /> Leaderboard</h3>
+            <div className="leaderboard-list">
+              {leaders.map(player => (
+                <div key={player.rank} className="leader-item">
+                  <div className="leader-rank">#{player.rank}</div>
+                  <div className="leader-info">
+                    <p className="leader-name font-orbitron">{player.name}</p>
+                    <span className="leader-stats">LVL {player.level} • {player.xp}</span>
+                  </div>
+                  {player.rank === 1 && <Flame size={14} color="#ffbd2e" />}
+                </div>
+              ))}
+            </div>
+          </div>
+        </aside>
 
-      {/* 🚀 STATUS MESSAGE */}
-      {statusMessage && (
-        <div className="status-toast font-orbitron animate-slide-up">
-           {statusMessage}
-        </div>
-      )}
+        {/* ⏹️ CENTER COLUMN: MISSIONS & MODES */}
+        <main className="center-column">
+          <div className="glass-panel daily-challenge-box">
+            <h3 className="panel-title font-orbitron"><Calendar size={16} /> Daily Protocol</h3>
+            <div className="challenge-content">
+              <div className="challenge-icon">
+                <Target size={32} />
+              </div>
+              <div className="challenge-text">
+                <h4 className="font-orbitron">NEURAL OVERRIDE</h4>
+                <p>Complete 3 Hard-level battles with >80% accuracy.</p>
+                <div className="bonus-tag font-orbitron">
+                  <Zap size={12} /> +500 XP BONUS
+                </div>
+              </div>
+            </div>
+          </div>
 
-      {/* BACKGROUND PARTICLES LAYER */}
-      <div className="bg-particles">
-        <div className="particle"></div>
-        <div className="particle"></div>
-        <div className="particle"></div>
-        <div className="particle"></div>
-        <div className="particle"></div>
+          <div className="mode-grid">
+            <div className="glass-panel mode-card" onClick={() => startBattle('ai')}>
+              <div className="mode-header">
+                <div className="mode-icon-box"><Swords size={24} /></div>
+                <span className="status-tag status-active font-orbitron">ACTIVE</span>
+              </div>
+              <div className="mode-body">
+                <h3 className="font-orbitron">BATTLE AI</h3>
+                <p>Engage the Neural Core. Perfect for training and quick XP gains.</p>
+              </div>
+              <div className="card-hover-hint"><ArrowRight size={16} /></div>
+            </div>
+
+            <div className="glass-panel mode-card" onClick={() => {}}>
+              <div className="mode-header">
+                <div className="mode-icon-box"><Users size={24} /></div>
+                <span className="status-tag status-coming font-orbitron">LOCKED</span>
+              </div>
+              <div className="mode-body">
+                <h3 className="font-orbitron">DUEL PLAYER</h3>
+                <p>Ranked 1v1 combat against other pilots. Global seasons coming soon.</p>
+              </div>
+            </div>
+
+            <div className="glass-panel mode-card" onClick={() => {}}>
+              <div className="mode-header">
+                <div className="mode-icon-box"><Shield size={24} /></div>
+                <span className="status-tag status-coming font-orbitron">LOCKED</span>
+              </div>
+              <div className="mode-body">
+                <h3 className="font-orbitron">SQUAD ARENA</h3>
+                <p>Tactical 3v3 team skirmish. Coordinate with allies to win.</p>
+              </div>
+            </div>
+          </div>
+
+          <button className="quick-start-btn font-orbitron" onClick={() => startBattle('random')}>
+            Start Random Battle ⚡
+          </button>
+        </main>
+
+        {/* ➡️ RIGHT COLUMN: ACTIVITY & CHAT */}
+        <aside className="right-column">
+          <div className="glass-panel neon-border-green">
+            <h3 className="panel-title font-orbitron"><Activity size={16} /> Recent Activity</h3>
+            <div className="activity-feed">
+              {activities.map((act, i) => (
+                <div key={i} className="activity-item">
+                  <div className="activity-dot"></div>
+                  <div className="activity-content">
+                    <p style={{ margin: 0 }}>{act.text}</p>
+                    <span style={{ fontSize: '0.65rem', color: '#555' }}>{act.time}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="glass-panel" style={{ marginTop: '20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <h3 className="panel-title font-orbitron"><MessageSquare size={16} /> Pilot Chat</h3>
+            <div className="telemetry-feed" style={{ flex: 1 }}>
+              <p>[SYSTEM]: Secure link established.</p>
+              <p>[Pilot_K]: Anyone up for a hard duel?</p>
+              <p>[AI_BOT]: Neural patterns stable.</p>
+              <p style={{ color: 'var(--neon-blue)' }}>[Global]: Tournament starts in 4h.</p>
+            </div>
+            <div style={{ marginTop: '15px', position: 'relative' }}>
+              <input 
+                type="text" 
+                placeholder="Secure message..." 
+                style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', padding: '10px', borderRadius: '4px', color: '#fff', fontSize: '0.8rem' }}
+              />
+              <Terminal size={12} style={{ position: 'absolute', right: '10px', top: '12px', opacity: 0.5 }} />
+            </div>
+          </div>
+        </aside>
+
       </div>
 
-      {/* 📺 FULLSCREEN TOGGLE */}
-      <button 
-        className="fullscreen-toggle" 
-        onClick={toggleFullscreen} 
-        title="Toggle Fullscreen (F)"
-        id="fullscreen-toggle-btn"
-      >
-        {isFullscreen ? <X size={18} /> : <Maximize size={18} />}
+      {/* 🖥️ FULLSCREEN STICKY */}
+      <button className="fullscreen-sticky" onClick={toggleFullscreen} title="Toggle Fullscreen">
+        {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
       </button>
 
-      <div className="container">
-        
-        {/* LEFT SIDEBAR */}
-        <div className="left">
-          <div className="simple-card">
-            <h3>TELEMETRY</h3>
-            <p>System Online: 100%</p>
-            <p>Neural Link: Active</p>
-          </div>
-          <div className="simple-card">
-            <h3>BOUNTY BOARD</h3>
-            <ul>
-              <li>Neutralize 5 AI Units</li>
-              <li>Complete 1 Duel</li>
-            </ul>
-          </div>
-        </div>
-
-        {/* CENTER SECTION */}
-        <div className="center">
-          <div className="center-content">
-            <h1 className="mission-title">DASHBOARD COMMAND</h1>
-            
-            <div className="dashboard-layout-split">
-              {/* LEFT: MISSION BOXES */}
-              <div className="mission-stack">
-                <div className="mission-box" onClick={() => navigate('/question-hub')} id="battle-ai-btn">
-                  <h2>BATTLE AI</h2>
-                  <p>Browse challenges &amp; enter combat.</p>
-                </div>
-                <div className="mission-box">
-                  <h2>DUEL PLAYER</h2>
-                  <p>Ranked 1v1 combat.</p>
-                </div>
-                <div className="mission-box">
-                  <h2>SQUAD ARENA</h2>
-                  <p>Team-based tactical skirmish.</p>
-                </div>
-              </div>
-
-              {/* RIGHT: PLAYER PROFILE (RELOCATED) */}
-              <div className="profile-panel-side simple-card">
-                <div className="profile-header">
-                  <span className="username font-orbitron">{profile.username}</span>
-                  <span className="level text-secondary">Lv. {profile.level}</span>
-                </div>
-                
-                <div className="xp-container">
-                  <div className="xp-header">
-                    <span>PROGRESSION</span>
-                    <span>{profile.xp} / 100</span>
-                  </div>
-                  <div className="xp-track">
-                    <div className="xp-fill" style={{ width: `${profile.xp}%` }}></div>
-                  </div>
-                </div>
-
-                <div className="status-metrics">
-                   <div className="metric">
-                      <span className="m-label">CREDITS</span>
-                      <span className="m-value text-primary">{profile.coins} CR</span>
-                   </div>
-                   <div className="metric">
-                      <span className="m-label">STATUS</span>
-                      <span className="m-value text-neon">ACTIVE</span>
-                   </div>
-                </div>
-
-                <div className="profile-footer">
-                  <p>Neural Link: STABLE</p>
-                  <button className="reconnect-btn">RESET CORE</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* RIGHT SIDEBAR */}
-        <div className="right">
-          <div className="simple-card">
-            <h3>OPERATORS</h3>
-            <p>No active units deployed.</p>
-          </div>
-          
-          <div className="simple-card chat-section">
-            <h3>CHAT</h3>
-            <div className="chat-content">
-              Welcome to the Hub.
-            </div>
-          </div>
-        </div>
-
-
-      </div>
     </div>
   );
 };
-
 
 export default Lobby;
