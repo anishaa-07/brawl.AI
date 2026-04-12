@@ -116,6 +116,8 @@ const Battle = () => {
   const [comboStreak,   setComboStreak]   = useState(0);
   const [sessionCorrectCount, setSessionCorrectCount] = useState(0);
   const [creditsAwarded, setCreditsAwarded] = useState(0);
+  const [hintsRemaining, setHintsRemaining] = useState(2);
+  const [hintUsedThisRound, setHintUsedThisRound] = useState(false);
   const inputRef = useRef(null);
 
   // Derived
@@ -159,11 +161,30 @@ const Battle = () => {
     }
   }, [updateProfile, user]);
 
+  // ── Hint Toggle ─────────────────────────────────────────────
+  const toggleHint = useCallback(() => {
+    if (showHint) {
+      setShowHint(false);
+    } else {
+      if (hintUsedThisRound) {
+        setShowHint(true);
+      } else if (hintsRemaining > 0) {
+        SoundFX.click();
+        setHintsRemaining(prev => prev - 1);
+        setHintUsedThisRound(true);
+        setShowHint(true);
+      }
+    }
+  }, [showHint, hintUsedThisRound, hintsRemaining]);
+
   // ── Submit Attack ───────────────────────────────────────────
   const handleAttack = useCallback(() => {
     if (isAttacking || phase !== 'battle' || !userInput.trim()) return;
     setIsAttacking(true);
     setShowHint(false);
+
+    // Dynamic XP if hint used
+    const currentXpReward = hintUsedThisRound ? Math.floor(xpPerHit / 2) : xpPerHit;
 
     // Execute user code — returns { isCorrect, userOutput, expectedOutput, error, isError }
     const result = executeCode(question, userInput);
@@ -192,8 +213,8 @@ const Battle = () => {
 
         const newHp = Math.max(0, aiHp - dmg);
         setAiHp(newHp);
-        setTotalXp(prev => prev + xpPerHit);
-        setFeedback({ type: 'hit', xp: xpPerHit, userOutput: result.userOutput, combo: newCombo });
+        setTotalXp(prev => prev + currentXpReward);
+        setFeedback({ type: 'hit', xp: currentXpReward, userOutput: result.userOutput, combo: newCombo });
         setWrongAttempts(0);
         const comboText = isCrit ? 'CRITICAL STRIKE! 🔥' : newCombo >= 3 ? `COMBO x${newCombo} 🔥` : 'Attack Successful ⚡';
         setDamageOverlay({ target: 'ai', amount: dmg, text: comboText });
@@ -215,7 +236,7 @@ const Battle = () => {
           const userUpdates = { totalCorrect: newTotalCorrect };
 
           // Level-up calculation
-          const newXp = (user.xp || 0) + xpPerHit;
+          const newXp = (user.xp || 0) + currentXpReward;
           const newLevel = Math.floor(newXp / 100) + 1;
           if (newLevel > (user.level || 1)) {
             setLevelUpMsg(true);
@@ -288,7 +309,7 @@ const Battle = () => {
         setTimeout(() => setLaserEffect(null), 800);
       }
     }, 650);
-  }, [isAttacking, phase, userInput, question, difficulty, aiHp, xpPerHit]); // eslint-disable-line
+  }, [isAttacking, phase, userInput, question, difficulty, aiHp, xpPerHit, hintUsedThisRound]); // eslint-disable-line
 
   // Stable ref so the auto-advance timer can call handleNext without stale closure
   const handleNextRef = useRef(null);
@@ -361,6 +382,7 @@ const Battle = () => {
     setWrongAttempts(0);
     setDamageOverlay(null);
     setShowHint(false);
+    setHintUsedThisRound(false);
     setIsAttacking(false);
     setAiMessage(aiPersonality.wait);
     setPhase('battle');
@@ -580,8 +602,9 @@ const Battle = () => {
 
                   {/* Hint */}
                   {showHint && (
-                    <div className="hint-bar font-orbitron" style={{ marginTop: '12px' }}>
-                      <Lightbulb size={13} /> HINT: {question.hint || 'No hint available.'}
+                    <div className="hint-bar font-orbitron" style={{ marginTop: '12px', border: '1px solid rgba(255, 189, 46, 0.4)', background: 'rgba(255, 189, 46, 0.1)', color: '#ffbd2e' }}>
+                      <Lightbulb size={13} /> {question.hint || 'No hint available.'}
+                      <span style={{ display: 'block', fontSize: '0.6rem', color: '#ff3c8d', marginTop: '4px' }}>⚠️ XP halved for this round</span>
                     </div>
                   )}
                 </div>
@@ -662,11 +685,12 @@ const Battle = () => {
 
                   <button
                     className={`hint-btn font-orbitron ${showHint ? 'hint-active' : ''}`}
-                    onClick={() => setShowHint(v => !v)}
+                    onClick={toggleHint}
+                    disabled={isAttacking || (!hintUsedThisRound && hintsRemaining === 0 && !showHint)}
                     id="hint-btn"
                   >
                     <Lightbulb size={15} />
-                    {showHint ? 'HIDE HINT' : 'HINT'}
+                    {showHint ? 'HIDE HINT' : `HINT (${hintsRemaining} LEFT)`}
                   </button>
                 </div>
               </div>
