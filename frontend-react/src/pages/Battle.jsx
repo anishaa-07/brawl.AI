@@ -105,19 +105,35 @@ const Battle = () => {
     setTimeout(() => {
       if (isHit) {
         setLaserEffect('player-to-ai');
-        const dmg = Math.floor(Math.random() * 21) + 20; // 20-40 dmg
+        
+        let minDmg = 10, maxDmg = 20;
+        if (difficulty === 'Medium') { minDmg = 20; maxDmg = 35; }
+        else if (difficulty === 'Hard') { minDmg = 35; maxDmg = 50; }
+        
+        let dmg = Math.floor(Math.random() * (maxDmg - minDmg + 1)) + minDmg;
+        const isCrit = Math.random() < 0.10; // 10% crit chance
+        if (isCrit) dmg *= 2;
+
         setAiHp(prev => Math.max(0, prev - dmg));
         setTotalXp(prev => prev + xpPerHit);
         setFeedback({ type: 'hit', xp: xpPerHit });
         setWrongAttempts(0);
-        setDamageOverlay({ target: 'ai', amount: dmg, text: 'Attack Successful ⚡' });
+        setDamageOverlay({ target: 'ai', amount: dmg, text: isCrit ? 'CRITICAL STRIKE! 🔥' : 'Attack Successful ⚡' });
       } else {
         setLaserEffect('ai-to-player');
-        const dmg = Math.floor(Math.random() * 6) + 10; // 10-15 dmg
+        
+        let minBase = 5, maxBase = 10;
+        if (difficulty === 'Medium') { minBase = 10; maxBase = 20; }
+        else if (difficulty === 'Hard') { minBase = 15; maxBase = 25; }
+        
+        let dmg = Math.floor(Math.random() * (maxBase - minBase + 1)) + minBase;
+        const isCrit = Math.random() < 0.10;
+        if (isCrit) dmg *= 2;
+
         setPlayerHp(prev => Math.max(0, prev - dmg));
         setWrongAttempts(prev => prev + 1);
         setFeedback({ type: 'miss', answer: question.answer[0] });
-        setDamageOverlay({ target: 'player', amount: dmg, text: 'Compilation Failed ❌' });
+        setDamageOverlay({ target: 'player', amount: dmg, text: isCrit ? 'SYSTEM BREACH 💀' : 'Compilation Failed ❌' });
       }
       setUserInput('');
       setIsAttacking(false);
