@@ -179,6 +179,73 @@ export const QUESTIONS = {
   ],
 };
 
+// ── GENERATE 1000+ DYNAMIC QUESTIONS ────────────────────────
+// EASY MATH (400 questions)
+for (let i = 1; i <= 20; i++) {
+  for (let j = 1; j <= 20; j++) {
+    QUESTIONS.Easy.push({
+      id: `e_add_${i}_${j}`, title: `Sum of ${i} and ${j}`,
+      question: `Return the [[sum]] of ${i} and ${j}.`,
+      example: { input: `${i}, ${j}`, output: `${i+j}` },
+      answer: [String(i + j)], hint: `Add the two numbers together.`,
+      xp: 10, tags: ['Math', 'Dynamic']
+    });
+  }
+}
+
+// EASY STRING MULTIPLY (140 questions)
+const wordsList = ["hello", "brawl", "neon", "cyber", "glitch", "code", "bot", "hack", "data", "byte"];
+wordsList.forEach((word) => {
+  for (let c = 2; c <= 15; c++) {
+    QUESTIONS.Easy.push({
+      id: `e_rep_${word}_${c}`, title: `Repeat String`,
+      question: `Repeat the string [['${word}']] exactly [[${c} times]] without spaces.`,
+      example: { input: `"${word}", ${c}`, output: `"${word.repeat(c)}"` },
+      answer: [`"${word.repeat(c)}"`, word.repeat(c)], hint: 'Use string multiplication/repeat.',
+      xp: 10, tags: ['String', 'Dynamic']
+    });
+  }
+});
+
+// MEDIUM MODULO (280 questions)
+for (let i = 20; i <= 59; i++) {
+  for (let mod = 3; mod <= 9; mod++) {
+    QUESTIONS.Medium.push({
+      id: `m_mod_${i}_${mod}`, title: `Modulo Check`,
+      question: `Calculate [[${i} modulo ${mod}]]. Return the remainder.`,
+      example: { input: `${i}, ${mod}`, output: `${i % mod}` },
+      answer: [String(i % mod)], hint: 'Use the % operator.',
+      xp: 20, tags: ['Math', 'Dynamic']
+    });
+  }
+}
+
+// HARD POWERS (28 questions)
+for (let base=2; base<=5; base++){
+  for (let exp=3; exp<=9; exp++){
+      QUESTIONS.Hard.push({
+         id: `h_pow_${base}_${exp}`, title: `Power Calculation`,
+         question: `Calculate [[${base} raised to the power of ${exp}]].`,
+         example: { input: `${base}, ${exp}`, output: `${Math.pow(base, exp)}` },
+         answer: [String(Math.pow(base, exp))], hint: 'Use Math.pow or ** operator.',
+         xp: 40, tags: ['Math', 'Dynamic']
+      });
+  }
+}
+
+// HARD FACTORIALS (13 questions)
+for (let f=3; f<=15; f++) {
+   let fact = 1; for(let k=2; k<=f; k++) fact*=k;
+   QUESTIONS.Hard.push({
+      id: `h_fact_${f}`, title: `Factorial of ${f}`,
+      question: `Calculate the [[factorial]] of ${f}.`,
+      example: { input: `${f}`, output: `${fact}` },
+      answer: [String(fact)], hint: 'f * (f-1) * ... 1',
+      xp: 40, tags: ['Math', 'Dynamic']
+   });
+}
+// ────────────────────────────────────────────────────────────
+
 // ── HELPERS ─────────────────────────────────────────────────────
 
 /**
