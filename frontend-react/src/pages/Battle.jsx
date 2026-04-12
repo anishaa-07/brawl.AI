@@ -10,6 +10,7 @@ import {
   TOTAL_ROUNDS, TIMER_DURATION, XP_PER_CORRECT,
 } from './questionsData';
 import UniversalBackBtn from '../components/UniversalBackBtn';
+import { SoundFX } from '../utils/sounds';
 import './Battle.css';
 
 // ── SUB-COMPONENT: Question Text with keyword highlighting ───────
@@ -150,6 +151,12 @@ const Battle = () => {
         const comboText = isCrit ? 'CRITICAL STRIKE! 🔥' : newCombo >= 3 ? `COMBO x${newCombo} 🔥` : 'Attack Successful ⚡';
         setDamageOverlay({ target: 'ai', amount: dmg, text: comboText });
 
+        // Sounds
+        if (isCrit) SoundFX.crit();
+        else if (newCombo >= 3) { SoundFX.combo3(); SoundFX.hit(); }
+        else if (newCombo === 2) { SoundFX.combo2(); SoundFX.hit(); }
+        else SoundFX.hit();
+
         if (newHp <= 30 && newHp > 0) setAiMessage('Critical damage... recalibrating...');
         else if (newHp <= 0) setAiMessage('System offline...');
         else setAiMessage('System breached...');
@@ -161,6 +168,7 @@ const Battle = () => {
           if (newLevel > (user.level || 1)) {
             setLevelUpMsg(true);
             setTimeout(() => setLevelUpMsg(false), 2500);
+            SoundFX.levelUp();
           }
           updateProfile({ xp: newXp, level: newLevel });
         }
@@ -183,6 +191,7 @@ const Battle = () => {
         setFeedback({ type: 'error', error: result.error, expectedOutput: result.expectedOutput });
         setDamageOverlay({ target: 'player', amount: dmg, text: 'Compilation Failed ❌' });
         setAiMessage('Logic error detected. Pathetic.');
+        SoundFX.error();
         setUserInput('');
         setIsAttacking(false);
         setPhase('result');
@@ -204,6 +213,7 @@ const Battle = () => {
         setFeedback({ type: 'miss', expectedOutput: result.expectedOutput, userOutput: result.userOutput });
         setDamageOverlay({ target: 'player', amount: dmg, text: isCrit ? 'SYSTEM BREACH 💀' : 'Wrong Answer ❌' });
         setAiMessage('Weak logic detected.');
+        SoundFX.miss();
         setUserInput('');
         setIsAttacking(false);
         setPhase('result');
@@ -223,6 +233,7 @@ const Battle = () => {
     setAiMessage('Timeout. Processing superior.');
     setDamageOverlay({ target: 'player', amount: 15, text: 'Time Up ⏱' });
     setLaserEffect('ai-to-player');
+    SoundFX.timeout();
     setPhase('result');
     setTimeout(() => setLaserEffect(null), 800);
     setTimeout(() => handleNextRef.current?.(), 2500);
@@ -243,6 +254,7 @@ const Battle = () => {
       else                                        result = 'DRAW';
       setBattleResult(result);
       setPhase('end');
+      SoundFX[result === 'VICTORY' ? 'victory' : result === 'DEFEAT' ? 'defeat' : 'miss']();
       return;
     }
 
@@ -528,7 +540,7 @@ const Battle = () => {
                 <div className="action-buttons code-actions">
                   <button
                     className="reset-btn font-orbitron"
-                    onClick={() => setUserInput('')}
+                    onClick={() => { SoundFX.click(); setUserInput(''); }}
                     disabled={isAttacking}
                   >
                     <RefreshCw size={15} /> RESET
@@ -536,7 +548,7 @@ const Battle = () => {
 
                   <button
                     className={`attack-btn font-orbitron ${isAttacking ? 'btn-loading' : ''}`}
-                    onClick={handleAttack}
+                    onClick={() => { SoundFX.click(); handleAttack(); }}
                     disabled={isAttacking || !userInput.trim()}
                     id="submit-attack-btn"
                   >
