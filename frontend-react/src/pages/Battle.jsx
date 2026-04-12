@@ -59,12 +59,38 @@ const Battle = () => {
   const navigate  = useNavigate();
   const location  = useLocation();
 
-  const difficulty   = location.state?.difficulty || 'Medium';
+  const preSelected = location.state?.selectedQuestion || null;
+  const userLevel = user?.level || 1;
+  const progressiveDiff = userLevel >= 7 ? 'Hard' : userLevel >= 4 ? 'Medium' : 'Easy';
+  const difficulty   = preSelected ? (location.state?.difficulty || progressiveDiff) : progressiveDiff;
+
   const pool         = QUESTIONS[difficulty] || QUESTIONS.Medium;
   const roundDuration = TIMER_DURATION[difficulty] || 45;
 
-  // If a question was pre-selected in the hub, use it as the first question
-  const preSelected = location.state?.selectedQuestion || null;
+  // ── AI Personality Specs ────────────────────────────────────
+  const aiPersonality = {
+    Easy: {
+      wait: "I am ready when you are.",
+      hit: "Ouch. Logic error.",
+      crit: "System overload... please stop.",
+      wrong: "Incorrect syntax.",
+      timeout: "Time is up. Try faster next time."
+    },
+    Medium: {
+      wait: "Awaiting logic input...",
+      hit: "System breached...",
+      crit: "Critical damage... recalibrating...",
+      wrong: "Weak logic detected.",
+      timeout: "Timeout. Processing superior."
+    },
+    Hard: {
+      wait: "Hurry up and fail.",
+      hit: "Insignificant damage.",
+      crit: "WARNING. Core destabilizing.",
+      wrong: "Pathetic human intellect.",
+      timeout: "Too slow. You are obsolete."
+    }
+  }[difficulty] || aiPersonality.Medium;
 
   // ── State ───────────────────────────────────────────────────
   const [round,         setRound]         = useState(1);
@@ -85,7 +111,7 @@ const Battle = () => {
   const [damageOverlay, setDamageOverlay] = useState(null);
   const [laserEffect,   setLaserEffect]   = useState(null);
   const [levelUpMsg,    setLevelUpMsg]    = useState(false);
-  const [aiMessage,     setAiMessage]     = useState('Awaiting logic input...');
+  const [aiMessage,     setAiMessage]     = useState(aiPersonality.wait);
   const [comboStreak,   setComboStreak]   = useState(0);
   const inputRef = useRef(null);
 
@@ -157,9 +183,9 @@ const Battle = () => {
         else if (newCombo === 2) { SoundFX.combo2(); SoundFX.hit(); }
         else SoundFX.hit();
 
-        if (newHp <= 30 && newHp > 0) setAiMessage('Critical damage... recalibrating...');
+        if (newHp <= 30 && newHp > 0) setAiMessage(aiPersonality.crit);
         else if (newHp <= 0) setAiMessage('System offline...');
-        else setAiMessage('System breached...');
+        else setAiMessage(aiPersonality.hit);
 
         // Level-up calculation
         if (updateProfile && user) {
@@ -212,7 +238,7 @@ const Battle = () => {
         setComboStreak(0); // reset combo
         setFeedback({ type: 'miss', expectedOutput: result.expectedOutput, userOutput: result.userOutput });
         setDamageOverlay({ target: 'player', amount: dmg, text: isCrit ? 'SYSTEM BREACH 💀' : 'Wrong Answer ❌' });
-        setAiMessage('Weak logic detected.');
+        setAiMessage(aiPersonality.wrong);
         SoundFX.miss();
         setUserInput('');
         setIsAttacking(false);
@@ -230,7 +256,7 @@ const Battle = () => {
     setFeedback({ type: 'timeout', expectedOutput: question.answer[0] });
     setWrongAttempts(0);
     setComboStreak(0); // reset combo on timeout
-    setAiMessage('Timeout. Processing superior.');
+    setAiMessage(aiPersonality.timeout);
     setDamageOverlay({ target: 'player', amount: 15, text: 'Time Up ⏱' });
     setLaserEffect('ai-to-player');
     SoundFX.timeout();
@@ -271,9 +297,9 @@ const Battle = () => {
     setDamageOverlay(null);
     setShowHint(false);
     setIsAttacking(false);
-    setAiMessage("Awaiting logic input...");
+    setAiMessage(aiPersonality.wait);
     setPhase('battle');
-  }, [round, aiHp, playerHp, usedIds, question.id, pool, roundDuration]);
+  }, [round, aiHp, playerHp, usedIds, question.id, pool, roundDuration, aiPersonality]);
 
   // Keep ref in sync for auto-advance
   useEffect(() => { handleNextRef.current = handleNext; }, [handleNext]);
