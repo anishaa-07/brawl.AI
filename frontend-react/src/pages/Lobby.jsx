@@ -135,7 +135,7 @@ const Lobby = () => {
               </div>
               <div className="challenge-text">
                 <h4 className="font-orbitron">NEURAL OVERRIDE</h4>
-                <p>Complete 3 Hard-level battles with >80% accuracy.</p>
+                <p>Complete 3 Hard-level battles with &gt;80% accuracy.</p>
                 <div className="bonus-tag font-orbitron">
                   <Zap size={12} /> +500 XP BONUS
                 </div>
