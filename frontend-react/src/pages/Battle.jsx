@@ -114,6 +114,8 @@ const Battle = () => {
   const [unlockedBadge, setUnlockedBadge] = useState(null);
   const [aiMessage,     setAiMessage]     = useState(aiPersonality.wait);
   const [comboStreak,   setComboStreak]   = useState(0);
+  const [sessionCorrectCount, setSessionCorrectCount] = useState(0);
+  const [creditsAwarded, setCreditsAwarded] = useState(0);
   const inputRef = useRef(null);
 
   // Derived
@@ -175,6 +177,7 @@ const Battle = () => {
         // ── HIT ────────────────────────────────────────────────
         const newCombo = comboStreak + 1;
         setComboStreak(newCombo);
+        setSessionCorrectCount(prev => prev + 1);
 
         setLaserEffect('player-to-ai');
 
@@ -323,8 +326,18 @@ const Battle = () => {
 
       if (updateProfile && user) {
         const statsUpdate = { totalBattles: (user.totalBattles || 0) + 1 };
-        if (result === 'VICTORY') statsUpdate.wins = (user.wins || 0) + 1;
+        
+        let earnedCredits = 0;
+        if (result === 'VICTORY') {
+          statsUpdate.wins = (user.wins || 0) + 1;
+          // Calculate credits: base 100 + difficulty bonus
+          earnedCredits = 100 + (difficulty === 'Hard' ? 100 : difficulty === 'Medium' ? 50 : 0);
+          statsUpdate.credits = (user.credits || 0) + earnedCredits;
+          setCreditsAwarded(earnedCredits);
+        }
+        
         if (result === 'DEFEAT') statsUpdate.losses = (user.losses || 0) + 1;
+        
         updateProfile(statsUpdate);
       }
 
@@ -791,14 +804,10 @@ const Battle = () => {
             </p>
 
             {/* Stats grid */}
-            <div className="end-stats glass-panel">
+            <div className={`end-stats glass-panel ${battleResult.toLowerCase()}`}>
               <div className="stat-item">
                 <span className="stat-label font-orbitron">DIFFICULTY</span>
                 <span className="stat-val font-orbitron" style={{ color: diffColor }}>{difficulty.toUpperCase()}</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-label font-orbitron">ROUNDS</span>
-                <span className="stat-val font-orbitron">{TOTAL_ROUNDS}</span>
               </div>
               <div className="stat-item">
                 <span className="stat-label font-orbitron">YOUR HP</span>
@@ -808,16 +817,39 @@ const Battle = () => {
                 <span className="stat-label font-orbitron">CODE XP</span>
                 <span className="stat-val font-orbitron" style={{ color: '#a238ff' }}>{totalXp}</span>
               </div>
+              <div className="stat-item">
+                <span className="stat-label font-orbitron">ANSWERS</span>
+                <span className="stat-val font-orbitron" style={{ color: '#00ff73' }}>{sessionCorrectCount} <span style={{fontSize: '0.6rem', color:'#fff'}}>/ {TOTAL_ROUNDS}</span></span>
+              </div>
             </div>
 
-            {/* XP reward */}
-            <div className="xp-reward font-orbitron">
-              <Zap size={16} />
-              CODE XP: {totalXp}
-              {xpBonus > 0 && <span className="bonus-pill">+{xpBonus} VICTORY BONUS</span>}
-            </div>
+            {/* Dynamic Rewards / Summary */}
+            {battleResult === 'VICTORY' ? (
+              <div className="victory-rewards">
+                <div className="xp-reward font-orbitron glow-text">
+                  <Zap size={16} /> +{totalXp} XP EARNED
+                </div>
+                <div className="credits-reward font-orbitron glow-text-gold">
+                  <span style={{ fontSize: '1.2rem', marginRight: '5px' }}>💰</span> +{creditsAwarded} CREDITS
+                </div>
+              </div>
+            ) : (
+              <div className="defeat-summary font-orbitron">
+                <div style={{ color: '#ff3c8d', fontSize: '0.8rem', letterSpacing: '2px', marginBottom: '8px' }}>POST-MATCH ANALYSIS</div>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '20px' }}>
+                  <div style={{ background: 'rgba(255,60,141,0.1)', padding: '10px 20px', borderRadius: '10px', border: '1px solid rgba(255,60,141,0.3)' }}>
+                    <div style={{ fontSize: '1.5rem', color: '#ff3c8d', fontWeight: '900' }}>{sessionCorrectCount}</div>
+                    <div style={{ fontSize: '0.6rem', color: '#fff', letterSpacing: '1px' }}>HITS</div>
+                  </div>
+                  <div style={{ background: 'rgba(0,255,115,0.1)', padding: '10px 20px', borderRadius: '10px', border: '1px solid rgba(0,255,115,0.3)' }}>
+                    <div style={{ fontSize: '1.5rem', color: '#00ff73', fontWeight: '900' }}>+{totalXp}</div>
+                    <div style={{ fontSize: '0.6rem', color: '#fff', letterSpacing: '1px' }}>XP SALVAGED</div>
+                  </div>
+                </div>
+              </div>
+            )}
 
-            <div className="end-actions">
+            <div className="end-actions" style={{ marginTop: '30px' }}>
               <button className="end-btn primary font-orbitron" onClick={handleRetry} id="retry-btn">
                 <RefreshCw size={14} /> RETRY
               </button>

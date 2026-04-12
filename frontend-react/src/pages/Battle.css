@@ -1540,3 +1540,59 @@
   15% { transform: rotate(0deg) scale(1); }
   100% { transform: rotate(0deg) scale(1); }
 }
+
+/* ── END SCREEN REWARDS & ANIMATIONS ── */
+.end-card.victory {
+  animation: victoryPulse 2.5s infinite alternate ease-in-out;
+  border: 1px solid rgba(0, 255, 115, 0.4);
+}
+
+.end-card.defeat {
+  animation: defeatPulse 3s infinite alternate ease-in-out;
+  border: 1px solid rgba(255, 60, 141, 0.4);
+}
+
+@keyframes victoryPulse {
+  from { box-shadow: 0 0 10px rgba(0, 255, 115, 0.1), inset 0 0 5px rgba(0, 255, 115, 0.05); }
+  to   { box-shadow: 0 0 30px rgba(0, 255, 115, 0.4), inset 0 0 15px rgba(0, 255, 115, 0.2); transform: scale(1.02); }
+}
+
+@keyframes defeatPulse {
+  from { box-shadow: 0 0 10px rgba(255, 60, 141, 0.1), inset 0 0 5px rgba(255, 60, 141, 0.05); }
+  to   { box-shadow: 0 0 30px rgba(255, 60, 141, 0.4), inset 0 0 15px rgba(255, 60, 141, 0.2); transform: scale(1.01); }
+}
+
+.victory-rewards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.glow-text {
+  color: #00ff73;
+  text-shadow: 0 0 10px rgba(0, 255, 115, 0.8), 0 0 20px rgba(0, 255, 115, 0.4);
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: textFloat 3s infinite alternate ease-in-out;
+}
+
+.glow-text-gold {
+  color: #ffbd2e;
+  text-shadow: 0 0 10px rgba(255, 189, 46, 0.8), 0 0 20px rgba(255, 189, 46, 0.4);
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: textFloat 3s infinite alternate ease-in-out 0.5s;
+}
+
+@keyframes textFloat {
+  from { transform: translateY(0); filter: brightness(1); }
+  to   { transform: translateY(-3px); filter: brightness(1.2); }
+}
