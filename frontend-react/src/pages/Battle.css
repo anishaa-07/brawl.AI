@@ -170,6 +170,42 @@
   color: rgba(255,255,255,0.6);
 }
 
+/* ── COMBO BADGE ── */
+.combo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.62rem;
+  letter-spacing: 2px;
+  background: rgba(162, 56, 255, 0.15);
+  border: 1px solid rgba(162, 56, 255, 0.5);
+  color: #a238ff;
+  text-shadow: 0 0 8px rgba(162,56,255,0.7);
+  animation: comboEnter 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+.combo-hot {
+  background: rgba(255, 100, 0, 0.15);
+  border-color: rgba(255, 150, 0, 0.6);
+  color: #ff9500;
+  text-shadow: 0 0 8px rgba(255,150,0,0.8);
+  animation: comboEnter 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) both,
+             comboPulse 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes comboEnter {
+  from { transform: scale(0.5) translateY(-6px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@keyframes comboPulse {
+  from { box-shadow: 0 0 5px rgba(255,150,0,0.3); }
+  to   { box-shadow: 0 0 16px rgba(255,150,0,0.8), 0 0 32px rgba(255,100,0,0.4); }
+}
+
 /* ── TIMER ── */
 .hud-center {
   display: flex;

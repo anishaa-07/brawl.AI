@@ -80,11 +80,12 @@ const Battle = () => {
   const [question,      setQuestion]      = useState(() => preSelected || pickQuestion(pool, []));
   const [showHint,      setShowHint]      = useState(false);
   const [showEntrance,  setShowEntrance]  = useState(true);
-  const [wrongAttempts, setWrongAttempts] = useState(0); // track misses per round
-  const [damageOverlay, setDamageOverlay] = useState(null); // { target, amount, text }
-  const [laserEffect, setLaserEffect]   = useState(null); // 'player-to-ai' | 'ai-to-player'
-  const [levelUpMsg, setLevelUpMsg]     = useState(false);
-  const [aiMessage, setAiMessage]       = useState("Awaiting logic input...");
+  const [wrongAttempts, setWrongAttempts] = useState(0);
+  const [damageOverlay, setDamageOverlay] = useState(null);
+  const [laserEffect,   setLaserEffect]   = useState(null);
+  const [levelUpMsg,    setLevelUpMsg]    = useState(false);
+  const [aiMessage,     setAiMessage]     = useState('Awaiting logic input...');
+  const [comboStreak,   setComboStreak]   = useState(0);
   const inputRef = useRef(null);
 
   // Derived
@@ -127,6 +128,9 @@ const Battle = () => {
     setTimeout(() => {
       if (result.isCorrect) {
         // ── HIT ────────────────────────────────────────────────
+        const newCombo = comboStreak + 1;
+        setComboStreak(newCombo);
+
         setLaserEffect('player-to-ai');
 
         let minDmg = 10, maxDmg = 20;
@@ -135,13 +139,16 @@ const Battle = () => {
         let dmg = Math.floor(Math.random() * (maxDmg - minDmg + 1)) + minDmg;
         const isCrit = Math.random() < 0.10;
         if (isCrit) dmg *= 2;
+        // Combo multiplier: x1.5 at streak 3+
+        if (newCombo >= 3) dmg = Math.floor(dmg * 1.5);
 
         const newHp = Math.max(0, aiHp - dmg);
         setAiHp(newHp);
         setTotalXp(prev => prev + xpPerHit);
-        setFeedback({ type: 'hit', xp: xpPerHit, userOutput: result.userOutput });
+        setFeedback({ type: 'hit', xp: xpPerHit, userOutput: result.userOutput, combo: newCombo });
         setWrongAttempts(0);
-        setDamageOverlay({ target: 'ai', amount: dmg, text: isCrit ? 'CRITICAL STRIKE! 🔥' : 'Attack Successful ⚡' });
+        const comboText = isCrit ? 'CRITICAL STRIKE! 🔥' : newCombo >= 3 ? `COMBO x${newCombo} 🔥` : 'Attack Successful ⚡';
+        setDamageOverlay({ target: 'ai', amount: dmg, text: comboText });
 
         if (newHp <= 30 && newHp > 0) setAiMessage('Critical damage... recalibrating...');
         else if (newHp <= 0) setAiMessage('System offline...');
@@ -169,9 +176,10 @@ const Battle = () => {
       } else if (result.isError) {
         // ── COMPILATION ERROR ──────────────────────────────────
         setLaserEffect('ai-to-player');
-        const dmg = 5; // small fixed penalty for crash
+        const dmg = 5;
         setPlayerHp(prev => Math.max(0, prev - dmg));
         setWrongAttempts(prev => prev + 1);
+        setComboStreak(0); // reset combo
         setFeedback({ type: 'error', error: result.error, expectedOutput: result.expectedOutput });
         setDamageOverlay({ target: 'player', amount: dmg, text: 'Compilation Failed ❌' });
         setAiMessage('Logic error detected. Pathetic.');
@@ -192,6 +200,7 @@ const Battle = () => {
 
         setPlayerHp(prev => Math.max(0, prev - dmg));
         setWrongAttempts(prev => prev + 1);
+        setComboStreak(0); // reset combo
         setFeedback({ type: 'miss', expectedOutput: result.expectedOutput, userOutput: result.userOutput });
         setDamageOverlay({ target: 'player', amount: dmg, text: isCrit ? 'SYSTEM BREACH 💀' : 'Wrong Answer ❌' });
         setAiMessage('Weak logic detected.');
@@ -210,12 +219,12 @@ const Battle = () => {
     setPlayerHp(prev => Math.max(0, prev - 15));
     setFeedback({ type: 'timeout', expectedOutput: question.answer[0] });
     setWrongAttempts(0);
+    setComboStreak(0); // reset combo on timeout
     setAiMessage('Timeout. Processing superior.');
     setDamageOverlay({ target: 'player', amount: 15, text: 'Time Up ⏱' });
     setLaserEffect('ai-to-player');
     setPhase('result');
     setTimeout(() => setLaserEffect(null), 800);
-    // Auto-advance after 2.5s on timeout
     setTimeout(() => handleNextRef.current?.(), 2500);
   }, [question]);
 
@@ -336,6 +345,15 @@ const Battle = () => {
             <div className="hud-bar-glow player-glow" style={{ width: `${playerHp}%` }}></div>
           </div>
           <div className="hud-hp-label font-orbitron">{playerHp}<span>%</span></div>
+
+          {/* ── COMBO BADGE ── */}
+          {comboStreak >= 2 && (
+            <div className={`combo-badge font-orbitron ${comboStreak >= 3 ? 'combo-hot' : ''}`}>
+              {comboStreak >= 3
+                ? `COMBO x${comboStreak} 🔥`
+                : `COMBO x2 🔥`}
+            </div>
+          )}
         </div>
 
         {/* Timer + XP */}
