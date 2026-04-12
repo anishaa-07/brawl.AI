@@ -61,6 +61,7 @@ const Battle = () => {
   const [showHint,      setShowHint]      = useState(false);
   const [showEntrance,  setShowEntrance]  = useState(true);
   const [wrongAttempts, setWrongAttempts] = useState(0); // track misses per round
+  const [damageOverlay, setDamageOverlay] = useState(null); // { target, amount, text }
   const inputRef = useRef(null);
 
   // Derived
@@ -101,18 +102,18 @@ const Battle = () => {
 
     setTimeout(() => {
       if (isHit) {
-        const dmg = difficulty === 'Easy' ? 34 : difficulty === 'Medium' ? 38 : 42;
+        const dmg = Math.floor(Math.random() * 11) + 20; // 20-30 dmg
         setAiHp(prev => Math.max(0, prev - dmg));
         setTotalXp(prev => prev + xpPerHit);
         setFeedback({ type: 'hit', xp: xpPerHit });
         setWrongAttempts(0);
+        setDamageOverlay({ target: 'ai', amount: dmg, text: 'Critical Hit! ⚡' });
       } else {
-        const dmg = wrongAttempts === 0
-          ? (difficulty === 'Easy' ? 18 : difficulty === 'Medium' ? 22 : 28)
-          : 8; // reduced damage on retry
+        const dmg = Math.floor(Math.random() * 6) + 10; // 10-15 dmg
         setPlayerHp(prev => Math.max(0, prev - dmg));
         setWrongAttempts(prev => prev + 1);
         setFeedback({ type: 'miss', answer: question.answer[0] });
+        setDamageOverlay({ target: 'player', amount: dmg, text: 'Attack Failed ❌' });
       }
       setUserInput('');
       setIsAttacking(false);
@@ -155,6 +156,7 @@ const Battle = () => {
     setUserInput('');
     setFeedback(null);
     setWrongAttempts(0);
+    setDamageOverlay(null);
     setShowHint(false);
     setIsAttacking(false);
     setPhase('battle');
@@ -190,7 +192,7 @@ const Battle = () => {
   }
 
   return (
-    <div className={`battle-screen ${showEntrance ? 'battle-enter' : ''} ${isAttacking ? 'screen-shake' : ''}`}>
+    <div className={`battle-screen ${showEntrance ? 'battle-enter' : ''} ${damageOverlay?.target === 'player' ? 'screen-shake' : ''}`}>
 
       {/* ── ANIMATED BACKGROUND ── */}
       <div className="battle-bg">
@@ -206,7 +208,13 @@ const Battle = () => {
       {/* ── HUD: TOP BAR ── */}
       <header className="battle-hud glass-panel">
         {/* Player */}
-        <div className="hud-fighter hud-player">
+        <div className={`hud-fighter hud-player ${damageOverlay?.target === 'player' ? 'flash-red' : ''}`} style={{ position: 'relative' }}>
+          {damageOverlay?.target === 'player' && (
+            <div className="floating-dmg player-dmg font-orbitron">
+              <span className="dmg-amount">-{damageOverlay.amount} HP</span>
+              <span className="dmg-text">{damageOverlay.text}</span>
+            </div>
+          )}
           <div className="hud-name font-orbitron"><span className="hud-icon">⚡</span> {playerName}</div>
           <div className="hud-bar-track">
             <div className="hud-bar-fill player-fill" style={{ width: `${playerHp}%` }}></div>
@@ -238,7 +246,13 @@ const Battle = () => {
         </div>
 
         {/* AI */}
-        <div className="hud-fighter hud-ai">
+        <div className={`hud-fighter hud-ai ${damageOverlay?.target === 'ai' ? 'flash-red' : ''}`} style={{ position: 'relative' }}>
+          {damageOverlay?.target === 'ai' && (
+            <div className="floating-dmg ai-dmg font-orbitron">
+              <span className="dmg-amount">-{damageOverlay.amount} HP</span>
+              <span className="dmg-text">{damageOverlay.text}</span>
+            </div>
+          )}
           <div className="hud-name font-orbitron" style={{ justifyContent: 'flex-end' }}>
             AI-CORE-X <span className="hud-icon">🤖</span>
           </div>
