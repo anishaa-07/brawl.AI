@@ -1331,3 +1331,36 @@
   75% { transform: scale(1.05) translateY(-10px); opacity: 1; }
   100% { transform: scale(1.5) translateY(-50px); opacity: 0; filter: blur(10px); }
 }
+
+/* ── AI CHAT BUBBLE ── */
+.ai-chat-bubble {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 10px;
+  background: rgba(10, 5, 20, 0.85);
+  border: 1px solid rgba(255, 60, 141, 0.4);
+  color: #ff3c8d;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  backdrop-filter: blur(8px);
+  max-width: 280px;
+  text-align: left;
+  box-shadow: 0 0 15px rgba(255, 60, 141, 0.2);
+  transform-origin: top right;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.ai-chat-bubble::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  right: 20px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid rgba(255, 60, 141, 0.4);
+}

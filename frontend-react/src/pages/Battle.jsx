@@ -33,6 +33,25 @@ const TagBadge = ({ label }) => (
   </span>
 );
 
+// ── SUB-COMPONENT: Typewriter Effect ─────────────────────────────
+const Typewriter = ({ text }) => {
+  const [display, setDisplay] = useState('');
+  
+  useEffect(() => {
+    setDisplay('');
+    let i = 0;
+    if (!text) return;
+    const t = setInterval(() => {
+      setDisplay(text.substring(0, i + 1));
+      i++;
+      if (i >= text.length) clearInterval(t);
+    }, 30);
+    return () => clearInterval(t);
+  }, [text]);
+
+  return <span>{display}</span>;
+};
+
 // ── MAIN BATTLE COMPONENT ────────────────────────────────────────
 const Battle = () => {
   const { user } = useAuth();
@@ -65,6 +84,7 @@ const Battle = () => {
   const [damageOverlay, setDamageOverlay] = useState(null); // { target, amount, text }
   const [laserEffect, setLaserEffect]   = useState(null); // 'player-to-ai' | 'ai-to-player'
   const [levelUpMsg, setLevelUpMsg]     = useState(false);
+  const [aiMessage, setAiMessage]       = useState("Awaiting logic input...");
   const inputRef = useRef(null);
 
   // Derived
@@ -115,11 +135,16 @@ const Battle = () => {
         const isCrit = Math.random() < 0.10; // 10% crit chance
         if (isCrit) dmg *= 2;
 
-        setAiHp(prev => Math.max(0, prev - dmg));
+        const newHp = Math.max(0, aiHp - dmg);
+        setAiHp(newHp);
         setTotalXp(prev => prev + xpPerHit);
         setFeedback({ type: 'hit', xp: xpPerHit });
         setWrongAttempts(0);
         setDamageOverlay({ target: 'ai', amount: dmg, text: isCrit ? 'CRITICAL STRIKE! 🔥' : 'Attack Successful ⚡' });
+
+        if (newHp <= 30 && newHp > 0) setAiMessage("Critical damage... recalibrating...");
+        else if (newHp <= 0) setAiMessage("System offline...");
+        else setAiMessage("System breached...");
 
         // === LEVEL UP LOGIC ===
         if (updateProfile && user) {
@@ -148,6 +173,7 @@ const Battle = () => {
         setWrongAttempts(prev => prev + 1);
         setFeedback({ type: 'miss', answer: question.answer[0] });
         setDamageOverlay({ target: 'player', amount: dmg, text: isCrit ? 'SYSTEM BREACH 💀' : 'Compilation Failed ❌' });
+        setAiMessage("Weak logic detected.");
       }
       setUserInput('');
       setIsAttacking(false);
@@ -162,6 +188,7 @@ const Battle = () => {
     setPlayerHp(prev => Math.max(0, prev - 15));
     setFeedback({ type: 'timeout', answer: question.answer[0] });
     setWrongAttempts(0);
+    setAiMessage("Timeout. Processing superior.");
     setPhase('result');
   }, [question]);
 
@@ -196,6 +223,7 @@ const Battle = () => {
     setDamageOverlay(null);
     setShowHint(false);
     setIsAttacking(false);
+    setAiMessage("Awaiting logic input...");
     setPhase('battle');
   }, [round, aiHp, playerHp, usedIds, question.id, pool, roundDuration]);
 
@@ -318,6 +346,11 @@ const Battle = () => {
             <div className="hud-bar-glow ai-glow"  style={{ width: `${aiHp}%` }}></div>
           </div>
           <div className="hud-hp-label font-orbitron" style={{ textAlign: 'right' }}>{aiHp}<span>%</span></div>
+          
+          {/* AI CHAT BUBBLE */}
+          <div className="ai-chat-bubble font-orbitron">
+            <Typewriter text={aiMessage} />
+          </div>
         </div>
       </header>
 
