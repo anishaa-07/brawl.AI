@@ -10,15 +10,20 @@ import './Lobby.css';
 
 const Lobby = () => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const [loading, setLoading] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [profile, setProfile] = useState({
-    username: 'PLAYER_X',
-    level: 5,
-    xp: 45,
-    rank: 'SILVER III',
-    credits: 1250
+  
+  // Real-time calculated properties from user
+  const currentLevel = user?.level || 1;
+  const currentXP = user?.xp || 0;
+  const nextLevelXP = currentLevel * 100;
+  const xpPercent = Math.min(100, Math.floor((currentXP % 100) / 100 * 100));
+
+  const [profile] = useState({
+    username: user?.username || 'ANON_USER',
+    rank: user?.rank || 'Bronze III',
+    credits: user?.credits || 1200
   });
 
   const leaders = [
@@ -123,8 +128,8 @@ const Lobby = () => {
                 <div className="font-orbitron" style={{ color: '#ffbd2e', fontSize: '1.1rem' }}>{profile.credits}</div>
               </div>
               <div style={{ flex: 1, background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <div style={{ fontSize: '0.6rem', color: '#888', letterSpacing: '2px', marginBottom: '5px' }}>COMPLETION</div>
-                <div className="font-orbitron" style={{ color: 'var(--neon-cyan)', fontSize: '1.1rem' }}>{profile.xp}%</div>
+                <div style={{ fontSize: '0.6rem', color: '#888', letterSpacing: '2px', marginBottom: '5px' }}>LEVEL {currentLevel}</div>
+                <div className="font-orbitron" style={{ color: 'var(--neon-cyan)', fontSize: '1.1rem' }}>{xpPercent}%</div>
               </div>
             </div>
           </div>
@@ -136,16 +141,24 @@ const Lobby = () => {
               <p>Test your logic against the neural core.</p>
             </div>
             
-            <div className="mode-card-v4" style={{ cursor: 'not-allowed', filter: 'grayscale(0.8)' }}>
+            <div 
+              className="mode-card-v4" 
+              style={currentLevel < 2 ? { cursor: 'not-allowed', filter: 'grayscale(0.8)' } : {}}
+              onClick={() => currentLevel >= 2 && startBattle('duel')}
+            >
               <div className="mode-icon-v4"><Users size={28} /></div>
               <h3 className="font-orbitron">DUEL</h3>
-              <p>Ranked matchmaking (Locked).</p>
+              <p>{currentLevel < 2 ? 'Ranked matchmaking (Unlocks at LVL 2).' : 'Ranked matchmaking against live players.'}</p>
             </div>
 
-            <div className="mode-card-v4" style={{ cursor: 'not-allowed', filter: 'grayscale(0.8)' }}>
+            <div 
+              className="mode-card-v4" 
+              style={currentLevel < 3 ? { cursor: 'not-allowed', filter: 'grayscale(0.8)' } : {}}
+              onClick={() => currentLevel >= 3 && startBattle('squad')}
+            >
               <div className="mode-icon-v4"><Target size={28} /></div>
               <h3 className="font-orbitron">SQUAD</h3>
-              <p>Tactical 3v3 team skirmish (Locked).</p>
+              <p>{currentLevel < 3 ? 'Tactical 3v3 team skirmish (Unlocks at LVL 3).' : 'Tactical 3v3 team skirmish.'}</p>
             </div>
           </div>
 

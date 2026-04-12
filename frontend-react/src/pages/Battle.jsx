@@ -64,6 +64,7 @@ const Battle = () => {
   const [wrongAttempts, setWrongAttempts] = useState(0); // track misses per round
   const [damageOverlay, setDamageOverlay] = useState(null); // { target, amount, text }
   const [laserEffect, setLaserEffect]   = useState(null); // 'player-to-ai' | 'ai-to-player'
+  const [levelUpMsg, setLevelUpMsg]     = useState(false);
   const inputRef = useRef(null);
 
   // Derived
@@ -119,6 +120,19 @@ const Battle = () => {
         setFeedback({ type: 'hit', xp: xpPerHit });
         setWrongAttempts(0);
         setDamageOverlay({ target: 'ai', amount: dmg, text: isCrit ? 'CRITICAL STRIKE! 🔥' : 'Attack Successful ⚡' });
+
+        // === LEVEL UP LOGIC ===
+        if (updateProfile && user) {
+           const newXp = (user.xp || 0) + xpPerHit;
+           const oldLevel = user.level || 1;
+           const newLevel = Math.floor(newXp / 100) + 1;
+           
+           if (newLevel > oldLevel) {
+              setLevelUpMsg(true);
+              setTimeout(() => setLevelUpMsg(false), 2500); // hide after 2.5s
+           }
+           updateProfile({ xp: newXp, level: newLevel });
+        }
       } else {
         setLaserEffect('ai-to-player');
         
@@ -310,6 +324,13 @@ const Battle = () => {
       {/* ── MAIN BATTLE ZONE ── */}
       <main className="battle-main">
         
+        {/* LEVEL UP ANIMATION OVERLAY */}
+        {levelUpMsg && (
+          <div className="level-up-pulse-overlay font-orbitron">
+            <div className="level-up-text">LEVEL UP 🚀</div>
+          </div>
+        )}
+
         {/* LASER ANIMATION OVERLAY */}
         {laserEffect && <div className={`laser-blast ${laserEffect}`}></div>}
 

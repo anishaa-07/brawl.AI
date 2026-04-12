@@ -1295,3 +1295,39 @@
   30% { height: 120vh; top: 0; opacity: 1; transform: scaleX(4); }
   100% { height: 120vh; top: 120vh; opacity: 0; transform: scaleX(0.5); }
 }
+
+/* ── LEVEL UP OVERLAY ── */
+.level-up-pulse-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(0,255,115,0.15) 0%, transparent 60%);
+  animation: levelUpFade 2.5s ease-out forwards;
+}
+
+.level-up-text {
+  font-size: 4rem;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 0 20px #00ff73, 0 0 40px #00ff73, 0 0 80px #00ff73;
+  animation: levelUpPulse 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes levelUpFade {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes levelUpPulse {
+  0% { transform: scale(0.5) translateY(50px); opacity: 0; }
+  15% { transform: scale(1.2) translateY(-20px); opacity: 1; text-shadow: 0 0 50px #ffffff, 0 0 100px #00ff73; }
+  25% { transform: scale(1) translateY(0); }
+  75% { transform: scale(1.05) translateY(-10px); opacity: 1; }
+  100% { transform: scale(1.5) translateY(-50px); opacity: 0; filter: blur(10px); }
+}

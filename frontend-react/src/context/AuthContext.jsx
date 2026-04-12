@@ -10,8 +10,23 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
 
   const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+    const baseData = {
+      xp: 0,
+      level: 1,
+      credits: 0,
+      rank: 'Bronze I',
+      ...userData,
+    };
+    setUser(baseData);
+    localStorage.setItem('user', JSON.stringify(baseData));
+  };
+
+  const updateProfile = (updates) => {
+    setUser((prev) => {
+      const updated = { ...prev, ...updates };
+      localStorage.setItem('user', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const logout = () => {
@@ -20,7 +35,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, loading, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );
