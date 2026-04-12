@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Shield, Swords, Users, Target, Activity, 
-  Crown, LogOut, ChevronRight, User, Maximize, Minimize, Award, Loader2
+  Crown, LogOut, ChevronRight, User, Maximize, Minimize, Award, Loader2, Settings as SettingsIcon
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import UniversalBackBtn from '../components/UniversalBackBtn';
+import SettingsModal from '../components/SettingsModal';
 import './Lobby.css';
 
 const Lobby = () => {
@@ -13,6 +14,7 @@ const Lobby = () => {
   const { user, logout } = useAuth();
   const [loading, setLoading] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   
   // Cinematic Boot State
   const [isBooting, setIsBooting] = useState(() => !sessionStorage.getItem('brawl_booted'));
@@ -258,9 +260,15 @@ const Lobby = () => {
 
       </div>
 
-      <button className="fs-btn-v4" onClick={toggleFullscreen}>
+      <button className="fs-btn-v4" onClick={toggleFullscreen} style={{ bottom: '20px', right: '20px' }}>
         {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
       </button>
+
+      <button className="settings-btn-v4" onClick={() => setShowSettings(true)} style={{ position: 'fixed', top: '20px', right: '20px', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', color: '#fff', width: '50px', height: '50px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 100, backdropFilter: 'blur(10px)', transition: '0.3s' }}>
+        <SettingsIcon size={22} className="hover-spin" />
+      </button>
+
+      {showSettings && <SettingsModal onClose={() => setShowSettings(false)} />}
 
     </div>
     </>

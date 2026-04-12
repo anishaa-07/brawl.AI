@@ -115,6 +115,11 @@ const AnimatedRoutes = () => {
 };
 
 function App() {
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('brawl_theme');
+    if (savedTheme === 'dark') document.body.className = 'brawl-theme-dark';
+  }, []);
+
   return (
     <Router>
       <AuthProvider>

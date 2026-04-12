@@ -244,3 +244,27 @@ input {
   gap: 15px;
   margin-top: 25px;
 }
+
+/* ────────── SETTINGS BUTTON & DARK THEME ────────── */
+.settings-btn-v4:hover {
+  background: #00f2ff !important;
+  color: #000 !important;
+  box-shadow: 0 0 15px #00f2ff;
+}
+
+.settings-btn-v4:hover .hover-spin {
+  animation: staticSpin 2s linear infinite;
+}
+
+@keyframes staticSpin {
+  100% { transform: rotate(360deg); }
+}
+
+body.brawl-theme-dark {
+  --neon-cyan: #7db8b5;
+  --neon-purple: #6a4c93;
+  --neon-magenta: #a3385b;
+  --glass-bg: rgba(5, 5, 5, 0.85);
+  background: #000 !important;
+  filter: saturate(0.4) contrast(1.1);
+}

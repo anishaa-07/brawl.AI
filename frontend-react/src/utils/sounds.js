@@ -15,6 +15,7 @@ function getCtx() {
 
 /** Low-level helper: play a short oscillator burst */
 function playTone({ type = 'sine', freq = 440, endFreq, gain = 0.18, duration = 0.15, startDelay = 0 }) {
+  if (localStorage.getItem('brawl_sound_enabled') === 'false') return;
   try {
     const ac = getCtx();
     const osc = ac.createOscillator();
@@ -42,6 +43,7 @@ function playTone({ type = 'sine', freq = 440, endFreq, gain = 0.18, duration = 
 
 /** White-noise burst for click feedback */
 function playNoise({ gain = 0.05, duration = 0.04, startDelay = 0 }) {
+  if (localStorage.getItem('brawl_sound_enabled') === 'false') return;
   try {
     const ac = getCtx();
     const bufSize = ac.sampleRate * duration;
