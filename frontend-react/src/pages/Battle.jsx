@@ -6,10 +6,9 @@ import {
   RefreshCw, Tag, Lightbulb, CheckCircle, XCircle, Clock,
 } from 'lucide-react';
 import {
-  pickQuestion, executeCode, parseKeywords,
+  QUESTIONS, pickQuestion, executeCode, parseKeywords,
   TOTAL_ROUNDS, TIMER_DURATION, XP_PER_CORRECT,
 } from './questionsData';
-import { ALL_QUESTIONS } from '../data/questionsDB';
 import UniversalBackBtn from '../components/UniversalBackBtn';
 import { SoundFX } from '../utils/sounds';
 import './Battle.css';
@@ -63,11 +62,9 @@ const Battle = () => {
   const preSelected = location.state?.selectedQuestion || null;
   const userLevel = user?.level || 1;
   const progressiveDiff = userLevel >= 7 ? 'Hard' : userLevel >= 4 ? 'Medium' : 'Easy';
-  const difficulty = preSelected ? (location.state?.difficulty || progressiveDiff) : progressiveDiff;
+  const difficulty   = preSelected ? (location.state?.difficulty || progressiveDiff) : progressiveDiff;
 
-  // STRICT POOLING FROM DB:
-  const pool = ALL_QUESTIONS.filter(q => q.difficulty === difficulty) || [];
-  const safePool = pool.length > 0 ? pool : ALL_QUESTIONS;
+  const pool         = QUESTIONS[difficulty] || QUESTIONS.Medium;
   const roundDuration = TIMER_DURATION[difficulty] || 45;
 
   // ── AI Personality Specs ────────────────────────────────────
@@ -107,7 +104,7 @@ const Battle = () => {
   const [phase,         setPhase]         = useState('battle');
   const [battleResult,  setBattleResult]  = useState('');
   const [usedIds,       setUsedIds]       = useState(() => preSelected ? [preSelected.id] : []);
-  const [question,      setQuestion]      = useState(() => preSelected || pickQuestion(safePool, []));
+  const [question,      setQuestion]      = useState(() => preSelected || pickQuestion(pool, []));
   const [showHint,      setShowHint]      = useState(false);
   const [showEntrance,  setShowEntrance]  = useState(true);
   const [wrongAttempts, setWrongAttempts] = useState(0);
@@ -374,9 +371,9 @@ const Battle = () => {
     }
 
     // Advance to next round
-    const newUsed = [...usedIds, question?.id].filter(Boolean);
+    const newUsed = [...usedIds, question.id];
     setUsedIds(newUsed);
-    const next = pickQuestion(safePool, newUsed) || safePool[0];
+    const next = pickQuestion(pool, newUsed);
     setQuestion(next);
     setRound(r => r + 1);
     setTimeLeft(roundDuration);
