@@ -125,11 +125,33 @@ const Lobby = () => {
             <div style={{ marginTop: '30px', display: 'flex', gap: '20px', width: '100%', maxWidth: '300px' }}>
               <div style={{ flex: 1, background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)' }}>
                 <div style={{ fontSize: '0.6rem', color: '#888', letterSpacing: '2px', marginBottom: '5px' }}>CREDITS</div>
-                <div className="font-orbitron" style={{ color: '#ffbd2e', fontSize: '1.1rem' }}>{profile.credits}</div>
+                <div className="font-orbitron" style={{ color: '#ffbd2e', fontSize: '1.1rem' }}>{user?.credits || 0}</div>
               </div>
               <div style={{ flex: 1, background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)' }}>
                 <div style={{ fontSize: '0.6rem', color: '#888', letterSpacing: '2px', marginBottom: '5px' }}>LEVEL {currentLevel}</div>
                 <div className="font-orbitron" style={{ color: 'var(--neon-cyan)', fontSize: '1.1rem' }}>{xpPercent}%</div>
+              </div>
+            </div>
+
+            {/* Extended Player Stats */}
+            <div style={{ marginTop: '15px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', width: '100%', maxWidth: '300px' }}>
+              <div style={{ background: 'rgba(255,255,255,0.02)', padding: '8px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)', textAlign: 'left' }}>
+                <div style={{ fontSize: '0.55rem', color: '#888', letterSpacing: '1px' }}>TOTAL BATTLES</div>
+                <div className="font-orbitron" style={{ color: '#fff', fontSize: '0.9rem' }}>{user?.totalBattles || 0}</div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.02)', padding: '8px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)', textAlign: 'left' }}>
+                <div style={{ fontSize: '0.55rem', color: '#888', letterSpacing: '1px' }}>W / L RATIO</div>
+                <div className="font-orbitron" style={{ color: '#00ff73', fontSize: '0.9rem' }}>{user?.wins || 0} <span style={{color: '#ff3c8d'}}>/ {user?.losses || 0}</span></div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.02)', padding: '8px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)', textAlign: 'left' }}>
+                <div style={{ fontSize: '0.55rem', color: '#888', letterSpacing: '1px' }}>ACCURACY</div>
+                <div className="font-orbitron" style={{ color: 'var(--neon-cyan)', fontSize: '0.9rem' }}>
+                  {user?.totalAttempts ? Math.round(((user?.totalCorrect || 0) / user.totalAttempts) * 100) : 0}%
+                </div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.02)', padding: '8px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)', textAlign: 'left' }}>
+                <div style={{ fontSize: '0.55rem', color: '#888', letterSpacing: '1px' }}>MAX COMBO</div>
+                <div className="font-orbitron" style={{ color: '#ffbd2e', fontSize: '0.9rem' }}>{user?.highestCombo || 0} 🔥</div>
               </div>
             </div>
           </div>

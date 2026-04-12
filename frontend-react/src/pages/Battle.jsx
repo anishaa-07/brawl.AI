@@ -166,6 +166,10 @@ const Battle = () => {
     // Execute user code — returns { isCorrect, userOutput, expectedOutput, error, isError }
     const result = executeCode(question, userInput);
 
+    if (updateProfile && user) {
+      updateProfile({ totalAttempts: (user.totalAttempts || 0) + 1 });
+    }
+
     setTimeout(() => {
       if (result.isCorrect) {
         // ── HIT ────────────────────────────────────────────────
@@ -217,6 +221,11 @@ const Battle = () => {
             userUpdates.level = newLevel;
           }
           userUpdates.xp = newXp;
+
+          if (newCombo > (user.highestCombo || 0)) {
+            userUpdates.highestCombo = newCombo;
+          }
+
           updateProfile(userUpdates);
 
           // Triggers: Code Ninja (5 total correct)
@@ -311,6 +320,13 @@ const Battle = () => {
       setBattleResult(result);
       setPhase('end');
       SoundFX[result === 'VICTORY' ? 'victory' : result === 'DEFEAT' ? 'defeat' : 'miss']();
+
+      if (updateProfile && user) {
+        const statsUpdate = { totalBattles: (user.totalBattles || 0) + 1 };
+        if (result === 'VICTORY') statsUpdate.wins = (user.wins || 0) + 1;
+        if (result === 'DEFEAT') statsUpdate.losses = (user.losses || 0) + 1;
+        updateProfile(statsUpdate);
+      }
 
       // Trigger: First Blood (win 1 game)
       if (result === 'VICTORY') {
