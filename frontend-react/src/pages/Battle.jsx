@@ -211,7 +211,12 @@ const Battle = () => {
     setFeedback({ type: 'timeout', expectedOutput: question.answer[0] });
     setWrongAttempts(0);
     setAiMessage('Timeout. Processing superior.');
+    setDamageOverlay({ target: 'player', amount: 15, text: 'Time Up ⏱' });
+    setLaserEffect('ai-to-player');
     setPhase('result');
+    setTimeout(() => setLaserEffect(null), 800);
+    // Auto-advance after 2.5s on timeout
+    setTimeout(() => handleNextRef.current?.(), 2500);
   }, [question]);
 
   // ── Next Round ──────────────────────────────────────────────
@@ -554,7 +559,7 @@ const Battle = () => {
                   {feedback.type === 'hit'     ? 'Attack Successful ⚡'
                   : feedback.type === 'miss'   ? 'Wrong Answer ❌'
                   : feedback.type === 'error'  ? 'Compilation Failed ❌'
-                  :                              'Timeout ❌'}
+                  :                              'Time Up ⏱'}
                 </div>
 
                 {/* ── HIT: XP + output ── */}

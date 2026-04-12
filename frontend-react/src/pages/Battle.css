@@ -184,11 +184,12 @@
   transition: transform 0.3s;
 }
 
-.timer-danger { animation: timerPulse 0.5s ease-in-out infinite alternate; }
+.timer-danger { animation: timerPulse 0.45s ease-in-out infinite alternate; }
+.timer-danger .timer-text { color: #ff3c8d; text-shadow: 0 0 12px rgba(255,60,141,0.9); }
 
 @keyframes timerPulse {
-  from { transform: scale(1); filter: drop-shadow(0 0 0 transparent); }
-  to   { transform: scale(1.12); filter: drop-shadow(0 0 10px rgba(255,60,141,0.8)); }
+  from { transform: scale(1);    filter: drop-shadow(0 0 0 transparent); }
+  to   { transform: scale(1.15); filter: drop-shadow(0 0 14px rgba(255,60,141,1)); }
 }
 
 .timer-svg {
