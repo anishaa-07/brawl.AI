@@ -191,20 +191,67 @@ export function pickQuestion(pool, usedIds) {
   return available[Math.floor(Math.random() * available.length)];
 }
 
-/**
- * Normalize an answer string for comparison:
- * lower-case, remove spaces and quotes.
- */
 export function normalizeAnswer(str) {
-  return str.toLowerCase().replace(/\s+/g, '').replace(/["']/g, '');
+  if (str === null || str === undefined) return '';
+  return String(str).toLowerCase().replace(/\s+/g, '').replace(/["']/g, '');
 }
 
 /**
  * Check if the user's answer matches any accepted answer for the question.
  */
 export function checkAnswer(question, userInput) {
-  const normalized = normalizeAnswer(userInput);
-  return question.answer.some(a => normalizeAnswer(a) === normalized);
+  try {
+    // 3. Ensure function is executed: Call solution(input) before checking result
+    const argsStr = question.example && question.example.input 
+        ? question.example.input.replace(/[a-zA-Z_]+\s*=\s*/g, '') 
+        : '';
+        
+    const wrappedCode = `
+      ${userInput}
+      if (typeof solution === 'function') {
+        return solution(${argsStr});
+      }
+      return undefined;
+    `;
+    const fn = new Function(wrappedCode);
+    const userResultRaw = fn();
+
+    let userOutput = "";
+    if (userResultRaw !== undefined) {
+       userOutput = typeof userResultRaw === 'object' ? JSON.stringify(userResultRaw) : String(userResultRaw);
+    } else {
+       // Fallback if they just typed the answer physically without function structure
+       userOutput = String(userInput);
+    }
+
+    // 5. Debug: Log both outputs before comparison
+    console.log("Raw expectedOutputs:", question.answer);
+    console.log("Raw userOutput:", userOutput);
+
+    // 1 & 2. Normalize and trim spaces
+    const normalizedUser = normalizeAnswer(userOutput);
+    
+    let isCorrect = false;
+    for (let ans of question.answer) {
+      const normalizedExpected = normalizeAnswer(ans);
+      
+      console.log("Comparing -> User:", normalizedUser, "| Expected:", normalizedExpected);
+      
+      // 4. Compare like this: userOutput === expectedOutput (after normalization)
+      if (normalizedUser === normalizedExpected) {
+        isCorrect = true;
+        break;
+      }
+    }
+    
+    return isCorrect;
+
+  } catch (error) {
+    console.error("Error executing user code:", error);
+    // Fallback if execution fails
+    const fallbackNormalized = normalizeAnswer(userInput);
+    return question.answer.some(a => normalizeAnswer(a) === fallbackNormalized);
+  }
 }
 
 /**
