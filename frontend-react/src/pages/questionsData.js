@@ -197,15 +197,18 @@ export function normalizeAnswer(str) {
 }
 
 /**
- * Check if the user's answer matches any accepted answer for the question.
+ * Execute user code against the question's test input and return a rich result.
+ * Returns: { isCorrect, userOutput, expectedOutput, error, isError }
  */
-export function checkAnswer(question, userInput) {
+export function executeCode(question, userInput) {
+  const expectedOutput = question.answer[0]; // primary expected answer for display
+
   try {
-    // 3. Ensure function is executed: Call solution(input) before checking result
-    const argsStr = question.example && question.example.input 
-        ? question.example.input.replace(/[a-zA-Z_]+\s*=\s*/g, '') 
-        : '';
-        
+    // Build argument string from the example input
+    const argsStr = question.example && question.example.input
+      ? question.example.input.replace(/[a-zA-Z_]+\s*=\s*/g, '')
+      : '';
+
     const wrappedCode = `
       ${userInput}
       if (typeof solution === 'function') {
@@ -213,45 +216,42 @@ export function checkAnswer(question, userInput) {
       }
       return undefined;
     `;
+
     const fn = new Function(wrappedCode);
-    const userResultRaw = fn();
+    const rawResult = fn();
 
-    let userOutput = "";
-    if (userResultRaw !== undefined) {
-       userOutput = typeof userResultRaw === 'object' ? JSON.stringify(userResultRaw) : String(userResultRaw);
+    let userOutput;
+    if (rawResult !== undefined) {
+      userOutput = typeof rawResult === 'object'
+        ? JSON.stringify(rawResult)
+        : String(rawResult);
     } else {
-       // Fallback if they just typed the answer physically without function structure
-       userOutput = String(userInput);
+      // Fallback: treat the whole input as a plain answer
+      userOutput = String(userInput).trim();
     }
 
-    // 5. Debug: Log both outputs before comparison
-    console.log("Raw expectedOutputs:", question.answer);
-    console.log("Raw userOutput:", userOutput);
+    console.log('[executeCode] userOutput:', userOutput, '| expected:', question.answer);
 
-    // 1 & 2. Normalize and trim spaces
     const normalizedUser = normalizeAnswer(userOutput);
-    
-    let isCorrect = false;
-    for (let ans of question.answer) {
-      const normalizedExpected = normalizeAnswer(ans);
-      
-      console.log("Comparing -> User:", normalizedUser, "| Expected:", normalizedExpected);
-      
-      // 4. Compare like this: userOutput === expectedOutput (after normalization)
-      if (normalizedUser === normalizedExpected) {
-        isCorrect = true;
-        break;
-      }
-    }
-    
-    return isCorrect;
+    const isCorrect = question.answer.some(a => normalizeAnswer(a) === normalizedUser);
 
-  } catch (error) {
-    console.error("Error executing user code:", error);
-    // Fallback if execution fails
-    const fallbackNormalized = normalizeAnswer(userInput);
-    return question.answer.some(a => normalizeAnswer(a) === fallbackNormalized);
+    return { isCorrect, userOutput, expectedOutput, error: null, isError: false };
+
+  } catch (err) {
+    console.error('[executeCode] Runtime error:', err.message);
+    // On error: try plain-text fallback comparison before marking as error
+    const fallbackNorm = normalizeAnswer(userInput);
+    const isCorrect = question.answer.some(a => normalizeAnswer(a) === fallbackNorm);
+    if (isCorrect) {
+      return { isCorrect: true, userOutput: userInput.trim(), expectedOutput, error: null, isError: false };
+    }
+    return { isCorrect: false, userOutput: null, expectedOutput, error: err.message, isError: true };
   }
+}
+
+// Keep old export as alias so nothing else breaks
+export function checkAnswer(question, userInput) {
+  return executeCode(question, userInput).isCorrect;
 }
 
 /**

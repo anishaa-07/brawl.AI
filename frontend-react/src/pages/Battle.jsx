@@ -6,7 +6,7 @@ import {
   RefreshCw, Tag, Lightbulb, CheckCircle, XCircle, Clock,
 } from 'lucide-react';
 import {
-  QUESTIONS, pickQuestion, checkAnswer, parseKeywords,
+  QUESTIONS, pickQuestion, executeCode, parseKeywords,
   TOTAL_ROUNDS, TIMER_DURATION, XP_PER_CORRECT,
 } from './questionsData';
 import UniversalBackBtn from '../components/UniversalBackBtn';
@@ -121,74 +121,96 @@ const Battle = () => {
     setIsAttacking(true);
     setShowHint(false);
 
-    const isHit = checkAnswer(question, userInput);
+    // Execute user code — returns { isCorrect, userOutput, expectedOutput, error, isError }
+    const result = executeCode(question, userInput);
 
     setTimeout(() => {
-      if (isHit) {
+      if (result.isCorrect) {
+        // ── HIT ────────────────────────────────────────────────
         setLaserEffect('player-to-ai');
-        
+
         let minDmg = 10, maxDmg = 20;
         if (difficulty === 'Medium') { minDmg = 20; maxDmg = 35; }
         else if (difficulty === 'Hard') { minDmg = 35; maxDmg = 50; }
-        
         let dmg = Math.floor(Math.random() * (maxDmg - minDmg + 1)) + minDmg;
-        const isCrit = Math.random() < 0.10; // 10% crit chance
+        const isCrit = Math.random() < 0.10;
         if (isCrit) dmg *= 2;
 
         const newHp = Math.max(0, aiHp - dmg);
         setAiHp(newHp);
         setTotalXp(prev => prev + xpPerHit);
-        setFeedback({ type: 'hit', xp: xpPerHit });
+        setFeedback({ type: 'hit', xp: xpPerHit, userOutput: result.userOutput });
         setWrongAttempts(0);
         setDamageOverlay({ target: 'ai', amount: dmg, text: isCrit ? 'CRITICAL STRIKE! 🔥' : 'Attack Successful ⚡' });
 
-        if (newHp <= 30 && newHp > 0) setAiMessage("Critical damage... recalibrating...");
-        else if (newHp <= 0) setAiMessage("System offline...");
-        else setAiMessage("System breached...");
+        if (newHp <= 30 && newHp > 0) setAiMessage('Critical damage... recalibrating...');
+        else if (newHp <= 0) setAiMessage('System offline...');
+        else setAiMessage('System breached...');
 
-        // === LEVEL UP LOGIC ===
+        // Level-up calculation
         if (updateProfile && user) {
-           const newXp = (user.xp || 0) + xpPerHit;
-           const oldLevel = user.level || 1;
-           const newLevel = Math.floor(newXp / 100) + 1;
-           
-           if (newLevel > oldLevel) {
-              setLevelUpMsg(true);
-              setTimeout(() => setLevelUpMsg(false), 2500); // hide after 2.5s
-           }
-           updateProfile({ xp: newXp, level: newLevel });
+          const newXp = (user.xp || 0) + xpPerHit;
+          const newLevel = Math.floor(newXp / 100) + 1;
+          if (newLevel > (user.level || 1)) {
+            setLevelUpMsg(true);
+            setTimeout(() => setLevelUpMsg(false), 2500);
+          }
+          updateProfile({ xp: newXp, level: newLevel });
         }
-      } else {
+
+        setUserInput('');
+        setIsAttacking(false);
+        setPhase('result');
+        setTimeout(() => setLaserEffect(null), 800);
+
+        // ── AUTO-ADVANCE after 1.5 s on correct ────────────────
+        setTimeout(() => handleNextRef.current?.(), 1500);
+
+      } else if (result.isError) {
+        // ── COMPILATION ERROR ──────────────────────────────────
         setLaserEffect('ai-to-player');
-        
+        const dmg = 5; // small fixed penalty for crash
+        setPlayerHp(prev => Math.max(0, prev - dmg));
+        setWrongAttempts(prev => prev + 1);
+        setFeedback({ type: 'error', error: result.error, expectedOutput: result.expectedOutput });
+        setDamageOverlay({ target: 'player', amount: dmg, text: 'Compilation Failed ❌' });
+        setAiMessage('Logic error detected. Pathetic.');
+        setUserInput('');
+        setIsAttacking(false);
+        setPhase('result');
+        setTimeout(() => setLaserEffect(null), 800);
+
+      } else {
+        // ── WRONG ANSWER ───────────────────────────────────────
+        setLaserEffect('ai-to-player');
         let minBase = 5, maxBase = 10;
         if (difficulty === 'Medium') { minBase = 10; maxBase = 20; }
         else if (difficulty === 'Hard') { minBase = 15; maxBase = 25; }
-        
         let dmg = Math.floor(Math.random() * (maxBase - minBase + 1)) + minBase;
         const isCrit = Math.random() < 0.10;
         if (isCrit) dmg *= 2;
 
         setPlayerHp(prev => Math.max(0, prev - dmg));
         setWrongAttempts(prev => prev + 1);
-        setFeedback({ type: 'miss', answer: question.answer[0] });
-        setDamageOverlay({ target: 'player', amount: dmg, text: isCrit ? 'SYSTEM BREACH 💀' : 'Compilation Failed ❌' });
-        setAiMessage("Weak logic detected.");
+        setFeedback({ type: 'miss', expectedOutput: result.expectedOutput, userOutput: result.userOutput });
+        setDamageOverlay({ target: 'player', amount: dmg, text: isCrit ? 'SYSTEM BREACH 💀' : 'Wrong Answer ❌' });
+        setAiMessage('Weak logic detected.');
+        setUserInput('');
+        setIsAttacking(false);
+        setPhase('result');
+        setTimeout(() => setLaserEffect(null), 800);
       }
-      setUserInput('');
-      setIsAttacking(false);
-      setPhase('result');
-      
-      // Clear laser after animation ends
-      setTimeout(() => setLaserEffect(null), 800);
     }, 650);
-  }, [isAttacking, phase, userInput, question, difficulty, wrongAttempts, xpPerHit]);
+  }, [isAttacking, phase, userInput, question, difficulty, aiHp, xpPerHit]); // eslint-disable-line
+
+  // Stable ref so the auto-advance timer can call handleNext without stale closure
+  const handleNextRef = useRef(null);
 
   const handleTimeOut = useCallback(() => {
     setPlayerHp(prev => Math.max(0, prev - 15));
-    setFeedback({ type: 'timeout', answer: question.answer[0] });
+    setFeedback({ type: 'timeout', expectedOutput: question.answer[0] });
     setWrongAttempts(0);
-    setAiMessage("Timeout. Processing superior.");
+    setAiMessage('Timeout. Processing superior.');
     setPhase('result');
   }, [question]);
 
@@ -226,6 +248,9 @@ const Battle = () => {
     setAiMessage("Awaiting logic input...");
     setPhase('battle');
   }, [round, aiHp, playerHp, usedIds, question.id, pool, roundDuration]);
+
+  // Keep ref in sync for auto-advance
+  useEffect(() => { handleNextRef.current = handleNext; }, [handleNext]);
 
   const handleRetry   = () => window.location.reload();
   const handleRetreatPrompt = () => {
@@ -518,31 +543,94 @@ const Battle = () => {
                     ? <CheckCircle size={52} color="#00ff73" strokeWidth={1.5} />
                     : feedback.type === 'miss'
                     ? <XCircle    size={52} color="#ff3c8d" strokeWidth={1.5} />
+                    : feedback.type === 'error'
+                    ? <XCircle    size={52} color="#ffbe00" strokeWidth={1.5} />
                     : <Clock      size={52} color="#ffbe00" strokeWidth={1.5} />
                   }
                 </div>
+
+                {/* ── STATUS LABEL ── */}
                 <div className={`result-label font-orbitron ${feedback.type}`}>
-                  {feedback.type === 'hit' ? 'Attack Successful ⚡' : feedback.type === 'miss' ? 'Compilation Failed ❌' : 'Timeout ❌'}
+                  {feedback.type === 'hit'     ? 'Attack Successful ⚡'
+                  : feedback.type === 'miss'   ? 'Wrong Answer ❌'
+                  : feedback.type === 'error'  ? 'Compilation Failed ❌'
+                  :                              'Timeout ❌'}
                 </div>
-                {feedback.type === 'hit' ? (
-                  <div className="xp-pop font-orbitron">+{feedback.xp} XP EARNED <Zap size={14} /></div>
-                ) : (
-                  <p className="result-try font-orbitron">Check your logic and try again.</p>
+
+                {/* ── HIT: XP + output ── */}
+                {feedback.type === 'hit' && (
+                  <>
+                    <div className="xp-pop font-orbitron">+{feedback.xp} XP EARNED <Zap size={14} /></div>
+                    <div className="output-compare-box">
+                      <div className="oc-row correct">
+                        <span className="oc-label">YOUR OUTPUT</span>
+                        <span className="oc-value correct">{feedback.userOutput ?? '—'}</span>
+                      </div>
+                    </div>
+                    <p className="result-try font-orbitron" style={{ color: '#888', fontSize: '0.6rem' }}>
+                      Loading next question...
+                    </p>
+                  </>
                 )}
-                {feedback.type !== 'hit' && (
-                  <div className="answer-reveal-box font-orbitron">
-                    <span className="ar-label">CORRECT ANSWER</span>
-                    <span className="ar-value">{feedback.answer}</span>
-                  </div>
+
+                {/* ── WRONG ANSWER: show diff ── */}
+                {feedback.type === 'miss' && (
+                  <>
+                    <p className="result-try font-orbitron">Check your logic and try again.</p>
+                    <div className="output-compare-box">
+                      <div className="oc-row wrong">
+                        <span className="oc-label">YOUR OUTPUT</span>
+                        <span className="oc-value wrong">{feedback.userOutput ?? '(no output)'}</span>
+                      </div>
+                      <div className="oc-row correct">
+                        <span className="oc-label">EXPECTED</span>
+                        <span className="oc-value correct">{feedback.expectedOutput}</span>
+                      </div>
+                    </div>
+                    <button className="next-btn font-orbitron" onClick={handleNext} id="next-round-btn">
+                      {isLastRound ? <><SkipForward size={16} /> END BATTLE</> : <><SkipForward size={16} /> NEXT ROUND</>}
+                    </button>
+                  </>
                 )}
-                <button className="next-btn font-orbitron" onClick={handleNext} id="next-round-btn">
-                  {isLastRound
-                    ? <><SkipForward size={16} /> END BATTLE</>
-                    : <><SkipForward size={16} /> NEXT ROUND</>
-                  }
-                </button>
+
+                {/* ── COMPILATION ERROR: show message ── */}
+                {feedback.type === 'error' && (
+                  <>
+                    <div className="error-msg-box font-orbitron">
+                      <span className="error-label">RUNTIME ERROR</span>
+                      <span className="error-text">{feedback.error}</span>
+                    </div>
+                    <div className="output-compare-box">
+                      <div className="oc-row correct">
+                        <span className="oc-label">EXPECTED</span>
+                        <span className="oc-value correct">{feedback.expectedOutput}</span>
+                      </div>
+                    </div>
+                    <button className="next-btn font-orbitron" onClick={handleNext} id="next-round-btn">
+                      {isLastRound ? <><SkipForward size={16} /> END BATTLE</> : <><SkipForward size={16} /> NEXT ROUND</>}
+                    </button>
+                  </>
+                )}
+
+                {/* ── TIMEOUT ── */}
+                {feedback.type === 'timeout' && (
+                  <>
+                    <p className="result-try font-orbitron">Time's up! The correct answer was:</p>
+                    <div className="output-compare-box">
+                      <div className="oc-row correct">
+                        <span className="oc-label">EXPECTED</span>
+                        <span className="oc-value correct">{feedback.expectedOutput}</span>
+                      </div>
+                    </div>
+                    <button className="next-btn font-orbitron" onClick={handleNext} id="next-round-btn">
+                      {isLastRound ? <><SkipForward size={16} /> END BATTLE</> : <><SkipForward size={16} /> NEXT ROUND</>}
+                    </button>
+                  </>
+                )}
+
               </div>
             )}
+
 
           </div>{/* end editor-panel */}
         </div>{/* end battle-split */}
