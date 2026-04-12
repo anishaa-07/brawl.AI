@@ -180,9 +180,9 @@ export const QUESTIONS = {
 };
 
 // ── GENERATE 1000+ DYNAMIC QUESTIONS ────────────────────────
-// EASY MATH (400 questions)
-for (let i = 1; i <= 20; i++) {
-  for (let j = 1; j <= 20; j++) {
+// EASY MATH (625 questions)
+for (let i = 1; i <= 25; i++) {
+  for (let j = 1; j <= 25; j++) {
     QUESTIONS.Easy.push({
       id: `e_add_${i}_${j}`, title: `Sum of ${i} and ${j}`,
       question: `Return the [[sum]] of ${i} and ${j}.`,
@@ -207,8 +207,8 @@ wordsList.forEach((word) => {
   }
 });
 
-// MEDIUM MODULO (280 questions)
-for (let i = 20; i <= 59; i++) {
+// MEDIUM MODULO (350 questions)
+for (let i = 20; i <= 69; i++) {
   for (let mod = 3; mod <= 9; mod++) {
     QUESTIONS.Medium.push({
       id: `m_mod_${i}_${mod}`, title: `Modulo Check`,
@@ -220,8 +220,8 @@ for (let i = 20; i <= 59; i++) {
   }
 }
 
-// HARD POWERS (28 questions)
-for (let base=2; base<=5; base++){
+// HARD POWERS (42 questions)
+for (let base=2; base<=7; base++){
   for (let exp=3; exp<=9; exp++){
       QUESTIONS.Hard.push({
          id: `h_pow_${base}_${exp}`, title: `Power Calculation`,
