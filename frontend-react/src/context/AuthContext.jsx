@@ -15,6 +15,8 @@ export const AuthProvider = ({ children }) => {
       level: 1,
       credits: 0,
       rank: 'Bronze I',
+      badges: [],
+      totalCorrect: 0,
       ...userData,
     };
     setUser(baseData);

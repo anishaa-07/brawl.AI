@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Maximize, Minimize, Swords, Users, Target, 
-  Trophy, Activity, User, Crown, Loader2, ArrowRight
+  Shield, Swords, Users, Target, Activity, 
+  Crown, LogOut, ChevronRight, User, Maximize, Minimize, Award, Loader2
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import UniversalBackBtn from '../components/UniversalBackBtn';
@@ -168,8 +168,28 @@ const Lobby = () => {
           
         </main>
 
-        {/* ➡️ RIGHT SIDE: ACTIVITY */}
+        {/* ➡️ RIGHT SIDE: ACTIVITY & BADGES */}
         <aside className="lobby-v4-side right-side">
+          
+          <div className="glass-panel-v4" style={{ marginBottom: '20px' }}>
+            <h3 className="panel-title-v4"><Award size={16} /> Honors</h3>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              {(!user?.badges || user.badges.length === 0) ? (
+                <div style={{ fontSize: '0.7rem', color: '#666', fontStyle: 'italic' }}>No honors acquired yet.</div>
+              ) : (
+                user.badges.map(b => (
+                  <div key={b.id} title={b.desc} style={{ 
+                    background: 'rgba(0, 255, 115, 0.1)', border: '1px solid rgba(0, 255, 115, 0.4)', 
+                    borderRadius: '8px', padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'default' 
+                  }}>
+                    <span style={{ fontSize: '1.2rem', filter: 'drop-shadow(0 0 5px rgba(0,255,115,0.8))' }}>{b.icon}</span>
+                    <span className="font-orbitron" style={{ fontSize: '0.7rem', color: '#fff', letterSpacing: '1px' }}>{b.name}</span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
           <div className="glass-panel-v4">
             <h3 className="panel-title-v4"><Activity size={16} /> Data Log</h3>
             <div className="activity-feed-v4">

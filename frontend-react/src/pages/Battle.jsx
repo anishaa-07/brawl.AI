@@ -111,6 +111,7 @@ const Battle = () => {
   const [damageOverlay, setDamageOverlay] = useState(null);
   const [laserEffect,   setLaserEffect]   = useState(null);
   const [levelUpMsg,    setLevelUpMsg]    = useState(false);
+  const [unlockedBadge, setUnlockedBadge] = useState(null);
   const [aiMessage,     setAiMessage]     = useState(aiPersonality.wait);
   const [comboStreak,   setComboStreak]   = useState(0);
   const inputRef = useRef(null);
@@ -142,6 +143,19 @@ const Battle = () => {
     const t = setInterval(() => setTimeLeft(p => p - 1), 1000);
     return () => clearInterval(t);
   }, [timeLeft, phase]); // eslint-disable-line
+
+  // ── Achievement Unlocker ────────────────────────────────────
+  const checkAndUnlockBadge = useCallback((id, name, icon, desc) => {
+    if (!updateProfile || !user) return;
+    const badges = user.badges || [];
+    if (!badges.some(b => b.id === id)) {
+      const newBadges = [...badges, { id, name, icon, desc, unlockedAt: Date.now() }];
+      updateProfile({ badges: newBadges });
+      setUnlockedBadge({ name, icon, desc });
+      SoundFX.levelUp(); // re-use level-up sound for badge unlock
+      setTimeout(() => setUnlockedBadge(null), 4000); // hide after 4s
+    }
+  }, [updateProfile, user]);
 
   // ── Submit Attack ───────────────────────────────────────────
   const handleAttack = useCallback(() => {
@@ -187,16 +201,32 @@ const Battle = () => {
         else if (newHp <= 0) setAiMessage('System offline...');
         else setAiMessage(aiPersonality.hit);
 
-        // Level-up calculation
+        // ── ACHIEVEMENTS & PROGRESSION ──
         if (updateProfile && user) {
+          // Track Total Correct
+          const newTotalCorrect = (user.totalCorrect || 0) + 1;
+          const userUpdates = { totalCorrect: newTotalCorrect };
+
+          // Level-up calculation
           const newXp = (user.xp || 0) + xpPerHit;
           const newLevel = Math.floor(newXp / 100) + 1;
           if (newLevel > (user.level || 1)) {
             setLevelUpMsg(true);
             setTimeout(() => setLevelUpMsg(false), 2500);
             SoundFX.levelUp();
+            userUpdates.level = newLevel;
           }
-          updateProfile({ xp: newXp, level: newLevel });
+          userUpdates.xp = newXp;
+          updateProfile(userUpdates);
+
+          // Triggers: Code Ninja (5 total correct)
+          if (newTotalCorrect === 5) {
+            checkAndUnlockBadge('code_ninja', 'Code Ninja', '🥷', 'Got 5 correct answers overall.');
+          }
+          // Triggers: Unstoppable (3x combo)
+          if (newCombo === 3) {
+            checkAndUnlockBadge('unstoppable', 'Unstoppable', '🔥', 'Hit a 3x combo streak.');
+          }
         }
 
         setUserInput('');
@@ -281,6 +311,12 @@ const Battle = () => {
       setBattleResult(result);
       setPhase('end');
       SoundFX[result === 'VICTORY' ? 'victory' : result === 'DEFEAT' ? 'defeat' : 'miss']();
+
+      // Trigger: First Blood (win 1 game)
+      if (result === 'VICTORY') {
+        checkAndUnlockBadge('first_blood', 'First Blood', '🩸', 'Won your first battle against AI Core.');
+      }
+
       return;
     }
 
@@ -443,6 +479,17 @@ const Battle = () => {
       {/* ── MAIN BATTLE ZONE ── */}
       <main className="battle-main">
         
+        {/* ACHIEVEMENT UNLOCK OVERLAY */}
+        {unlockedBadge && (
+          <div className="achievement-popup show font-orbitron">
+            <div className="ach-icon">{unlockedBadge.icon}</div>
+            <div className="ach-info">
+              <div className="ach-title">ACHIEVEMENT UNLOCKED</div>
+              <div className="ach-name">{unlockedBadge.name}</div>
+            </div>
+          </div>
+        )}
+
         {/* LEVEL UP ANIMATION OVERLAY */}
         {levelUpMsg && (
           <div className="level-up-pulse-overlay font-orbitron">
