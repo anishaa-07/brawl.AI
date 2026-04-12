@@ -478,3 +478,24 @@
   from { opacity: 0; transform: scale(1.05); filter: blur(5px); }
   to { opacity: 1; transform: scale(1); filter: blur(0); }
 }
+
+/* ────────── QUICK BATTLE CTA GLOW ────────── */
+.animate-quick-pulse {
+  animation: quickPulse 1.5s infinite alternate ease-in-out;
+  box-shadow: 0 0 15px var(--neon-cyan), inset 0 0 10px rgba(0, 242, 255, 0.2);
+  transition: all 0.2s ease-out;
+}
+
+.animate-quick-pulse:hover {
+  animation: none;
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: 0 0 35px var(--neon-cyan), inset 0 0 15px rgba(0, 242, 255, 0.4);
+  background: var(--neon-cyan);
+  color: #000;
+  text-shadow: none;
+}
+
+@keyframes quickPulse {
+  from { box-shadow: 0 0 10px var(--neon-cyan), inset 0 0 5px rgba(0, 242, 255, 0.2); border-color: rgba(0, 242, 255, 0.5); }
+  to   { box-shadow: 0 0 30px var(--neon-cyan), inset 0 0 20px rgba(0, 242, 255, 0.4); border-color: rgba(0, 242, 255, 1); }
+}

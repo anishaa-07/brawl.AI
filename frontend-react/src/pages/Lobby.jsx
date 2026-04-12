@@ -68,9 +68,16 @@ const Lobby = () => {
   };
 
   const startBattle = (mode) => {
+    if (mode === 'quick') {
+      // Instant execution per user request
+      navigate('/battle', { state: { mode: 'random' } });
+      return;
+    }
+    
     setLoading(true);
     setTimeout(() => {
-      navigate('/battle', { state: { mode } });
+      if (mode === 'ai') navigate('/question-hub');
+      else navigate('/battle', { state: { mode } });
     }, 1500);
   };
 
@@ -214,8 +221,8 @@ const Lobby = () => {
             </div>
           </div>
 
-          <button className="cta-start-v4 font-orbitron" onClick={() => startBattle('random')}>
-            INITIATE COMBAT ⚡
+          <button className="cta-start-v4 font-orbitron animate-quick-pulse" onClick={() => startBattle('quick')}>
+            QUICK BATTLE ⚡
           </button>
           
         </main>
