@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Maximize, Minimize, Swords, Users, Target, 
-  Trophy, Activity, User, Crown, Loader2, ArrowRight
+  Trophy, Activity, User, Crown, Loader2, ArrowRight, ArrowLeft
 } from 'lucide-react';
 import './Lobby.css';
 
@@ -54,6 +54,11 @@ const Lobby = () => {
   return (
     <div className="lobby-v4-wrapper animate-page-fade">
       
+      {/* 🔙 BACK BUTTON */}
+      <button className="back-btn-v4" onClick={() => navigate(-1)} title="Go Back">
+        <ArrowLeft size={24} />
+      </button>
+
       {/* 🧬 BACKGROUND */}
       <div className="lobby-v4-bg">
         <div className="bg-grid-v4"></div>

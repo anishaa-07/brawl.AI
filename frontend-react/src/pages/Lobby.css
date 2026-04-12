@@ -345,6 +345,40 @@
   color: #ccc;
 }
 
+/* BACK BTN */
+.back-btn-v4 {
+  position: fixed;
+  top: 30px;
+  left: 30px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--neon-cyan);
+  color: var(--neon-cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100;
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: pageFade 0.8s ease-out;
+}
+
+.back-btn-v4:hover {
+  transform: scale(1.15);
+  background: rgba(162, 56, 255, 0.1);
+  border-color: var(--neon-purple);
+  color: var(--neon-purple);
+  box-shadow: 0 0 25px rgba(162, 56, 255, 0.6);
+}
+
+.back-btn-v4:active {
+  transform: scale(0.95);
+}
+
 /* FULLSCREEN BTN */
 .fs-btn-v4 {
   position: fixed;
@@ -378,7 +412,14 @@
 
 /* MOBILE ADJUSTMENTS */
 @media (max-width: 767px) {
-  .lobby-v4-wrapper { padding: 80px 15px 40px; }
+  .lobby-v4-wrapper { padding: 90px 15px 40px; }
   .game-modes-v4 { flex-direction: column; }
   .mode-card-v4 { max-width: 100%; }
+  
+  .back-btn-v4 {
+    top: 20px;
+    left: 20px;
+    width: 55px; /* Keep it slightly bigger on mobile */
+    height: 55px;
+  }
 }
