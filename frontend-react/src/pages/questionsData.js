@@ -278,6 +278,6 @@ export function parseKeywords(questionStr) {
   return parts;
 }
 
-export const XP_PER_CORRECT = { Easy: 10, Medium: 20, Hard: 40 };
+export const XP_PER_CORRECT = { Easy: 20, Medium: 50, Hard: 100 };
 export const TOTAL_ROUNDS   = 5;
 export const TIMER_DURATION = { Easy: 60, Medium: 45, Hard: 30 };

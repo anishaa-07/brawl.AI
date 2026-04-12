@@ -63,6 +63,7 @@ const Battle = () => {
   const [showEntrance,  setShowEntrance]  = useState(true);
   const [wrongAttempts, setWrongAttempts] = useState(0); // track misses per round
   const [damageOverlay, setDamageOverlay] = useState(null); // { target, amount, text }
+  const [laserEffect, setLaserEffect]   = useState(null); // 'player-to-ai' | 'ai-to-player'
   const inputRef = useRef(null);
 
   // Derived
@@ -103,22 +104,27 @@ const Battle = () => {
 
     setTimeout(() => {
       if (isHit) {
-        const dmg = Math.floor(Math.random() * 11) + 20; // 20-30 dmg
+        setLaserEffect('player-to-ai');
+        const dmg = Math.floor(Math.random() * 21) + 20; // 20-40 dmg
         setAiHp(prev => Math.max(0, prev - dmg));
         setTotalXp(prev => prev + xpPerHit);
         setFeedback({ type: 'hit', xp: xpPerHit });
         setWrongAttempts(0);
-        setDamageOverlay({ target: 'ai', amount: dmg, text: 'Critical Hit! ⚡' });
+        setDamageOverlay({ target: 'ai', amount: dmg, text: 'Attack Successful ⚡' });
       } else {
+        setLaserEffect('ai-to-player');
         const dmg = Math.floor(Math.random() * 6) + 10; // 10-15 dmg
         setPlayerHp(prev => Math.max(0, prev - dmg));
         setWrongAttempts(prev => prev + 1);
         setFeedback({ type: 'miss', answer: question.answer[0] });
-        setDamageOverlay({ target: 'player', amount: dmg, text: 'Attack Failed ❌' });
+        setDamageOverlay({ target: 'player', amount: dmg, text: 'Compilation Failed ❌' });
       }
       setUserInput('');
       setIsAttacking(false);
       setPhase('result');
+      
+      // Clear laser after animation ends
+      setTimeout(() => setLaserEffect(null), 800);
     }, 650);
   }, [isAttacking, phase, userInput, question, difficulty, wrongAttempts, xpPerHit]);
 
@@ -287,6 +293,10 @@ const Battle = () => {
 
       {/* ── MAIN BATTLE ZONE ── */}
       <main className="battle-main">
+        
+        {/* LASER ANIMATION OVERLAY */}
+        {laserEffect && <div className={`laser-blast ${laserEffect}`}></div>}
+
         <div className="battle-split">
 
           {/* ══════════════════════ LEFT: QUESTION PANEL ══════════════════════ */}
@@ -442,7 +452,7 @@ const Battle = () => {
                   }
                 </div>
                 <div className={`result-label font-orbitron ${feedback.type}`}>
-                  {feedback.type === 'hit' ? 'HIT! +XP ⚡' : feedback.type === 'miss' ? 'Compilation Failed ❌' : 'Timeout ❌'}
+                  {feedback.type === 'hit' ? 'Attack Successful ⚡' : feedback.type === 'miss' ? 'Compilation Failed ❌' : 'Timeout ❌'}
                 </div>
                 {feedback.type === 'hit' ? (
                   <div className="xp-pop font-orbitron">+{feedback.xp} XP EARNED <Zap size={14} /></div>
