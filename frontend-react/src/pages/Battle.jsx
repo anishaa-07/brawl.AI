@@ -62,6 +62,7 @@ const Battle = () => {
   const [showEntrance,  setShowEntrance]  = useState(true);
   const [wrongAttempts, setWrongAttempts] = useState(0); // track misses per round
   const [damageOverlay, setDamageOverlay] = useState(null); // { target, amount, text }
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
   const inputRef = useRef(null);
 
   // Derived
@@ -83,6 +84,23 @@ const Battle = () => {
   useEffect(() => {
     if (phase === 'battle') setTimeout(() => inputRef.current?.focus(), 150);
   }, [phase]);
+
+  // ── Keyboard Shortcuts (ESC to Retreat) ───────────────────────
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        if (showExitConfirm) {
+          setShowExitConfirm(false);
+        } else if (phase !== 'end') {
+          setShowExitConfirm(true);
+        } else {
+          navigate('/lobby');
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showExitConfirm, phase, navigate]);
 
   // ── Timer ───────────────────────────────────────────────────
   useEffect(() => {
@@ -163,7 +181,9 @@ const Battle = () => {
   }, [round, aiHp, playerHp, usedIds, question.id, pool, roundDuration]);
 
   const handleRetry   = () => window.location.reload();
-  const handleRetreat = () => navigate('/lobby');
+  const handleRetreatPrompt = () => setShowExitConfirm(true);
+  const handleConfirmExit = () => navigate('/lobby');
+  const handleCancelExit = () => setShowExitConfirm(false);
 
   // XP totals for end screen
   const maxXp    = TOTAL_ROUNDS * xpPerHit;
@@ -204,6 +224,15 @@ const Battle = () => {
           <div key={i} className={`bg-particle bp-${(i % 4) + 1}`} style={{ '--i': i }}></div>
         ))}
       </div>
+
+      {/* ── BREADCRUMB NAVIGATION ── */}
+      <nav className="battle-breadcrumbs font-orbitron">
+        <span className="bc-link" onClick={handleRetreatPrompt}>Lobby</span>
+        <span className="bc-divider">/</span>
+        <span className="bc-link">Battle AI</span>
+        <span className="bc-divider">/</span>
+        <span className="bc-current">Round {round}</span>
+      </nav>
 
       {/* ── HUD: TOP BAR ── */}
       <header className="battle-hud glass-panel">
@@ -449,10 +478,10 @@ const Battle = () => {
 
 
 
-      {/* ── FOOTER ── */}
+      {/* ── FOOTER Quick Navigation ── */}
       <footer className="battle-footer">
-        <button className="retreat-btn font-orbitron" onClick={handleRetreat} id="retreat-btn">
-          <ChevronLeft size={14} /> RETREAT
+        <button className="retreat-btn font-orbitron" onClick={handleRetreatPrompt} id="retreat-btn">
+          <ChevronLeft size={14} /> EXIT BATTLE
         </button>
         <div className="footer-sparks">
           {[...Array(5)].map((_, i) => (
@@ -460,6 +489,22 @@ const Battle = () => {
           ))}
         </div>
       </footer>
+
+      {/* ── EXIT CONFIRMATION MODAL ── */}
+      {showExitConfirm && (
+        <div className="exit-confirm-overlay">
+          <div className="exit-confirm-card glass-panel animate-fade-in">
+            <h2 className="font-orbitron">WARN: EXIT BATTLE?</h2>
+            <p className="font-orbitron" style={{ color: '#aaa', fontSize: '0.8rem', marginTop: '10px' }}>
+              Are you sure you want to exit? Your progress will be lost.
+            </p>
+            <div className="exit-actions">
+              <button className="end-btn secondary font-orbitron" onClick={handleCancelExit}>CANCEL (ESC)</button>
+              <button className="end-btn primary font-orbitron" onClick={handleConfirmExit}>CONFIRM</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── BATTLE END OVERLAY ── */}
       {phase === 'end' && (
@@ -508,7 +553,7 @@ const Battle = () => {
               <button className="end-btn primary font-orbitron" onClick={handleRetry} id="retry-btn">
                 <RefreshCw size={14} /> RETRY
               </button>
-              <button className="end-btn secondary font-orbitron" onClick={handleRetreat} id="lobby-btn">
+              <button className="end-btn secondary font-orbitron" onClick={handleConfirmExit} id="lobby-btn">
                 <ChevronLeft size={14} /> LOBBY
               </button>
             </div>

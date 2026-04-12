@@ -1143,6 +1143,70 @@
 }
 .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
 
+/* ── BREADCRUMBS ── */
+.battle-breadcrumbs {
+  position: absolute;
+  top: 15px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  z-index: 10;
+  text-transform: uppercase;
+}
+.bc-link {
+  color: #888;
+  cursor: pointer;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+.bc-link:hover {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+.bc-divider {
+  color: #444;
+}
+.bc-current {
+  color: var(--neon-cyan, #00f2ff);
+  font-weight: 800;
+  text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+}
+
+/* ── EXIT CONFIRMATION ── */
+.exit-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.exit-confirm-card {
+  max-width: 400px;
+  width: 90%;
+  padding: 30px;
+  text-align: center;
+  border-radius: 16px;
+  border: 1px solid #ff3c8d;
+  box-shadow: 0 0 30px rgba(255, 60, 141, 0.3);
+}
+.exit-confirm-card h2 {
+  color: #ff3c8d;
+  margin: 0;
+  font-size: 1.5rem;
+  letter-spacing: 4px;
+}
+.exit-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 25px;
+}
+
 /* ── DAMAGE EFFECTS ── */
 .flash-red {
   animation: flashRed 0.6s ease-out;
