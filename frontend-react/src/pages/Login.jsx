@@ -1,233 +1,238 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Terminal, Lock, KeyRound, Mail, UserPlus, LogIn } from 'lucide-react';
+import { Zap, LogIn, UserPlus, Mail, Lock, User, KeyRound } from 'lucide-react';
+import characterImg from '../assets/login_character.png';
 import './Login.css';
+
+const LOGS = {
+  login: ['Scanning credentials...', 'Neural sync standby...', 'Bypassing firewall...'],
+  register: ['Creating identity...', 'Allocating memory...', 'Encrypting bio-signature...'],
+};
 
 const Login = () => {
   const [activeMode, setActiveMode] = useState('login');
   const [formData, setFormData] = useState({ username: '', email: '', password: '', confirmPassword: '' });
+  const [errorMsg, setErrorMsg] = useState('');
   const [errorStatus, setErrorStatus] = useState(false);
   const [successStatus, setSuccessStatus] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [logs, setLogs] = useState([]);
+  const [logLine, setLogLine] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrorStatus(false);
-  };
-
-  const handleModeSwitch = (mode) => {
-    setActiveMode(mode);
-    setErrorStatus(false);
-    setFormData({ username: '', email: '', password: '', confirmPassword: '' });
-  };
-
-  const addLog = (msg) => {
-    setLogs(prev => [...prev.slice(-3), msg]);
-  };
-
-  // Easter egg / constant visual feedback
+  // Cycle system log
   useEffect(() => {
-    const defaultLogs = activeMode === 'login' 
-      ? ["Scanning credentials...", "Bypassing firewall constraints...", "Neural sync standby..."]
-      : ["Creating identity...", "Allocating memory...", "Encrypting subroutines..."];
-      
+    const pool = LOGS[activeMode];
     let i = 0;
+    setLogLine(pool[0]);
     const t = setInterval(() => {
-      addLog(defaultLogs[i % defaultLogs.length]);
-      i++;
-    }, 4000);
+      i = (i + 1) % pool.length;
+      setLogLine(pool[i]);
+    }, 3500);
     return () => clearInterval(t);
   }, [activeMode]);
+
+  const handleInput = (e) => {
+    setFormData(f => ({ ...f, [e.target.name]: e.target.value }));
+    setErrorMsg('');
+    setErrorStatus(false);
+  };
+
+  const switchMode = (m) => {
+    setActiveMode(m);
+    setFormData({ username: '', email: '', password: '', confirmPassword: '' });
+    setErrorMsg('');
+    setErrorStatus(false);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorStatus(false);
+    setErrorMsg('');
     setIsLoading(true);
 
-    addLog(activeMode === 'login' ? "Scanning credentials..." : "Creating identity...");
-    
     try {
-      if (!formData.username || !formData.password) {
-        throw new Error('Fields missing.');
-      }
-
-      await new Promise(resolve => setTimeout(resolve, 800));
+      if (!formData.username || !formData.password) throw new Error('All fields are required.');
+      await new Promise(r => setTimeout(r, 900));
 
       const usersDB = JSON.parse(localStorage.getItem('brawl_users_db') || '[]');
-      
+
       if (activeMode === 'login') {
-        const existingUser = usersDB.find(
-          u => u.username === formData.username && u.password === formData.password
-        );
-        if (!existingUser) throw new Error('Access Denied: Invalid Credentials');
-        
-        addLog("Neural sync ready...");
+        const found = usersDB.find(u => u.username === formData.username && u.password === formData.password);
+        if (!found) throw new Error('ACCESS DENIED — Invalid credentials.');
         setSuccessStatus(true);
-        setTimeout(() => {
-          login({ username: existingUser.username, level: existingUser.level, xp: existingUser.xp });
-          navigate('/lobby');
-        }, 1500);
+        setTimeout(() => { login({ username: found.username, level: found.level, xp: found.xp }); navigate('/lobby'); }, 1400);
 
       } else {
-        // Register Mode
-        if (!formData.email || !formData.confirmPassword) {
-          throw new Error('All fields required.');
-        }
-        if (formData.password !== formData.confirmPassword) {
-          throw new Error('Passwords do not match.');
-        }
-        const usernameTaken = usersDB.find(u => u.username === formData.username);
-        if (usernameTaken) throw new Error('Identity already exists.');
-
-        addLog("Allocating memory...");
-        const newUser = { username: formData.username, password: formData.password, level: 1, xp: 0 };
+        if (!formData.email) throw new Error('Email is required.');
+        if (formData.password !== formData.confirmPassword) throw new Error('Passwords do not match.');
+        if (usersDB.find(u => u.username === formData.username)) throw new Error('Identity already taken.');
+        const newUser = { username: formData.username, email: formData.email, password: formData.password, level: 1, xp: 0 };
         usersDB.push(newUser);
         localStorage.setItem('brawl_users_db', JSON.stringify(usersDB));
-        
-        addLog("Database updated. Identity verified.");
         setSuccessStatus(true);
-        setTimeout(() => {
-          login({ username: newUser.username, level: newUser.level, xp: newUser.xp });
-          navigate('/lobby');
-        }, 1500);
+        setTimeout(() => { login({ username: newUser.username, level: newUser.level, xp: newUser.xp }); navigate('/lobby'); }, 1400);
       }
-
     } catch (err) {
-      addLog(err.message);
+      setErrorMsg(err.message);
       setErrorStatus(true);
       setIsLoading(false);
     }
   };
 
   return (
-    <div className={`login-terminal-wrapper ${successStatus ? 'glitch-success' : ''}`}>
-      {/* Animated Background */}
-      <div className="cyber-grid"></div>
-      <div className="cyber-particles"></div>
+    <div className={`lp-root${successStatus ? ' lp-success' : ''}`}>
+      {/* ── Animated BG ── */}
+      <div className="lp-grid" aria-hidden="true" />
+      <div className="lp-ambient" aria-hidden="true" />
 
-      <div className={`terminal-card ${errorStatus ? 'shake-error' : ''}`}>
-        
-        <div className="terminal-header">
-          <Terminal size={28} className="terminal-icon" color="#00ffcc" />
-          <h1 className="font-orbitron">AI ACCESS TERMINAL</h1>
-          <div className="status-dot blink"></div>
-        </div>
+      <div className="lp-split">
 
-        <div className="cyber-tabs font-orbitron">
-          <div 
-            className={`cyber-tab ${activeMode === 'login' ? 'active' : ''}`}
-            onClick={() => handleModeSwitch('login')}
-          >
-            <LogIn size={14} style={{marginRight: 6}} /> LOGIN
-          </div>
-          <div 
-            className={`cyber-tab ${activeMode === 'register' ? 'active' : ''}`}
-            onClick={() => handleModeSwitch('register')}
-          >
-            <UserPlus size={14} style={{marginRight: 6}} /> REGISTER
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="terminal-form">
-          <div className="cyber-input-group">
-            <input 
-              type="text" 
-              name="username"
-              required
-              value={formData.username}
-              onChange={handleInputChange}
-              className="cyber-input font-orbitron"
-              placeholder=" "
-              autoComplete="off"
-              disabled={isLoading || successStatus}
-            />
-            <label className="cyber-label"><Lock size={12} style={{marginRight: 6}}/> USERNAME</label>
-            <div className="input-glow"></div>
-            <div className="input-border"></div>
+        {/* ══ LEFT PANEL ══ */}
+        <div className="lp-left">
+          {/* Logo */}
+          <div className="lp-logo">
+            <Zap size={26} className="lp-logo-icon" />
+            <span className="font-orbitron lp-logo-text">BRAWL.AI</span>
           </div>
 
-          {activeMode === 'register' && (
-            <div className="cyber-input-group">
-              <input 
-                type="email" 
-                name="email"
-                required={activeMode === 'register'}
-                value={formData.email}
-                onChange={handleInputChange}
-                className="cyber-input font-orbitron"
-                placeholder=" "
-                autoComplete="off"
-                disabled={isLoading || successStatus}
-              />
-              <label className="cyber-label"><Mail size={12} style={{marginRight: 6}}/> EMAIL</label>
-              <div className="input-glow"></div>
-              <div className="input-border"></div>
+          {/* Hero Text */}
+          <div className="lp-hero-text">
+            <h1 className="font-orbitron lp-heading">
+              ENTER THE<br />
+              <span className="lp-heading-accent">NEURAL ARENA</span>
+            </h1>
+            <p className="lp-subtitle">Where code meets combat.<br />Defeat AI using logic.</p>
+          </div>
+
+          {/* Card */}
+          <div className={`lp-card${errorStatus ? ' lp-card-error' : ''}`}>
+
+            {/* Tabs */}
+            <div className="lp-tabs font-orbitron">
+              <button
+                type="button"
+                className={`lp-tab${activeMode === 'login' ? ' active' : ''}`}
+                onClick={() => switchMode('login')}
+              >
+                <LogIn size={13} /> LOGIN
+              </button>
+              <button
+                type="button"
+                className={`lp-tab${activeMode === 'register' ? ' active' : ''}`}
+                onClick={() => switchMode('register')}
+              >
+                <UserPlus size={13} /> REGISTER
+              </button>
             </div>
-          )}
 
-          <div className="cyber-input-group">
-            <input 
-              type="password" 
-              name="password"
-              required 
-              value={formData.password}
-              onChange={handleInputChange}
-              className="cyber-input font-orbitron"
-              placeholder=" "
-              disabled={isLoading || successStatus}
-            />
-            <label className="cyber-label"><KeyRound size={12} style={{marginRight: 6}}/> PASSWORD</label>
-            <div className="input-glow"></div>
-            <div className="input-border"></div>
-          </div>
+            {/* Form */}
+            <form className="lp-form" onSubmit={handleSubmit} noValidate>
 
-          {activeMode === 'register' && (
-            <div className="cyber-input-group">
-              <input 
-                type="password" 
-                name="confirmPassword"
-                required={activeMode === 'register'}
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-                className="cyber-input font-orbitron"
-                placeholder=" "
-                disabled={isLoading || successStatus}
-              />
-              <label className="cyber-label"><KeyRound size={12} style={{marginRight: 6}}/> CONFIRM PASSWORD</label>
-              <div className="input-glow"></div>
-              <div className="input-border"></div>
-            </div>
-          )}
-
-          {/* System Logs */}
-          <div className="terminal-logs font-orbitron">
-            {logs.map((log, i) => (
-              <div key={i} className={`log-entry ${errorStatus && i === logs.length - 1 ? 'log-error' : ''}`}>
-                <span className="log-prefix">&gt;</span> {log}
+              {/* Username */}
+              <div className="lp-field">
+                <User size={14} className="lp-field-icon" />
+                <input
+                  type="text"
+                  name="username"
+                  placeholder="USERNAME"
+                  value={formData.username}
+                  onChange={handleInput}
+                  className="lp-input font-orbitron"
+                  autoComplete="off"
+                  disabled={isLoading || successStatus}
+                  required
+                />
               </div>
-            ))}
-          </div>
 
-          <button 
-            type="submit" 
-            className={`cyber-btn font-orbitron ${isLoading || successStatus ? 'processing' : ''}`}
-            disabled={isLoading || successStatus}
-          >
-            <span className="btn-glitch-text" data-text={activeMode === 'login' ? "INITIALIZE ACCESS ⚡" : "CREATE IDENTITY 🚀"}>
-              {isLoading 
-                ? 'PROCESSING...' 
-                : successStatus 
-                  ? 'GRANTED' 
-                  : activeMode === 'login' 
-                    ? 'INITIALIZE ACCESS ⚡' 
-                    : 'CREATE IDENTITY 🚀'}
-            </span>
-          </button>
-        </form>
+              {/* Email (register only) */}
+              {activeMode === 'register' && (
+                <div className="lp-field">
+                  <Mail size={14} className="lp-field-icon" />
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="EMAIL ADDRESS"
+                    value={formData.email}
+                    onChange={handleInput}
+                    className="lp-input font-orbitron"
+                    autoComplete="off"
+                    disabled={isLoading || successStatus}
+                    required
+                  />
+                </div>
+              )}
+
+              {/* Password */}
+              <div className="lp-field">
+                <Lock size={14} className="lp-field-icon" />
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="PASSWORD"
+                  value={formData.password}
+                  onChange={handleInput}
+                  className="lp-input font-orbitron"
+                  disabled={isLoading || successStatus}
+                  required
+                />
+              </div>
+
+              {/* Confirm Password (register only) */}
+              {activeMode === 'register' && (
+                <div className="lp-field">
+                  <KeyRound size={14} className="lp-field-icon" />
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="CONFIRM PASSWORD"
+                    value={formData.confirmPassword}
+                    onChange={handleInput}
+                    className="lp-input font-orbitron"
+                    disabled={isLoading || successStatus}
+                    required
+                  />
+                </div>
+              )}
+
+              {/* Error */}
+              {errorMsg && (
+                <div className="lp-error font-orbitron">
+                  ⚠ {errorMsg}
+                </div>
+              )}
+
+              {/* System log line */}
+              <div className="lp-syslog font-orbitron">
+                <span className="lp-syslog-dot" />
+                {logLine}
+              </div>
+
+              {/* Submit */}
+              <button
+                type="submit"
+                className={`lp-btn font-orbitron${isLoading || successStatus ? ' lp-btn-loading' : ''}`}
+                disabled={isLoading || successStatus}
+              >
+                <span className="lp-btn-inner">
+                  {isLoading ? 'PROCESSING...' : successStatus ? '✓ ACCESS GRANTED' : activeMode === 'login' ? 'INITIALIZE ACCESS ⚡' : 'CREATE IDENTITY 🚀'}
+                </span>
+                <span className="lp-btn-glow" aria-hidden="true" />
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {/* ══ RIGHT PANEL ══ */}
+        <div className="lp-right" aria-hidden="true">
+          <div className="lp-right-glow" />
+          <img src={characterImg} alt="Neural Arena Character" className="lp-character" />
+          <div className="lp-right-overlay" />
+          {/* floating scanlines */}
+          <div className="lp-scanlines" />
+        </div>
+
       </div>
     </div>
   );

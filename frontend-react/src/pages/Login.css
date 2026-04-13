@@ -1,363 +1,468 @@
-/* ── ANIMATIONS ── */
-@keyframes cyberGrid {
-  0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
-  100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
+/* ════════════════════════════════════════════════════
+   BRAWL.AI  —  Premium Gaming Login  (Login.css)
+   Theme: Neon Green-Purple Cyberpunk + Glassmorphism
+═══════════════════════════════════════════════════════ */
+
+/* ── Google Font already pulled in index.html ── */
+
+/* ════ KEYFRAMES ════════════════════════════════════ */
+@keyframes gridPan {
+  from { background-position: 0 0; }
+  to   { background-position: 60px 60px; }
 }
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+
+@keyframes charFloat {
+  0%, 100% { transform: translateY(0px) scale(1.03); }
+  50%       { transform: translateY(-14px) scale(1.04); }
 }
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1; }
+}
+
+@keyframes syslogFade {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
 @keyframes errorShake {
   0%, 100% { transform: translateX(0); }
-  20%, 60% { transform: translateX(-10px); }
-  40%, 80% { transform: translateX(10px); }
-}
-@keyframes glitchSuccess {
-  0% { filter: hue-rotate(0deg) contrast(1); transform: scale(1); }
-  10% { filter: hue-rotate(90deg) contrast(2); transform: scale(1.02) skewX(2deg); }
-  20% { filter: hue-rotate(-90deg) contrast(1.5); transform: scale(0.98) skewX(-2deg); }
-  30% { filter: hue-rotate(0deg) contrast(1); transform: scale(1); }
-  100% { filter: brightness(10) blur(10px); opacity: 0; }
-}
-@keyframes floatParticle {
-  0% { transform: translateY(0) scale(1); opacity: 0; }
-  50% { opacity: 0.5; }
-  100% { transform: translateY(-100vh) scale(0); opacity: 0; }
+  20%, 60%  { transform: translateX(-10px); }
+  40%, 80%  { transform: translateX(10px); }
 }
 
-/* ── LAYOUT ── */
-.login-terminal-wrapper {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  background-color: #03060c;
+@keyframes successFlash {
+  0%   { filter: brightness(1); }
+  30%  { filter: brightness(2) saturate(2); }
+  60%  { filter: brightness(0.5); }
+  100% { filter: brightness(3) blur(8px); opacity: 0; }
+}
+
+@keyframes scanlines {
+  from { background-position: 0 0; }
+  to   { background-position: 0 100%; }
+}
+
+@keyframes tabSlide {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ════ ROOT ════════════════════════════════════════ */
+.lp-root {
+  position: fixed;
+  inset: 0;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  align-items: stretch;
+  background: #060b12;
   overflow: hidden;
+  font-family: 'Orbitron', sans-serif;
 }
 
-.login-terminal-wrapper.glitch-success {
-  animation: glitchSuccess 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-}
-
-/* ── BACKGROUNDS ── */
-.cyber-grid {
-  position: absolute;
-  width: 200vw;
-  height: 200vh;
-  top: 0%;
-  left: -50%;
-  background-image: 
-    linear-gradient(rgba(0, 255, 204, 0.2) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 204, 0.2) 1px, transparent 1px);
-  background-size: 50px 50px;
-  transform-origin: top;
-  animation: cyberGrid 3s linear infinite;
-  z-index: 1;
+.lp-root.lp-success {
+  animation: successFlash 1.4s ease forwards;
   pointer-events: none;
-  mask-image: linear-gradient(to bottom, transparent 10%, black 70%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 10%, black 70%);
 }
 
-.cyber-particles {
+/* ── Animated grid background ── */
+.lp-grid {
   position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(0,255,136,0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,136,0.09) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridPan 6s linear infinite;
+  pointer-events: none;
+}
+
+/* ── Ambient radial glow ── */
+.lp-ambient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 70% 55% at 25% 50%, rgba(0,255,136,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 60% at 75% 50%, rgba(136,0,255,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ════ SPLIT ════════════════════════════════════════ */
+.lp-split {
+  position: relative;
+  z-index: 1;
+  display: flex;
   width: 100%;
   height: 100%;
-  z-index: 2;
-  pointer-events: none;
-  background-image: radial-gradient(circle at 50% 50%, rgba(0,255,204,0.1) 0%, transparent 60%);
 }
 
-/* ── CARD ── */
-.terminal-card {
-  position: relative;
-  z-index: 10;
-  width: 420px;
-  padding: 40px;
-  background: rgba(3, 8, 16, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(0, 255, 204, 0.3);
-  border-radius: 12px;
-  box-shadow: 
-    0 0 20px rgba(0, 255, 204, 0.1),
-    inset 0 0 15px rgba(0, 255, 204, 0.05);
-  transition: all 0.3s ease;
+/* ════ LEFT ════════════════════════════════════════ */
+.lp-left {
+  flex: 0 0 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px 52px;
+  gap: 28px;
+  overflow-y: auto;
 }
 
-.terminal-card.shake-error {
-  animation: errorShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-  border-color: #ff3c3c;
-  box-shadow: 
-    0 0 30px rgba(255, 60, 60, 0.3),
-    inset 0 0 20px rgba(255, 60, 60, 0.1);
-}
-
-.terminal-header {
+/* Logo */
+.lp-logo {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 30px;
-  position: relative;
+  gap: 10px;
 }
 
-.terminal-header h1 {
-  color: #00ffcc;
-  font-size: 1.4rem;
+.lp-logo-icon {
+  color: #00ff88;
+  filter: drop-shadow(0 0 8px rgba(0,255,136,0.8));
+}
+
+.lp-logo-text {
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: 4px;
+  background: linear-gradient(90deg, #00ff88, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Hero text */
+.lp-hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lp-heading {
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  font-weight: 900;
+  color: #e8f0ff;
+  line-height: 1.15;
   letter-spacing: 2px;
   margin: 0;
-  text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+  text-shadow: 0 0 40px rgba(0,255,136,0.15);
 }
 
-.status-dot {
-  width: 10px;
-  height: 10px;
-  background: #00ffcc;
-  border-radius: 50%;
-  box-shadow: 0 0 8px #00ffcc;
-}
-.status-dot.blink {
-  animation: blink 1s infinite;
-}
-.terminal-card.shake-error .status-dot {
-  background: #ff3c3c;
-  box-shadow: 0 0 8px #ff3c3c;
-}
-.terminal-card.shake-error .terminal-header h1 {
-  color: #ff3c3c;
-  text-shadow: 0 0 10px rgba(255, 60, 60, 0.5);
+.lp-heading-accent {
+  background: linear-gradient(90deg, #00ff88 0%, #a855f7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block;
 }
 
-/* ── TABS ── */
-.cyber-tabs {
+.lp-subtitle {
+  font-size: 0.95rem;
+  color: rgba(200, 220, 255, 0.55);
+  line-height: 1.7;
+  letter-spacing: 0.5px;
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+/* ════ CARD ════════════════════════════════════════ */
+.lp-card {
+  background: rgba(8, 16, 28, 0.7);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(0,255,136,0.18);
+  border-radius: 14px;
+  padding: 32px;
+  box-shadow:
+    0 0 0 1px rgba(0,255,136,0.06),
+    0 8px 32px rgba(0,0,0,0.5),
+    inset 0 0 24px rgba(0,255,136,0.03);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.lp-card.lp-card-error {
+  animation: errorShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  border-color: rgba(255,60,80,0.5);
+  box-shadow:
+    0 0 0 1px rgba(255,60,80,0.15),
+    0 8px 32px rgba(0,0,0,0.5),
+    inset 0 0 24px rgba(255,60,80,0.06);
+}
+
+/* ════ TABS ════════════════════════════════════════ */
+.lp-tabs {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 24px;
-  border-bottom: 1px solid rgba(0, 255, 204, 0.2);
+  gap: 4px;
+  margin-bottom: 26px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 8px;
+  padding: 4px;
+  border: 1px solid rgba(255,255,255,0.06);
 }
 
-.cyber-tab {
+.lp-tab {
   flex: 1;
-  text-align: center;
-  padding: 10px 0;
-  cursor: pointer;
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 0.85rem;
-  letter-spacing: 1.5px;
-  position: relative;
-  transition: all 0.3s ease;
   display: flex;
+  align-items: center;
   justify-content: center;
+  gap: 7px;
+  padding: 10px 12px;
+  font-size: 0.78rem;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.35);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  animation: tabSlide 0.3s ease;
+}
+
+.lp-tab:hover {
+  color: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.05);
+}
+
+.lp-tab.active {
+  color: #00ff88;
+  background: rgba(0,255,136,0.1);
+  text-shadow: 0 0 10px rgba(0,255,136,0.4);
+  box-shadow: 0 0 0 1px rgba(0,255,136,0.2), inset 0 0 16px rgba(0,255,136,0.06);
+}
+
+/* ════ FORM ════════════════════════════════════════ */
+.lp-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Field wrapper */
+.lp-field {
+  position: relative;
+  display: flex;
   align-items: center;
 }
 
-.cyber-tab::after {
-  content: '';
+.lp-field-icon {
   position: absolute;
-  bottom: -1px;
-  left: 0;
+  left: 14px;
+  color: rgba(0,255,136,0.5);
+  pointer-events: none;
+  z-index: 2;
+  transition: color 0.3s;
+}
+
+.lp-input {
   width: 100%;
-  height: 2px;
-  background: #00ffcc;
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
-}
-
-.cyber-tab:hover {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.cyber-tab.active {
-  color: #00ffcc;
-  text-shadow: 0 0 8px rgba(0, 255, 204, 0.4);
-}
-
-.cyber-tab.active::after {
-  transform: scaleX(1);
-}
-
-/* ── FORM ── */
-.terminal-form {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.cyber-input-group {
-  position: relative;
-  width: 100%;
-}
-
-.cyber-input {
-  width: 100%;
-  background: rgba(0, 255, 204, 0.03);
-  border: 1px solid rgba(0, 255, 204, 0.2);
-  border-radius: 4px;
-  padding: 14px 16px;
-  font-size: 0.95rem;
-  color: #fff;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 13px 16px 13px 40px;
+  font-size: 0.82rem;
+  letter-spacing: 1.5px;
+  color: #e8f0ff;
   outline: none;
   transition: all 0.3s ease;
-  z-index: 2;
-  position: relative;
+  font-family: 'Orbitron', sans-serif;
+  box-sizing: border-box;
 }
 
-.cyber-label {
-  position: absolute;
-  left: 16px;
-  top: 14px;
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.4);
-  pointer-events: none;
-  transition: all 0.3s ease;
+.lp-input::placeholder {
+  color: rgba(200,220,255,0.2);
+  letter-spacing: 2px;
+}
+
+.lp-input:focus {
+  border-color: rgba(0,255,136,0.5);
+  background: rgba(0,255,136,0.05);
+  box-shadow: 0 0 0 3px rgba(0,255,136,0.08), 0 0 20px rgba(0,255,136,0.07);
+}
+
+.lp-input:focus + .lp-field-icon,
+.lp-field:focus-within .lp-field-icon {
+  color: #00ff88;
+}
+
+.lp-card.lp-card-error .lp-input {
+  border-color: rgba(255,60,80,0.4);
+}
+.lp-card.lp-card-error .lp-input:focus {
+  border-color: rgba(255,60,80,0.8);
+  box-shadow: 0 0 0 3px rgba(255,60,80,0.1);
+}
+.lp-card.lp-card-error .lp-field-icon {
+  color: rgba(255,60,80,0.6);
+}
+
+/* Error message */
+.lp-error {
+  font-size: 0.73rem;
+  letter-spacing: 1px;
+  color: #ff4060;
+  background: rgba(255,60,80,0.08);
+  border: 1px solid rgba(255,60,80,0.25);
+  border-radius: 6px;
+  padding: 8px 12px;
+  text-shadow: 0 0 8px rgba(255,60,80,0.4);
+}
+
+/* System log ticker */
+.lp-syslog {
   display: flex;
   align-items: center;
-  z-index: 3;
+  gap: 8px;
+  font-size: 0.68rem;
   letter-spacing: 1px;
+  color: rgba(0,255,136,0.45);
+  animation: syslogFade 0.4s ease;
+  padding: 2px 0;
 }
 
-/* Floating label effect */
-.cyber-input:focus ~ .cyber-label,
-.cyber-input:not(:placeholder-shown) ~ .cyber-label {
-  top: -10px;
-  left: 10px;
-  font-size: 0.7rem;
-  color: #00ffcc;
-  background: #030810;
-  padding: 0 6px;
+.lp-syslog-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00ff88;
+  box-shadow: 0 0 6px #00ff88;
+  flex-shrink: 0;
+  animation: glowPulse 1.4s ease infinite;
 }
 
-.terminal-card.shake-error .cyber-input:focus ~ .cyber-label,
-.terminal-card.shake-error .cyber-input:not(:placeholder-shown) ~ .cyber-label {
-  color: #ff3c3c;
+.lp-card.lp-card-error .lp-syslog {
+  color: rgba(255,60,80,0.6);
+}
+.lp-card.lp-card-error .lp-syslog-dot {
+  background: #ff4060;
+  box-shadow: 0 0 6px #ff4060;
 }
 
-.input-border {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0%;
-  height: 2px;
-  background: #00ffcc;
-  transition: width 0.4s ease;
-  z-index: 4;
-}
-
-.cyber-input:focus ~ .input-border {
-  width: 100%;
-}
-
-.terminal-card.shake-error .input-border {
-  background: #ff3c3c;
-}
-
-.cyber-input:focus {
-  background: rgba(0, 255, 204, 0.08);
-  border-color: rgba(0, 255, 204, 0.6);
-  box-shadow: 0 0 15px rgba(0, 255, 204, 0.15);
-}
-
-.terminal-card.shake-error .cyber-input {
-  border-color: rgba(255, 60, 60, 0.4);
-}
-.terminal-card.shake-error .cyber-input:focus {
-  background: rgba(255, 60, 60, 0.08);
-  border-color: #ff3c3c;
-  box-shadow: 0 0 15px rgba(255, 60, 60, 0.2);
-}
-
-/* ── LOGS ── */
-.terminal-logs {
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(0, 255, 204, 0.15);
-  border-radius: 4px;
-  padding: 10px;
-  height: 80px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  font-size: 0.75rem;
-  color: #a0aab5;
-}
-
-.log-entry {
-  margin: 2px 0;
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.log-prefix {
-  color: #00ffcc;
-  margin-right: 6px;
-}
-.log-error .log-prefix { color: #ff3c3c; }
-.log-error { color: #ff3c3c; }
-
-/* ── BUTTON ── */
-.cyber-btn {
+/* ════ BUTTON ════════════════════════════════════ */
+.lp-btn {
   position: relative;
   width: 100%;
-  padding: 16px;
-  background: transparent;
-  border: 1px solid #00ffcc;
-  border-radius: 4px;
-  color: #00ffcc;
-  font-size: 1rem;
-  letter-spacing: 2px;
-  font-weight: 600;
+  padding: 15px 20px;
+  margin-top: 4px;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
   overflow: hidden;
+  background: linear-gradient(135deg, #00ff88 0%, #7c3aed 100%);
+  color: #060b12;
+  font-size: 0.85rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  font-family: 'Orbitron', sans-serif;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0,255,136,0.25);
 }
 
-.cyber-btn::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: #00ffcc;
-  transform: translateX(-100%);
-  transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-  z-index: 0;
+.lp-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,255,136,0.4), 0 0 60px rgba(124,58,237,0.2);
+  filter: brightness(1.1);
 }
 
-.cyber-btn:hover::before {
-  transform: translateX(0);
+.lp-btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
-.btn-glitch-text {
+.lp-btn-inner {
   position: relative;
+  z-index: 2;
+}
+
+/* shimmer sweep */
+.lp-btn-glow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%);
+  transform: translateX(-110%);
+  transition: transform 0.6s ease;
   z-index: 1;
-  transition: color 0.3s ease;
 }
 
-.cyber-btn:hover .btn-glitch-text {
-  color: #030810;
+.lp-btn:hover .lp-btn-glow {
+  transform: translateX(110%);
 }
 
-.cyber-btn.processing {
-  border-color: #a0aab5;
-  color: #a0aab5;
+.lp-btn.lp-btn-loading {
+  opacity: 0.7;
+  cursor: not-allowed;
   pointer-events: none;
 }
-.cyber-btn.processing::before {
-  background: rgba(160, 170, 181, 0.1);
-  transform: translateX(0);
+
+/* ════ RIGHT PANEL ════════════════════════════════ */
+.lp-right {
+  flex: 0 0 50%;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(160deg, #080e1a 0%, #0c1224 60%, #10072e 100%);
 }
 
-.terminal-card.shake-error .cyber-btn {
-  border-color: #ff3c3c;
-  color: #ff3c3c;
+/* purple-green glow behind character */
+.lp-right-glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 80% at 50% 60%, rgba(124,58,237,0.3) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 40% at 50% 90%, rgba(0,255,136,0.2) 0%, transparent 60%);
+  z-index: 1;
+  animation: glowPulse 3s ease infinite;
 }
-.terminal-card.shake-error .cyber-btn::before {
-  background: #ff3c3c;
+
+/* Character artwork */
+.lp-character {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 95%;
+  width: auto;
+  object-fit: contain;
+  z-index: 2;
+  animation: charFloat 5s ease-in-out infinite;
+  filter: drop-shadow(0 0 40px rgba(124,58,237,0.5)) drop-shadow(0 0 20px rgba(0,255,136,0.2));
 }
-.terminal-card.shake-error .cyber-btn:hover .btn-glitch-text {
-  color: #030810;
+
+/* dark gradient overlay blending bottom */
+.lp-right-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: linear-gradient(
+    to bottom,
+    rgba(6,11,18,0.1) 0%,
+    transparent 30%,
+    transparent 65%,
+    rgba(6,11,18,0.65) 100%
+  );
+}
+
+/* scanline texture */
+.lp-scanlines {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 3px,
+    rgba(0,0,0,0.08) 3px,
+    rgba(0,0,0,0.08) 4px
+  );
+  opacity: 0.6;
+  animation: scanlines 8s linear infinite;
+}
+
+/* ════ RESPONSIVE ════════════════════════════════ */
+@media (max-width: 860px) {
+  .lp-split { flex-direction: column; }
+  .lp-left  { flex: none; padding: 36px 24px; }
+  .lp-right { flex: 0 0 280px; }
+
+  .lp-heading { font-size: 1.6rem; }
+  .lp-logo-text { font-size: 1.2rem; }
 }
