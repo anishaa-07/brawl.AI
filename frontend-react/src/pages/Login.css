@@ -96,17 +96,22 @@
   display: flex;
   width: 100%;
   height: 100%;
+  gap: 0;
 }
 
 /* ════ LEFT ════════════════════════════════════════ */
 .lp-left {
   flex: 0 0 50%;
+  width: 50%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: 48px 52px;
   gap: 28px;
   overflow-y: auto;
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(to right, rgba(6,11,18,1) 70%, rgba(6,11,18,0.92) 100%);
 }
 
 /* Logo */
@@ -395,7 +400,7 @@
 
 /* ════ RIGHT PANEL ════════════════════════════════ */
 .lp-right {
-  flex: 0 0 50%;
+  flex: 1;
   position: relative;
   overflow: hidden;
   background: linear-gradient(160deg, #080e1a 0%, #0c1224 60%, #10072e 100%);
@@ -415,16 +420,14 @@
 /* Character artwork */
 .lp-character {
   position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center top;
+  object-position: center center;
   z-index: 2;
   animation: charFloat 5s ease-in-out infinite;
-  filter: drop-shadow(0 0 40px rgba(124,58,237,0.5)) drop-shadow(0 0 20px rgba(0,255,136,0.2));
+  filter: drop-shadow(0 0 30px rgba(124,58,237,0.4)) drop-shadow(0 0 15px rgba(0,255,136,0.15));
 }
 
 /* dark gradient overlay blending bottom */
