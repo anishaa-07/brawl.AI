@@ -5,6 +5,7 @@ import {
   Crown, LogOut, ChevronRight, User, Maximize, Minimize, Award, Loader2, Settings as SettingsIcon
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { ALL_QUESTIONS } from '../data/questionsDB';
 import UniversalBackBtn from '../components/UniversalBackBtn';
 import SettingsModal from '../components/SettingsModal';
 import './Lobby.css';
@@ -69,8 +70,8 @@ const Lobby = () => {
 
   const startBattle = (mode) => {
     if (mode === 'quick') {
-      // Instant execution per user request
-      navigate('/battle', { state: { mode: 'random' } });
+      const q = ALL_QUESTIONS[Math.floor(Math.random() * ALL_QUESTIONS.length)];
+      navigate('/battle', { state: { selectedQuestion: q, difficulty: q.difficulty } });
       return;
     }
     

@@ -6,9 +6,10 @@ import {
   RefreshCw, Tag, Lightbulb, CheckCircle, XCircle, Clock,
 } from 'lucide-react';
 import {
-  QUESTIONS, pickQuestion, executeCode, parseKeywords,
+  pickQuestion, executeCode, parseKeywords,
   TOTAL_ROUNDS, TIMER_DURATION, XP_PER_CORRECT,
 } from './questionsData';
+import { ALL_QUESTIONS } from '../data/questionsDB';
 import UniversalBackBtn from '../components/UniversalBackBtn';
 import { SoundFX } from '../utils/sounds';
 import './Battle.css';
@@ -62,9 +63,11 @@ const Battle = () => {
   const preSelected = location.state?.selectedQuestion || null;
   const userLevel = user?.level || 1;
   const progressiveDiff = userLevel >= 7 ? 'Hard' : userLevel >= 4 ? 'Medium' : 'Easy';
-  const difficulty   = preSelected ? (location.state?.difficulty || progressiveDiff) : progressiveDiff;
+  const difficulty   = preSelected?.difficulty || location.state?.difficulty || progressiveDiff;
 
-  const pool         = QUESTIONS[difficulty] || QUESTIONS.Medium;
+  // Single source of truth pool
+  const basePool = ALL_QUESTIONS.filter(q => q.difficulty === difficulty);
+  const pool = basePool.length > 0 ? basePool : ALL_QUESTIONS;
   const roundDuration = TIMER_DURATION[difficulty] || 45;
 
   // ── AI Personality Specs ────────────────────────────────────
@@ -103,8 +106,15 @@ const Battle = () => {
   const [feedback,      setFeedback]      = useState(null);
   const [phase,         setPhase]         = useState('battle');
   const [battleResult,  setBattleResult]  = useState('');
-  const [usedIds,       setUsedIds]       = useState(() => preSelected ? [preSelected.id] : []);
-  const [question,      setQuestion]      = useState(() => preSelected || pickQuestion(pool, []));
+  
+  // Safe initialization
+  const [usedIds,       setUsedIds]       = useState(() => preSelected?.id ? [preSelected.id] : []);
+  const [question,      setQuestion]      = useState(() => {
+    if (preSelected && preSelected.id) return preSelected;
+    // Fallback: pick randomly ensuring safe pool
+    return pickQuestion(pool.length ? pool : ALL_QUESTIONS, []);
+  });
+  
   const [showHint,      setShowHint]      = useState(false);
   const [showEntrance,  setShowEntrance]  = useState(true);
   const [wrongAttempts, setWrongAttempts] = useState(0);
@@ -370,11 +380,11 @@ const Battle = () => {
       return;
     }
 
-    // Advance to next round
-    const newUsed = [...usedIds, question.id];
+    // Advance to next round securely
+    const newUsed = [...usedIds, question?.id].filter(Boolean);
     setUsedIds(newUsed);
-    const next = pickQuestion(pool, newUsed);
-    setQuestion(next);
+    const nextQ = pickQuestion(pool.length ? pool : ALL_QUESTIONS, newUsed);
+    setQuestion(nextQ || ALL_QUESTIONS[0]); // Absolute fallback
     setRound(r => r + 1);
     setTimeLeft(roundDuration);
     setUserInput('');
@@ -579,17 +589,17 @@ const Battle = () => {
                   {/* Description */}
                   <div className="qp-section-label font-orbitron">PROBLEM</div>
                   <p className="q-statement">
-                    <HighlightedQuestion raw={question.question || question.description || 'No description available.'} />
+                    <HighlightedQuestion raw={question?.question || question?.description || 'No description found.'} />
                   </p>
 
                   {/* Input / Output Format */}
-                  {question.example && (
+                  {question?.example && (
                     <div className="qp-io-grid">
                       <div className="qp-io-block">
                         <div className="qp-io-label font-orbitron">
                           <span className="qp-io-dot input-dot"></span>INPUT FORMAT
                         </div>
-                        <pre className="qp-io-value">{question.example.input || '—'}</pre>
+                        <pre className="qp-io-value">{question.example.input || String(question.example) || '—'}</pre>
                       </div>
                       <div className="qp-io-block">
                         <div className="qp-io-label font-orbitron">
