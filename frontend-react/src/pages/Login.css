@@ -78,6 +78,40 @@
   pointer-events: none;
 }
 
+/* ── Floating Controls (Back + Fullscreen) ── */
+.lp-controls {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 50;
+  display: flex;
+  gap: 8px;
+}
+
+.lp-ctrl-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(8, 16, 28, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  border-radius: 8px;
+  color: rgba(0, 255, 136, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lp-ctrl-btn:hover {
+  background: rgba(0, 255, 136, 0.12);
+  border-color: rgba(0, 255, 136, 0.5);
+  color: #00ff88;
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.2);
+  transform: scale(1.08);
+}
+
 /* ── Ambient radial glow ── */
 .lp-ambient {
   position: absolute;

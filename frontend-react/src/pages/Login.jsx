@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Zap, LogIn, UserPlus, Mail, Lock, User, KeyRound } from 'lucide-react';
+import { Zap, LogIn, UserPlus, Mail, Lock, User, KeyRound, ChevronLeft, Maximize2, Minimize2 } from 'lucide-react';
 import characterImg from '../assets/anime_fighters_group.png';
 import './Login.css';
 
@@ -18,8 +18,19 @@ const Login = () => {
   const [successStatus, setSuccessStatus] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [logLine, setLogLine] = useState('');
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+      setIsFullscreen(true);
+    } else {
+      document.exitFullscreen();
+      setIsFullscreen(false);
+    }
+  };
 
   // Cycle system log
   useEffect(() => {
@@ -86,6 +97,16 @@ const Login = () => {
       {/* ── Animated BG ── */}
       <div className="lp-grid" aria-hidden="true" />
       <div className="lp-ambient" aria-hidden="true" />
+
+      {/* ── Floating Controls ── */}
+      <div className="lp-controls">
+        <button className="lp-ctrl-btn" onClick={() => navigate(-1)} title="Go Back">
+          <ChevronLeft size={18} />
+        </button>
+        <button className="lp-ctrl-btn" onClick={toggleFullscreen} title="Toggle Fullscreen">
+          {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+        </button>
+      </div>
 
       <div className="lp-split">
 
