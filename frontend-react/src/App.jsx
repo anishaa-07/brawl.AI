@@ -2,7 +2,6 @@ import React, { useRef, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { AnimatePresence, motion } from 'framer-motion';
-import { socket } from './socket';
 
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -120,13 +119,6 @@ function App() {
     // 1. Setup Theme
     const savedTheme = localStorage.getItem('brawl_theme');
     if (savedTheme === 'dark') document.body.className = 'brawl-theme-dark';
-
-    // 2. Open Real-time Socket globally
-    socket.connect();
-
-    return () => {
-      socket.disconnect();
-    };
   }, []);
 
   return (
