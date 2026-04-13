@@ -6,6 +6,7 @@ import { Sword, Cpu, Target, Globe, Info, Send, ChevronRight, Activity, Zap, Shi
 import Background from '../components/Background';
 import Navbar from '../components/Navbar';
 import GameModes from '../components/GameModes';
+import fightersImg from '../assets/anime_fighters_group.png';
 import './Home.css';
 
 const Home = () => {
@@ -147,7 +148,7 @@ const Home = () => {
                 <div className="hero-cin-glow-ring ring-inner" />
                 <div className="hero-cin-glow-orb" />
                 <img
-                  src={`${import.meta.env.BASE_URL}assets/anime_fighters_group.png`}
+                  src={fightersImg}
                   alt="Neural Arena Fighters"
                   className="hero-cin-img"
                 />
