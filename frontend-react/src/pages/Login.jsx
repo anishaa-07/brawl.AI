@@ -1,209 +1,157 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { User, Lock, Eye, EyeOff, KeyRound, Flame } from 'lucide-react';
-import characterImg from '../assets/brawl_duo.png';
+import { Terminal, Lock, KeyRound } from 'lucide-react';
 import './Login.css';
 
 const Login = () => {
-  const [activeTab, setActiveTab] = useState('login');
-  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ username: '', password: '' });
-  const [rememberMe, setRememberMe] = useState(true);
-  const [error, setError] = useState('');
+  const [errorStatus, setErrorStatus] = useState(false);
+  const [successStatus, setSuccessStatus] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [logs, setLogs] = useState([]);
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setError('');
+    setErrorStatus(false);
   };
+
+  const addLog = (msg) => {
+    setLogs(prev => [...prev.slice(-3), msg]);
+  };
+
+  // Easter egg / constant visual feedback
+  useEffect(() => {
+    const defaultLogs = [
+      "Establishing neural handshake...",
+      "Bypassing firewall constraints...",
+      "Syncing bio-metrics..."
+    ];
+    let i = 0;
+    const t = setInterval(() => {
+      addLog(defaultLogs[i % defaultLogs.length]);
+      i++;
+    }, 4000);
+    return () => clearInterval(t);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (activeTab === 'forgot') return;
-
-    setError('');
+    setErrorStatus(false);
     setIsLoading(true);
 
+    addLog("Booting AI Core...");
+    
     try {
       if (!formData.username || !formData.password) {
-        throw new Error('Please fill all fields');
+        throw new Error('Fields missing.');
       }
 
-      await new Promise(resolve => setTimeout(resolve, 600));
+      await new Promise(resolve => setTimeout(resolve, 800));
 
       const usersDB = JSON.parse(localStorage.getItem('brawl_users_db') || '[]');
+      let existingUser = usersDB.find(
+        u => u.username === formData.username && u.password === formData.password
+      );
 
-      if (activeTab === 'login') {
-        const existingUser = usersDB.find(
-          u => u.username === formData.username && u.password === formData.password
-        );
-        
-        if (!existingUser) {
-          throw new Error('Invalid username or password');
+      // If user doesn't exist, silently register them (hacky fallback for easy access)
+      if (!existingUser) {
+        const usernameTaken = usersDB.find(u => u.username === formData.username);
+        if (usernameTaken) {
+          throw new Error('Access Denied: Invalid Credentials');
+        } else {
+          addLog("Registering new bio-signature...");
+          existingUser = { username: formData.username, password: formData.password, level: 1, xp: 0 };
+          usersDB.push(existingUser);
+          localStorage.setItem('brawl_users_db', JSON.stringify(usersDB));
         }
+      }
 
+      addLog("Neural Link Established...");
+      setSuccessStatus(true);
+      
+      // Delay for glitch animation
+      setTimeout(() => {
         login({ username: existingUser.username, level: existingUser.level, xp: existingUser.xp });
         navigate('/lobby');
-      } else if (activeTab === 'register') {
-        const userExists = usersDB.find(u => u.username === formData.username);
-        
-        if (userExists) {
-          throw new Error('Username already taken');
-        }
+      }, 1500);
 
-        usersDB.push({ 
-          username: formData.username, 
-          password: formData.password,
-          level: 1,
-          xp: 0
-        });
-        localStorage.setItem('brawl_users_db', JSON.stringify(usersDB));
-        
-        setActiveTab('login');
-        alert("Registration successful! You can now sign in.");
-      }
     } catch (err) {
-      setError(err.message);
-    } finally {
+      addLog(err.message);
+      setErrorStatus(true);
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="login-wrapper">
-      <div className="login-wrapper-bg"></div>
-      <div className="login-container">
-        {/* Left Side: Form */}
-        <div className="login-left">
-          
-          <div className="logo-header">
-            <div className="logo-brawl">
-              <Flame size={32} color="#FF4F33" className="logo-icon"/>
-              <div className="logo-text-wrapper">
-                <span className="logo-main" style={{paddingTop: '6px'}}>BRAWL.AI</span>
-              </div>
-            </div>
-            <p className="header-desc">
-              Live the life you've always dreamed of! Become<br/>
-              who you've always wanted to be in real life!
-            </p>
-          </div>
+    <div className={`login-terminal-wrapper ${successStatus ? 'glitch-success' : ''}`}>
+      {/* Animated Background */}
+      <div className="cyber-grid"></div>
+      <div className="cyber-particles"></div>
 
-          <div className="tab-menu">
-            <div 
-              className={`tab-btn ${activeTab === 'login' ? 'active' : ''}`}
-              onClick={() => setActiveTab('login')}
-            >
-              Sign In
-              {activeTab === 'login' && <div className="tab-indicator"></div>}
-            </div>
-            <div 
-              className={`tab-btn ${activeTab === 'register' ? 'active' : ''}`}
-              onClick={() => setActiveTab('register')}
-            >
-              Registration
-              {activeTab === 'register' && <div className="tab-indicator"></div>}
-            </div>
-            <div 
-              className={`tab-btn ${activeTab === 'forgot' ? 'active' : ''}`}
-              onClick={() => setActiveTab('forgot')}
-            >
-              Forget Password?
-              {activeTab === 'forgot' && <div className="tab-indicator"></div>}
-            </div>
-          </div>
-
-          <div className="auth-section">
-            <h1 className="auth-title">Authorization</h1>
-            <p className="auth-subtitle">
-              If you already have an account, fill in all the fields. To select<br/>
-              other actions, click on the desired tab above.
-            </p>
-
-            <form onSubmit={handleSubmit} className="auth-form">
-              <div className="input-group">
-                <div className="input-label">
-                  <User size={14} /> Login
-                </div>
-                <input 
-                  type="text" 
-                  name="username"
-                  required
-                  value={formData.username}
-                  onChange={handleInputChange}
-                  placeholder="Aleksandr"
-                  autoComplete="username"
-                />
-              </div>
-
-              <div className="input-group">
-                <div className="input-label">
-                  <Lock size={14} /> Password
-                </div>
-                <input 
-                  type={showPassword ? "text" : "password"} 
-                  name="password"
-                  required 
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  placeholder="***************"
-                  autoComplete={activeTab === 'login' ? "current-password" : "new-password"}
-                />
-                <button 
-                  type="button" 
-                  className="eye-toggle" 
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-
-              {error && <div className="error-text">{error}</div>}
-
-              <div className="form-options">
-                <label className="checkbox-wrap">
-                  <input 
-                    type="checkbox" 
-                    checked={rememberMe} 
-                    onChange={() => setRememberMe(!rememberMe)} 
-                  />
-                  <span className="checkmark"></span>
-                  Remember me
-                </label>
-              </div>
-
-              <button type="submit" className="action-btn" disabled={isLoading}>
-                <KeyRound size={20} className="btn-icon" /> 
-                {isLoading ? 'Processing...' : (activeTab === 'login' ? 'Login to Account' : 'Register Account')}
-              </button>
-            </form>
-          </div>
+      <div className={`terminal-card ${errorStatus ? 'shake-error' : ''}`}>
+        
+        <div className="terminal-header">
+          <Terminal size={28} className="terminal-icon" color="#00ffcc" />
+          <h1 className="font-orbitron">AI ACCESS TERMINAL</h1>
+          <div className="status-dot blink"></div>
         </div>
 
-        {/* Right Side: Showcase */}
-        <div className="login-right">
-          {/* Subtle background landscape simulation with CSS */}
-          <div className="landscape-bg"></div>
-
-          <div className="showcase-content">
-            <h2 className="showcase-title">
-              Where Technology Meets<br/>
-              <span className="highlight">Total Control.</span>
-            </h2>
-            <p className="showcase-desc">
-              Unique skins, modifications and accessories are<br/>
-              waiting for you! Stand out, create, surprise -<br/>
-              your character will become a legend. Go to the<br/>
-              store and create your own story!
-            </p>
-            <div className="showcase-divider"></div>
+        <form onSubmit={handleSubmit} className="terminal-form">
+          <div className="cyber-input-group">
+            <input 
+              type="text" 
+              name="username"
+              required
+              value={formData.username}
+              onChange={handleInputChange}
+              className="cyber-input font-orbitron"
+              placeholder=" "
+              autoComplete="off"
+              disabled={isLoading || successStatus}
+            />
+            <label className="cyber-label"><Lock size={12} style={{marginRight: 6}}/> USERNAME</label>
+            <div className="input-glow"></div>
+            <div className="input-border"></div>
           </div>
 
-          <img src={characterImg} alt="Character" className="character-render" />
-        </div>
+          <div className="cyber-input-group">
+            <input 
+              type="password" 
+              name="password"
+              required 
+              value={formData.password}
+              onChange={handleInputChange}
+              className="cyber-input font-orbitron"
+              placeholder=" "
+              disabled={isLoading || successStatus}
+            />
+            <label className="cyber-label"><KeyRound size={12} style={{marginRight: 6}}/> PASSSWORD</label>
+            <div className="input-glow"></div>
+            <div className="input-border"></div>
+          </div>
+
+          {/* System Logs */}
+          <div className="terminal-logs font-orbitron">
+            {logs.map((log, i) => (
+              <div key={i} className={`log-entry ${errorStatus && i === logs.length - 1 ? 'log-error' : ''}`}>
+                <span className="log-prefix">&gt;</span> {log}
+              </div>
+            ))}
+          </div>
+
+          <button 
+            type="submit" 
+            className={`cyber-btn font-orbitron ${isLoading || successStatus ? 'processing' : ''}`}
+            disabled={isLoading || successStatus}
+          >
+            <span className="btn-glitch-text" data-text="INITIALIZE ACCESS ⚡">
+              {isLoading ? 'PROCESSING...' : successStatus ? 'GRANTED' : 'INITIALIZE ACCESS ⚡'}
+            </span>
+          </button>
+        </form>
       </div>
     </div>
   );
