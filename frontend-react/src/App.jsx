@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { AnimatePresence, motion } from 'framer-motion';
+import ErrorBoundary from './components/ErrorBoundary';
 
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -100,7 +101,9 @@ const AnimatedRoutes = () => {
         } />
         <Route path="/battle" element={
           <PrivateRoute>
-            <motion.div {...motionProps('/battle')}><Battle /></motion.div>
+            <ErrorBoundary>
+              <motion.div {...motionProps('/battle')}><Battle /></motion.div>
+            </ErrorBoundary>
           </PrivateRoute>
         } />
         <Route path="/arena" element={

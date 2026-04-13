@@ -10,38 +10,56 @@ const puppeteer = require('puppeteer');
       console.log('BROWSER ERROR:', msg.text());
     }
   });
-
   page.on('pageerror', error => {
     console.log('PAGE ERROR:', error.message);
   });
 
   console.log("Navigating to app...");
-  await page.goto('http://127.0.0.1:5173/brawl.AI/', { waitUntil: 'networkidle2' });
+  await page.goto('http://localhost:5173/brawl.AI/', { waitUntil: 'networkidle2' });
 
-  // Simulate picking username "Player" if prompts exist
-  // We'll wait for the Quick battle button
-  console.log("Waiting for app to boot and UI to render...");
-  await new Promise(r => setTimeout(r, 2000));
-
+  // 1. Landing Page
+  console.log("Waiting for Landing Page CTA...");
   try {
-    const quickBattleBtn = await page.waitForSelector('.cta-start-v4', { timeout: 3000 });
-    if (quickBattleBtn) {
-       console.log("Clicking 'Quick Battle' button...");
-       await quickBattleBtn.click();
-    } else {
-       console.log("No quick battle button found. Maybe it's random battle?");
-    }
+      await page.waitForSelector('button, a', { timeout: 3000 });
+      const btns = await page.$$('button, a');
+      for (let btn of btns) {
+          const text = await page.evaluate(el => el.innerText, btn);
+          if (text && text.toLowerCase().includes('initialize')) {
+               console.log("Clicking Initialize System...");
+               await btn.click();
+               break;
+          }
+      }
+  } catch(e) { console.log(e); }
+
+  await new Promise(r => setTimeout(r, 2000));
+  
+  // 2. Login Page
+  try {
+      console.log("Looking for Login inputs...");
+      const input = await page.$('input[placeholder*="Player"]');
+      if (input) {
+          await input.type("TestUser");
+          const enterBtn = await page.$('button[type="submit"]');
+          if (enterBtn) await enterBtn.click();
+      }
+  } catch (e) { console.log(e); }
+
+  await new Promise(r => setTimeout(r, 4000));
+  
+  // 3. Lobby Page
+  console.log("Looking for Quick Battle...");
+  try {
+      const quickBtn = await page.waitForSelector('.cta-start-v4', { timeout: 3000 });
+      if (quickBtn) {
+         console.log("Found Quick Battle button, clicking...");
+         await quickBtn.click();
+      }
   } catch(e) {
-    console.log("Could not find quick battle button. Looking for random battle or other modes.");
-    const altBtn = await page.$('.cta-start-v4');
-    if (altBtn) {
-        await altBtn.click();
-    } else {
-      console.log("No CTA found.");
-    }
+      console.log("Could not click Quick battle.");
   }
 
-  console.log("Waiting for potential crash log...");
+  console.log("Waiting to see what happens on Battle Page...");
   await new Promise(r => setTimeout(r, 3000));
 
   await browser.close();
