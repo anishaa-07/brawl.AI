@@ -239,6 +239,61 @@
   filter: drop-shadow(0 0 10px rgba(0,242,255,0.25));
 }
 
+/* ── Profile inline stat boxes ── */
+.profile-stats-row {
+  margin-top: 28px;
+  display: flex;
+  gap: 14px;
+  width: 100%;
+  max-width: 300px;
+}
+.profile-stat-box {
+  flex: 1;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 10px 12px;
+  transition: border-color 0.2s;
+}
+.profile-stat-box:hover { border-color: rgba(0,242,255,0.2); }
+.stat-box-label {
+  font-size: 0.58rem;
+  color: rgba(180,210,255,0.4);
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+}
+.stat-box-val { font-size: 1.1rem; font-weight: 900; }
+
+/* ── Extended stats 2x2 grid ── */
+.profile-ext-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+  max-width: 300px;
+}
+.profile-ext-cell {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 8px;
+  padding: 9px 10px;
+  text-align: left;
+  transition: border-color 0.2s;
+}
+.profile-ext-cell:hover { border-color: rgba(0,242,255,0.15); }
+.ext-label {
+  font-size: 0.54rem;
+  color: rgba(180,210,255,0.4);
+  letter-spacing: 1.5px;
+  margin-bottom: 4px;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+}
+.ext-val { font-size: 0.9rem; font-weight: 800; }
+
 .profile-level-v4 {
   font-size: 0.7rem;
   color: var(--text-dim);
