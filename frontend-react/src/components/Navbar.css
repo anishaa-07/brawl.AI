@@ -24,37 +24,61 @@
 
 .nav-links {
   display: flex;
-  gap: 40px;
+  gap: 32px;
   align-items: center;
 }
 
-.nav-links a {
+/* Every nav link — icon + label inline */
+.nav-link-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: #8b9fb1;
   text-decoration: none;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 800;
-  letter-spacing: 1px;
-  transition: all 0.3s;
+  letter-spacing: 1.5px;
+  transition: all 0.25s ease;
   text-transform: uppercase;
   position: relative;
+  white-space: nowrap;
 }
 
-.nav-links a::after {
+.nav-link-item svg { flex-shrink: 0; opacity: 0.7; transition: 0.25s; }
+
+/* Underline sweep */
+.nav-link-item::after {
   content: '';
   position: absolute;
   bottom: -5px; left: 0;
   width: 0%; height: 2px;
   background: var(--primary);
-  transition: 0.3s;
+  transition: width 0.3s ease;
+  border-radius: 2px;
 }
 
-.nav-links a:hover {
+.nav-link-item:hover {
   color: #fff;
 }
+.nav-link-item:hover svg { opacity: 1; }
+.nav-link-item:hover::after { width: 100%; }
 
-.nav-links a:hover::after {
-  width: 100%;
+/* Locked link — dimmed with lock icon */
+.nav-link-locked {
+  opacity: 0.45;
+  cursor: pointer;
 }
+.nav-link-locked:hover {
+  color: #ffbd2e;
+  opacity: 0.75;
+}
+.nav-link-locked:hover::after { background: #ffbd2e; }
+
+.nav-lock-badge {
+  font-size: 0.65rem;
+  margin-left: 2px;
+}
+
 
 .nav-actions {
   display: flex;
@@ -62,18 +86,22 @@
 }
 
 .create-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(10px);
   border-radius: 4px;
-  padding: 12px 24px;
+  padding: 10px 20px;
   color: #fff;
   text-decoration: none;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 900;
   transition: all 0.3s;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
+  margin-left: 10px;
 }
 
 .create-btn:hover {
