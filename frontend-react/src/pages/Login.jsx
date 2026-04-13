@@ -97,10 +97,9 @@ const Login = () => {
       {/* ── Animated BG ── */}
       <div className="lp-grid" aria-hidden="true" />
       <div className="lp-ambient" aria-hidden="true" />
-
       {/* ── Floating Controls ── */}
       <div className="lp-controls">
-        <button className="lp-ctrl-btn" onClick={() => navigate(-1)} title="Go Back">
+        <button className="lp-ctrl-btn" onClick={() => navigate('/')} title="Back to Home">
           <ChevronLeft size={18} />
         </button>
         <button className="lp-ctrl-btn" onClick={toggleFullscreen} title="Toggle Fullscreen">
