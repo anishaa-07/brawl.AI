@@ -11,35 +11,40 @@ import SettingsModal from '../components/SettingsModal';
 import './Lobby.css';
 
 /* ── Avatar Utility ──────────────────────────────────────
-   detectGender: names ending in a/i/aa → female
-   getStyle:     female → adventurer (soft anime)
+   detectGender : names ending in a/i/aa → female
+   Styles (v9)  : female → lorelei (soft anime girl)
                   male   → adventurer-neutral (warrior)
-   getSeed:      username + stored random suffix → unique
+   Seed         : username + random suffix → unique per session
+   Format       : PNG for reliable <img> rendering
 ──────────────────────────────────────────────────────── */
 const detectGender = (name = '') => {
   const n = name.trim().toLowerCase();
-  if (/aa$|[ai]$/i.test(n)) return 'female';
-  return 'male';
+  return /aa$|[ai]$/.test(n) ? 'female' : 'male';
 };
 
+// DiceBear v9 styles with PNG support
 const STYLES = {
-  female: 'adventurer',
-  male:   'adventurer-neutral',
+  female: 'lorelei',          // soft anime girl
+  male:   'adventurer-neutral', // warrior / neutral anime
 };
 
-const STORAGE_KEY = 'brawl_avatar_seed';
+const STORAGE_KEY = 'brawl_avatar_seed_v2';
 
 const makeSeed = (username) => {
   const suffix = Math.random().toString(36).slice(2, 8);
-  const seed = `${username}_${suffix}`;
-  localStorage.setItem(STORAGE_KEY, seed);
+  const seed   = `${username}_${suffix}`;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ user: username, seed }));
   return seed;
 };
 
 const getSeed = (username) => {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  // Only reuse if it belongs to this user
-  if (stored && stored.startsWith(username + '_')) return stored;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const { user, seed } = JSON.parse(raw);
+      if (user === username && seed) return seed;
+    }
+  } catch (_) { /* ignore */ }
   return makeSeed(username);
 };
 
@@ -47,8 +52,8 @@ const buildAvatarUrl = (username) => {
   const gender = detectGender(username);
   const style  = STYLES[gender];
   const seed   = getSeed(username);
-  // Extra query params add cyberpunk flair
-  return `https://api.dicebear.com/7.x/${style}/svg?seed=${encodeURIComponent(seed)}&backgroundColor=0a0e1a&radius=50`;
+  // Use PNG — renders reliably in <img> tags, no SVG/CORS issues
+  return `https://api.dicebear.com/9.x/${style}/png?seed=${encodeURIComponent(seed)}&size=120&backgroundColor=0a0e1a`;
 };
 
 const Lobby = () => {
@@ -71,7 +76,7 @@ const Lobby = () => {
     const newSeed  = makeSeed(username);
     setAvatarLoaded(false);
     setAvatarUrl(
-      `https://api.dicebear.com/7.x/${style}/svg?seed=${encodeURIComponent(newSeed)}&backgroundColor=0a0e1a&radius=50`
+      `https://api.dicebear.com/9.x/${style}/png?seed=${encodeURIComponent(newSeed)}&size=120&backgroundColor=0a0e1a`
     );
   }, [user?.username]);
 
@@ -230,16 +235,17 @@ const Lobby = () => {
                 {/* Glow orb behind avatar */}
                 <div className="avatar-glow-orb"></div>
                 {/* Avatar image circle */}
-                <div className={`avatar-circle-v4 avatar-anime${avatarLoaded ? ' avatar-ready' : ''}`}>
+                <div className="avatar-circle-v4 avatar-anime">
+                  {/* Skeleton shimmer while loading */}
+                  {!avatarLoaded && <div className="avatar-skeleton" />}
                   <img
                     src={avatarUrl}
                     alt="Pilot Avatar"
                     className="avatar-img"
+                    style={{ opacity: avatarLoaded ? 1 : 0 }}
                     onLoad={() => setAvatarLoaded(true)}
                     onError={() => setAvatarLoaded(true)}
                   />
-                  {/* Skeleton shimmer while loading */}
-                  {!avatarLoaded && <div className="avatar-skeleton" />}
                 </div>
                 <div className="rank-badge-v4 font-orbitron">{profile.rank}</div>
               </div>
