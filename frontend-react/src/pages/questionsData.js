@@ -263,41 +263,62 @@ export function normalizeAnswer(str) {
   return String(str).toLowerCase().replace(/\s+/g, '').replace(/["']/g, '');
 }
 
+export const LANGUAGE_CONFIGS = {
+  javascript: { name: 'javascript', version: '18.15.0', label: 'JavaScript', boilerplate: 'function solution(input) {\n  // Your code here\n}' },
+  python: { name: 'python', version: '3.10.0', label: 'Python', boilerplate: 'def solution(input):\n    # Your code here\n    pass' },
+  java: { name: 'java', version: '15.0.2', label: 'Java', boilerplate: 'public class Solution {\n    public static Object solution(Object input) {\n        // Your code here\n        return null;\n    }\n}' },
+  cpp: { name: 'cpp', version: '10.2.0', label: 'C++', boilerplate: '#include <iostream>\n#include <string>\n\n// Use a generic approach for simplicity in this demo\nstd::string solution(std::string input) {\n    // Your code here\n    return "";\n}' },
+  typescript: { name: 'typescript', version: '5.0.3', label: 'TypeScript', boilerplate: 'function solution(input: any): any {\n  // Your code here\n}' },
+  php: { name: 'php', version: '8.2.3', label: 'PHP', boilerplate: '<?php\nfunction solution($input) {\n    // Your code here\n}' },
+};
+
 /**
  * Execute user code against the question's test input and return a rich result.
- * Returns: { isCorrect, userOutput, expectedOutput, error, isError }
+ * Supports multiple languages via the Piston API.
  */
-export function executeCode(question, userInput) {
-  const expectedOutput = question.answer[0]; // primary expected answer for display
+export async function executeCode(question, userInput, language = 'javascript') {
+  const expectedOutput = question.answer[0];
+  const config = LANGUAGE_CONFIGS[language] || LANGUAGE_CONFIGS.javascript;
+
+  // Build argument string from the example input
+  const argsStr = question.example && question.example.input
+    ? question.example.input.replace(/[a-zA-Z_]+\s*=\s*/g, '')
+    : '';
 
   try {
-    // Build argument string from the example input
-    const argsStr = question.example && question.example.input
-      ? question.example.input.replace(/[a-zA-Z_]+\s*=\s*/g, '')
-      : '';
+    let codeToExecute = userInput;
 
-    const wrappedCode = `
-      ${userInput}
-      if (typeof solution === 'function') {
-        return solution(${argsStr});
-      }
-      return undefined;
-    `;
-
-    const fn = new Function(wrappedCode);
-    const rawResult = fn();
-
-    let userOutput;
-    if (rawResult !== undefined) {
-      userOutput = typeof rawResult === 'object'
-        ? JSON.stringify(rawResult)
-        : String(rawResult);
-    } else {
-      // Fallback: treat the whole input as a plain answer
-      userOutput = String(userInput).trim();
+    // For specific languages, we might need to wrap the code to call the function
+    if (language === 'javascript' || language === 'typescript') {
+      codeToExecute = `${userInput}\nconsole.log(solution(${argsStr}));`;
+    } else if (language === 'python') {
+      codeToExecute = `${userInput}\nprint(solution(${argsStr}))`;
+    } else if (language === 'php') {
+      // Basic wrap for PHP
+      codeToExecute = `${userInput}\necho solution(${argsStr});`;
+    } else if (language === 'java') {
+      // Java needs a main method to run
+      codeToExecute = `${userInput}\npublic class Main { public static void main(String[] args) { System.out.print(Solution.solution("${argsStr}")); } }`;
     }
 
-    console.log('[executeCode] userOutput:', userOutput, '| expected:', question.answer);
+    const response = await fetch('https://emkc.org/api/v2/piston/execute', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        language: config.name,
+        version: config.version,
+        files: [{ content: codeToExecute }]
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.run.stderr) {
+      throw new Error(data.run.stderr);
+    }
+
+    const userOutput = data.run.output.trim();
+    console.log(`[executeCode] ${language} output:`, userOutput, '| expected:', question.answer);
 
     const normalizedUser = normalizeAnswer(userOutput);
     const isCorrect = question.answer.some(a => normalizeAnswer(a) === normalizedUser);
@@ -305,8 +326,8 @@ export function executeCode(question, userInput) {
     return { isCorrect, userOutput, expectedOutput, error: null, isError: false };
 
   } catch (err) {
-    console.error('[executeCode] Runtime error:', err.message);
-    // On error: try plain-text fallback comparison before marking as error
+    console.error('[executeCode] Execution error:', err.message);
+    // On error: try plain-text fallback comparison
     const fallbackNorm = normalizeAnswer(userInput);
     const isCorrect = question.answer.some(a => normalizeAnswer(a) === fallbackNorm);
     if (isCorrect) {
@@ -316,9 +337,10 @@ export function executeCode(question, userInput) {
   }
 }
 
-// Keep old export as alias so nothing else breaks
-export function checkAnswer(question, userInput) {
-  return executeCode(question, userInput).isCorrect;
+// Keep old export as alias so nothing else breaks (marking as async now)
+export async function checkAnswer(question, userInput, language) {
+  const result = await executeCode(question, userInput, language);
+  return result.isCorrect;
 }
 
 /**

@@ -8,6 +8,7 @@ import {
 import {
   pickQuestion, executeCode, parseKeywords,
   TOTAL_ROUNDS, TIMER_DURATION, XP_PER_CORRECT,
+  LANGUAGE_CONFIGS,
 } from './questionsData';
 import { ALL_QUESTIONS } from '../data/questionsDB';
 import UniversalBackBtn from '../components/UniversalBackBtn';
@@ -101,7 +102,8 @@ const Battle = () => {
   const [playerHp,      setPlayerHp]      = useState(100);
   const [aiHp,          setAiHp]          = useState(100);
   const [totalXp,       setTotalXp]       = useState(0);
-  const [userInput,     setUserInput]      = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState('javascript');
+  const [userInput,     setUserInput]      = useState(LANGUAGE_CONFIGS.javascript.boilerplate);
   const [isAttacking,   setIsAttacking]   = useState(false);
   const [feedback,      setFeedback]      = useState(null);
   const [phase,         setPhase]         = useState('battle');
@@ -188,7 +190,7 @@ const Battle = () => {
   }, [showHint, hintUsedThisRound, hintsRemaining]);
 
   // ── Submit Attack ───────────────────────────────────────────
-  const handleAttack = useCallback(() => {
+  const handleAttack = useCallback(async () => {
     if (isAttacking || phase !== 'battle' || !userInput.trim()) return;
     setIsAttacking(true);
     setShowHint(false);
@@ -197,7 +199,7 @@ const Battle = () => {
     const currentXpReward = hintUsedThisRound ? Math.floor(xpPerHit / 2) : xpPerHit;
 
     // Execute user code — returns { isCorrect, userOutput, expectedOutput, error, isError }
-    const result = executeCode(question, userInput);
+    const result = await executeCode(question, userInput, selectedLanguage);
 
     if (updateProfile && user) {
       updateProfile({ totalAttempts: (user.totalAttempts || 0) + 1 });
@@ -272,7 +274,7 @@ const Battle = () => {
           }
         }
 
-        setUserInput('');
+        // Keep current input but clear isAttacking
         setIsAttacking(false);
         setPhase('result');
         setTimeout(() => setLaserEffect(null), 800);
@@ -291,7 +293,6 @@ const Battle = () => {
         setDamageOverlay({ target: 'player', amount: dmg, text: 'Compilation Failed ❌' });
         setAiMessage('Logic error detected. Pathetic.');
         SoundFX.error();
-        setUserInput('');
         setIsAttacking(false);
         setPhase('result');
         setTimeout(() => setLaserEffect(null), 800);
@@ -313,13 +314,12 @@ const Battle = () => {
         setDamageOverlay({ target: 'player', amount: dmg, text: isCrit ? 'SYSTEM BREACH 💀' : 'Wrong Answer ❌' });
         setAiMessage(aiPersonality.wrong);
         SoundFX.miss();
-        setUserInput('');
         setIsAttacking(false);
         setPhase('result');
         setTimeout(() => setLaserEffect(null), 800);
       }
     }, 650);
-  }, [isAttacking, phase, userInput, question, difficulty, aiHp, xpPerHit, hintUsedThisRound]); // eslint-disable-line
+  }, [isAttacking, phase, userInput, question, difficulty, aiHp, xpPerHit, hintUsedThisRound, selectedLanguage]); // eslint-disable-line
 
   // Stable ref so the auto-advance timer can call handleNext without stale closure
   const handleNextRef = useRef(null);
@@ -387,7 +387,7 @@ const Battle = () => {
     setQuestion(nextQ || ALL_QUESTIONS[0]); // Absolute fallback
     setRound(r => r + 1);
     setTimeLeft(roundDuration);
-    setUserInput('');
+    setUserInput(LANGUAGE_CONFIGS[selectedLanguage].boilerplate);
     setFeedback(null);
     setWrongAttempts(0);
     setDamageOverlay(null);
@@ -638,11 +638,18 @@ const Battle = () => {
                 <div className="code-editor-wrapper">
                   <div className="editor-header font-orbitron">
                     <div className="editor-tab active">solution.code</div>
-                    <select className="lang-dropdown font-orbitron" defaultValue="javascript">
-                      <option value="javascript">JavaScript</option>
-                      <option value="python">Python</option>
-                      <option value="java">Java</option>
-                      <option value="cpp">C++</option>
+                    <select
+                      className="lang-dropdown font-orbitron"
+                      value={selectedLanguage}
+                      onChange={(e) => {
+                        const newLang = e.target.value;
+                        setSelectedLanguage(newLang);
+                        setUserInput(LANGUAGE_CONFIGS[newLang].boilerplate);
+                      }}
+                    >
+                      {Object.values(LANGUAGE_CONFIGS).map(config => (
+                        <option key={config.name} value={config.name}>{config.label}</option>
+                      ))}
                     </select>
                   </div>
                   <div className="editor-body">
