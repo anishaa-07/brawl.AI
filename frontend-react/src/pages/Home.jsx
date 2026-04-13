@@ -1,101 +1,158 @@
-import React from 'react';
+import React, { useRef, useCallback } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Sword, Cpu, Target, Globe, Info, Send, ChevronRight, Activity, Zap, Shield, GitFork, Mail } from 'lucide-react';
+import { Sword, Cpu, Target, Globe, Info, Send, ChevronRight, Activity, Zap, Shield, GitFork, Mail, Terminal } from 'lucide-react';
 import Background from '../components/Background';
 import Navbar from '../components/Navbar';
 import GameModes from '../components/GameModes';
 import './Home.css';
 
 const Home = () => {
+  const artRef = useRef(null);
+
+  const handleMouseMove = useCallback((e) => {
+    if (!artRef.current) return;
+    const { clientX, clientY, currentTarget } = e;
+    const { width, height, left, top } = currentTarget.getBoundingClientRect();
+    const x = ((clientX - left) / width - 0.5) * 18;
+    const y = ((clientY - top) / height - 0.5) * 10;
+    artRef.current.style.transform = `translate(${x}px, ${y}px) scale(1.04)`;
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    if (!artRef.current) return;
+    artRef.current.style.transform = 'translate(0px, 0px) scale(1)';
+  }, []);
+
   return (
     <div className="landing-wrapper">
       <Background>
         <Navbar />
         
-        {/* 🏆 EPIC HERO: CINEMATIC BATTLE ARENA 🏆 */}
-        <section className="hero-section premium" id="home">
-          {/* Anime Background Overlay */}
-          <div className="hero-anime-bg" style={{ 
-            backgroundImage: `url(${import.meta.env.BASE_URL}assets/anime_bg.png)`,
-            position: 'absolute', inset: 0, opacity: 0.15, zIndex: 1, pointerEvents: 'none',
-            backgroundSize: 'cover', backgroundPosition: 'center'
-          }} />
-
-          <div className="container-hero">
-            <motion.div 
-              className="hero-text-content"
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              style={{ zIndex: 10 }}
-            >
-              <motion.div 
-                className="tagline-badge"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-              >
-                <Zap size={14} className="accent-magenta" />
-                <span>NEURAL ARENA PILOT</span>
-              </motion.div>
-
-              <motion.h1 
-                className="hero-display font-montserrat"
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                Only The <span className="accent-magenta text-glow">SMARTEST</span><br />
-                Survive !
-              </motion.h1>
-
-              <motion.p 
-                className="hero-lead"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-              >
-                The first decentralized AI fighting arena where combat is code, 
-                and logic is the ultimate weapon. Dominate the global grid.
-              </motion.p>
-
-              <motion.div 
-                className="hero-actions"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
-              >
-                <Link to="/login" className="btn-primary-glow">
-                  <span>ENTER ARENA</span>
-                  <ChevronRight size={18} />
-                </Link>
-
-              </motion.div>
-            </motion.div>
-
-            {/* Cinematic Clashing Art (Single Consolidated Image) */}
-            <motion.div 
-              className="hero-art-main"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.2, ease: "easeOut" }}
-              style={{ zIndex: 5 }}
-            >
-              <div className="hero-art-single">
-                <img src={`${import.meta.env.BASE_URL}assets/hero_main_new.png?v=1.4`} alt="Elite Pilots" className="hero-center-art-v2" />
-                <div className="clash-glow" />
-              </div>
-            </motion.div>
+        {/* ══════════ CINEMATIC HERO ══════════ */}
+        <section
+          className="hero-cinematic"
+          id="home"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+        >
+          {/* Particle dots */}
+          <div className="hero-particles" aria-hidden="true">
+            {[...Array(22)].map((_, i) => (
+              <span key={i} className="h-particle" style={{
+                '--x': `${Math.random() * 100}%`,
+                '--y': `${Math.random() * 100}%`,
+                '--d': `${2 + Math.random() * 6}s`,
+                '--s': `${2 + Math.random() * 4}px`,
+              }} />
+            ))}
           </div>
 
-          <div className="stat-bar-premium">
-             <div className="p-stat"><span className="p-label">TOTAL MATCHES</span><span className="p-val">1.28M</span><Activity size={12} className="accent-magenta" /></div>
-             <div className="v-divider" />
-             <div className="p-stat"><span className="p-label">SYSTEM RANK</span><span className="p-val">CORE-01</span><Shield size={12} className="accent-cyan" /></div>
-             <div className="v-divider" />
-             <div className="p-stat"><span className="p-label">ACTIVE PILOTS</span><span className="p-val">15,842</span><div className="online-indicator" /></div>
+          {/* Grid overlay */}
+          <div className="hero-grid-overlay" aria-hidden="true" />
+
+          <div className="hero-cin-inner">
+
+            {/* ── LEFT ── */}
+            <motion.div
+              className="hero-cin-left"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.9, ease: 'easeOut' }}
+            >
+              {/* Badge */}
+              <motion.div
+                className="hero-cin-badge font-orbitron"
+                initial={{ opacity: 0, y: -12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <Zap size={12} /> NEURAL ARENA v2.0
+              </motion.div>
+
+              {/* Heading */}
+              <h1 className="hero-cin-heading font-orbitron">
+                ONLY THE <span className="hero-cin-accent">SMARTEST</span><br />
+                SURVIVE ⚡
+              </h1>
+
+              {/* Subtitle */}
+              <p className="hero-cin-sub">
+                Code is your weapon.<br />
+                Defeat AI in the ultimate arena.
+              </p>
+
+              {/* System log text */}
+              <div className="hero-cin-syslog font-orbitron">
+                <motion.div
+                  className="syslog-line"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.8 }}
+                >
+                  <Terminal size={11} className="syslog-icon" />
+                  <span>&gt; AI CORE ONLINE</span>
+                  <span className="syslog-cursor" />
+                </motion.div>
+                <motion.div
+                  className="syslog-line"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 1.2 }}
+                >
+                  <Terminal size={11} className="syslog-icon" />
+                  <span>&gt; READY FOR COMBAT</span>
+                </motion.div>
+              </div>
+
+              {/* CTA */}
+              <motion.div
+                className="hero-cin-actions"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.0 }}
+              >
+                <Link to="/login" className="hero-cin-btn font-orbitron">
+                  <span>⚡ ENTER THE ARENA</span>
+                  <span className="hero-cin-btn-glow" />
+                </Link>
+              </motion.div>
+
+              {/* Stats strip */}
+              <motion.div
+                className="hero-cin-stats"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.3 }}
+              >
+                <div className="hcs"><span className="hcs-val">1.28M</span><span className="hcs-label">MATCHES</span></div>
+                <div className="hcs-div" />
+                <div className="hcs"><span className="hcs-val">15K+</span><span className="hcs-label">PILOTS</span></div>
+                <div className="hcs-div" />
+                <div className="hcs"><span className="hcs-val">#1</span><span className="hcs-label">ARENA</span></div>
+              </motion.div>
+            </motion.div>
+
+            {/* ── RIGHT ── */}
+            <motion.div
+              className="hero-cin-right"
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1.2, ease: 'easeOut' }}
+            >
+              <div className="hero-cin-art-wrap" ref={artRef}>
+                {/* Glow rings */}
+                <div className="hero-cin-glow-ring ring-outer" />
+                <div className="hero-cin-glow-ring ring-inner" />
+                <div className="hero-cin-glow-orb" />
+                <img
+                  src={`${import.meta.env.BASE_URL}assets/anime_fighters_group.png`}
+                  alt="Neural Arena Fighters"
+                  className="hero-cin-img"
+                />
+              </div>
+            </motion.div>
           </div>
         </section>
 
