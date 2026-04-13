@@ -56,7 +56,7 @@ const Typewriter = ({ text }) => {
 
 // ── MAIN BATTLE COMPONENT ────────────────────────────────────────
 const Battle = () => {
-  const { user } = useAuth();
+  const { user, updateProfile } = useAuth();
   const navigate  = useNavigate();
   const location  = useLocation();
 
