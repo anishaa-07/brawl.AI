@@ -82,6 +82,31 @@
   box-shadow: 0 0 20px var(--primary-glow);
 }
 
+/* Fullscreen toggle */
+.nav-fullscreen-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  margin-right: 10px;
+  transition: all 0.2s ease;
+}
+
+.nav-fullscreen-btn:hover {
+  background: rgba(138, 43, 226, 0.15);
+  border-color: rgba(138, 43, 226, 0.5);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(138, 43, 226, 0.25);
+  transform: scale(1.08);
+}
+
+
 .mobile-menu-toggle {
   display: none;
   background: none;

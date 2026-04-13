@@ -1,10 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Maximize2, Minimize2 } from 'lucide-react';
 import './Navbar.css';
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+      setIsFullscreen(true);
+    } else {
+      document.exitFullscreen();
+      setIsFullscreen(false);
+    }
+  }, []);
 
   return (
     <nav className="navbar">
@@ -19,6 +30,14 @@ const Navbar = () => {
       </div>
 
       <div className="nav-actions">
+        <button
+          className="nav-fullscreen-btn"
+          onClick={toggleFullscreen}
+          title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+          aria-label="Toggle Fullscreen"
+        >
+          {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+        </button>
 
         <button className="mobile-menu-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
