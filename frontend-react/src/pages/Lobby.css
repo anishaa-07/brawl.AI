@@ -202,7 +202,116 @@
     inset 0 0 20px rgba(0,242,255,0.08),
     0 0 30px rgba(0,0,0,0.5);
   overflow: hidden;
+  transition: box-shadow 0.35s ease;
 }
+
+/* Hover — ring + orb intensify */
+.avatar-v4:hover .avatar-circle-v4 {
+  box-shadow:
+    inset 0 0 30px rgba(0,242,255,0.15),
+    0 0 40px rgba(168,85,247,0.25),
+    0 0 0 2px rgba(0,242,255,0.2);
+}
+
+/* Glow orb behind the avatar */
+.avatar-glow-orb {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 110px; height: 110px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,242,255,0.18) 0%, rgba(168,85,247,0.12) 50%, transparent 72%);
+  filter: blur(14px);
+  pointer-events: none;
+  z-index: 0;
+  animation: orbPulse 3.5s ease-in-out infinite;
+}
+
+@keyframes orbPulse {
+  0%, 100% { opacity: 0.5; transform: translate(-50%,-50%) scale(1); }
+  50%       { opacity: 0.9; transform: translate(-50%,-50%) scale(1.15); }
+}
+
+/* The actual anime SVG avatar */
+.avatar-anime { position: relative; }
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.35s ease;
+  transform: scale(0.9);
+  position: relative;
+  z-index: 1;
+}
+
+.avatar-ready .avatar-img {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.avatar-v4:hover .avatar-img {
+  transform: scale(1.06);
+}
+
+/* Skeleton shimmer while avatar loads */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.avatar-skeleton {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(
+    90deg,
+    rgba(0,242,255,0.04) 0%,
+    rgba(0,242,255,0.12) 40%,
+    rgba(168,85,247,0.08) 60%,
+    rgba(0,242,255,0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+  z-index: 2;
+}
+
+/* Regenerate button */
+.avatar-regen-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 12px;
+  margin-bottom: -6px;
+  padding: 5px 14px;
+  background: rgba(0,242,255,0.05);
+  border: 1px solid rgba(0,242,255,0.18);
+  border-radius: 20px;
+  color: rgba(0,242,255,0.55);
+  font-size: 0.58rem;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.avatar-regen-btn:hover {
+  background: rgba(0,242,255,0.1);
+  border-color: rgba(0,242,255,0.4);
+  color: #00f2ff;
+  box-shadow: 0 0 12px rgba(0,242,255,0.2);
+  transform: scale(1.05);
+}
+
+.avatar-regen-btn svg {
+  transition: transform 0.5s ease;
+}
+.avatar-regen-btn:hover svg {
+  transform: rotate(180deg);
+}
+
+
 
 .rank-badge-v4 {
   position: absolute;

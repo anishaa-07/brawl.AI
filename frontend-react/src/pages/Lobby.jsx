@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Shield, Swords, Users, Target, Activity,
-  Crown, LogOut, ChevronRight, User, Maximize, Minimize, Award, Loader2, Settings as SettingsIcon
+  Crown, LogOut, ChevronRight, RefreshCw, Maximize, Minimize, Award, Loader2, Settings as SettingsIcon
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { ALL_QUESTIONS } from '../data/questionsDB';
@@ -10,12 +10,70 @@ import UniversalBackBtn from '../components/UniversalBackBtn';
 import SettingsModal from '../components/SettingsModal';
 import './Lobby.css';
 
+/* ── Avatar Utility ──────────────────────────────────────
+   detectGender: names ending in a/i/aa → female
+   getStyle:     female → adventurer (soft anime)
+                  male   → adventurer-neutral (warrior)
+   getSeed:      username + stored random suffix → unique
+──────────────────────────────────────────────────────── */
+const detectGender = (name = '') => {
+  const n = name.trim().toLowerCase();
+  if (/aa$|[ai]$/i.test(n)) return 'female';
+  return 'male';
+};
+
+const STYLES = {
+  female: 'adventurer',
+  male:   'adventurer-neutral',
+};
+
+const STORAGE_KEY = 'brawl_avatar_seed';
+
+const makeSeed = (username) => {
+  const suffix = Math.random().toString(36).slice(2, 8);
+  const seed = `${username}_${suffix}`;
+  localStorage.setItem(STORAGE_KEY, seed);
+  return seed;
+};
+
+const getSeed = (username) => {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  // Only reuse if it belongs to this user
+  if (stored && stored.startsWith(username + '_')) return stored;
+  return makeSeed(username);
+};
+
+const buildAvatarUrl = (username) => {
+  const gender = detectGender(username);
+  const style  = STYLES[gender];
+  const seed   = getSeed(username);
+  // Extra query params add cyberpunk flair
+  return `https://api.dicebear.com/7.x/${style}/svg?seed=${encodeURIComponent(seed)}&backgroundColor=0a0e1a&radius=50`;
+};
+
 const Lobby = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [loading, setLoading] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+
+  // Dynamic anime avatar URL
+  const [avatarUrl, setAvatarUrl] = useState(() =>
+    buildAvatarUrl(user?.username || 'ANON_USER')
+  );
+  const [avatarLoaded, setAvatarLoaded] = useState(false);
+
+  const regenerateAvatar = useCallback(() => {
+    const username = user?.username || 'ANON_USER';
+    const gender   = detectGender(username);
+    const style    = STYLES[gender];
+    const newSeed  = makeSeed(username);
+    setAvatarLoaded(false);
+    setAvatarUrl(
+      `https://api.dicebear.com/7.x/${style}/svg?seed=${encodeURIComponent(newSeed)}&backgroundColor=0a0e1a&radius=50`
+    );
+  }, [user?.username]);
 
   // Cinematic Boot State
   const [isBooting, setIsBooting] = useState(() => !sessionStorage.getItem('brawl_booted'));
@@ -167,12 +225,34 @@ const Lobby = () => {
 
             <div className="profile-hub-v4">
               <div className="avatar-v4">
+                {/* Outer dual-color spinning ring */}
                 <div className="avatar-ring-v4"></div>
-                <div className="avatar-circle-v4">
-                  <User size={60} color="var(--neon-cyan)" />
+                {/* Glow orb behind avatar */}
+                <div className="avatar-glow-orb"></div>
+                {/* Avatar image circle */}
+                <div className={`avatar-circle-v4 avatar-anime${avatarLoaded ? ' avatar-ready' : ''}`}>
+                  <img
+                    src={avatarUrl}
+                    alt="Pilot Avatar"
+                    className="avatar-img"
+                    onLoad={() => setAvatarLoaded(true)}
+                    onError={() => setAvatarLoaded(true)}
+                  />
+                  {/* Skeleton shimmer while loading */}
+                  {!avatarLoaded && <div className="avatar-skeleton" />}
                 </div>
                 <div className="rank-badge-v4 font-orbitron">{profile.rank}</div>
               </div>
+
+              {/* Regenerate Button */}
+              <button
+                className="avatar-regen-btn font-orbitron"
+                onClick={regenerateAvatar}
+                title="Regenerate Avatar"
+              >
+                <RefreshCw size={10} />
+                REGEN
+              </button>
 
               <h2 className="profile-name-v4 font-orbitron">{profile.username}</h2>
               <div className="profile-level-v4 font-orbitron">TITAN-CLASS OPERATOR</div>
