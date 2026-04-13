@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Zap, LogIn, UserPlus, Mail, Lock, User, KeyRound } from 'lucide-react';
-import characterImg from '../assets/login_character.png';
+import characterImg from '../assets/anime_fighters_group.png';
 import './Login.css';
 
 const LOGS = {
