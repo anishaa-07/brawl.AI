@@ -61,7 +61,7 @@ To build a next-generation gaming platform where players compete using intellige
 * [✨ Features](#-features)
 * [⚔️ Game Modes](#️-game-modes)
 * [⚙️ Tech Stack](#️-tech-stack)
-* [🚀 Installation](#-installation)
+* [🚀 Installation](#-installation) 
 * [🎯 Future Plans](#-future-plans)
 * [🏆 Status](#-status)
 
